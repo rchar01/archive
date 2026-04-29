@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="160" viewBox="0 0 480 160" fill="none">
+  <rect width="480" height="160" rx="18" fill="#0F172A"/>
+  <rect x="28" y="48" width="96" height="64" rx="12" fill="#1D4ED8"/>
+  <text x="76" y="86" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#EFF6FF">sources</text>
+  <rect x="192" y="48" width="96" height="64" rx="12" fill="#0F766E"/>
+  <text x="240" y="86" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#ECFEFF">content</text>
+  <rect x="356" y="48" width="96" height="64" rx="12" fill="#7C3AED"/>
+  <text x="404" y="86" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#F5F3FF">site</text>
+  <path d="M136 80H180" stroke="#94A3B8" stroke-width="6" stroke-linecap="round"/>
+  <path d="M300 80H344" stroke="#94A3B8" stroke-width="6" stroke-linecap="round"/>
+</svg>

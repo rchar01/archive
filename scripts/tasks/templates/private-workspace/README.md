@@ -1,0 +1,27 @@
+# Private Archive Workspace
+
+This repository stores canonical Archive content in private Git.
+
+## Layout
+
+- `incoming/new/`: rough draft intake
+- `incoming/review/`: normalized drafts waiting for approval
+- `sources/notes/`: canonical private notes
+- `sources/docs/`: canonical private docs
+
+Generated `content/`, `site/`, and `.vitepress/*generated*` output stay in the public Archive tool clone.
+This bootstrap stays intentionally empty; the public repo's optional `examples/` starter content is not copied into private Git.
+
+## Usage
+
+Set `ARCHIVE_DIR` in the forwarding `Makefile` if your public Archive clone is not at `../archive`.
+
+Then run commands from this private repo:
+
+```sh
+make validate
+make new kind=note title="DNS Notes" section=infra
+make build
+```
+
+Those commands forward to Archive with `WORKSPACE=$(CURDIR)`.

@@ -1,0 +1,12 @@
+kind: note
+label: Notes
+source_root: sources/notes
+output_root: content/notes
+default_section: general
+knowledge_panel: true
+backlinks: true
+related: true
+required_sections:
+  - Summary
+  - Details
+  - Related

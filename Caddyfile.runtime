@@ -1,0 +1,5 @@
+:80 {
+    root * /usr/share/caddy
+    try_files {path} {path}.html {path}/index.html =404
+    file_server
+}

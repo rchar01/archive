@@ -1,0 +1,25 @@
+.mermaid-diagram {
+  margin: 1.5rem 0;
+}
+
+.mermaid-diagram__graphic {
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+}
+
+.mermaid-diagram__graphic svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.mermaid-diagram__source {
+  overflow-x: auto;
+}
+
+.mermaid-diagram__error {
+  margin: 0.5rem 0 0;
+  color: var(--vp-c-danger-1);
+  font-size: 0.9rem;
+}

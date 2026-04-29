@@ -1,0 +1,12 @@
+.git/
+.venv/
+.venv-test/
+.pytest_cache/
+__pycache__/
+node_modules/
+incoming/
+content/
+site/
+build/
+.vitepress/cache/
+.vitepress/dist/

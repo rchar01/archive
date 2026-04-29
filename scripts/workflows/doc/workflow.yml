@@ -1,0 +1,12 @@
+kind: doc
+label: Docs
+source_root: sources/docs
+output_root: content/docs
+default_section: general
+knowledge_panel: true
+backlinks: true
+related: true
+required_sections:
+  - Overview
+  - Details
+  - References

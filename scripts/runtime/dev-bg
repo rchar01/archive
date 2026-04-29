@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+# shellcheck source=./_container.sh
+. "$SCRIPT_DIR/_container.sh"
+
+build_image
+container_id=$(run_container_with_dev_port_background "$DEV_CONTAINER_NAME" 'python3 scripts/tasks/build_content.py && python3 scripts/tasks/build_linkgraph.py && python3 scripts/tasks/build_related.py && python3 scripts/tasks/build_indexes.py && python3 scripts/tasks/build_sidebar.py && npm run docs:dev -- --host 0.0.0.0 --port "$VITEPRESS_DEV_PORT"')
+printf 'Started %s (%s) at http://localhost:%s\n' "$DEV_CONTAINER_NAME" "$container_id" "$VITEPRESS_DEV_PORT"

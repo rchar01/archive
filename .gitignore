@@ -1,0 +1,32 @@
+# Incoming scratch
+incoming/new/*
+incoming/review/*
+!incoming/new/.gitkeep
+!incoming/review/.gitkeep
+
+# Generated content
+content/
+site/
+
+# Build outputs
+build/cache/
+build/reports/
+
+# VitePress cache
+.vitepress/cache/
+.vitepress/dist/
+
+# Generated VitePress metadata
+.vitepress/nav.generated.ts
+.vitepress/sidebar.generated.ts
+.vitepress/knowledge/
+
+# Dependencies and virtualenvs
+node_modules/
+.venv/
+.venv-test/
+
+# Python caches
+__pycache__/
+.pytest_cache/
+.pycache-temp/
