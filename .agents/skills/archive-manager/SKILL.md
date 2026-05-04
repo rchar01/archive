@@ -34,11 +34,13 @@ When this skill is active, read in this order:
 2. `README.md`
 3. `docs/README.md`
 4. `docs/authoring.md` when the task involves creating or editing content
-5. `Makefile`
-6. `Containerfile.dev` and `Containerfile.runtime` if container behavior matters
-7. `.vitepress/config.ts` if navigation or generated page structure may be involved
-8. the relevant files under `scripts/`
-9. `.agents/skills/archive-title-style/SKILL.md` when title cleanup matters
+5. `docs/cli.md` when the task involves cross-project authoring or installed CLI usage
+6. `docs/skills.md` when the task involves globally installable Archive guidance for other agents
+7. `Makefile`
+8. `Containerfile.dev` and `Containerfile.runtime` if container behavior matters
+9. `.vitepress/config.ts` if navigation or generated page structure may be involved
+10. the relevant files under `scripts/`
+11. `.agents/skills/archive-title-style/SKILL.md` when title cleanup matters
 
 ## Workflow Reminders
 
@@ -62,6 +64,8 @@ Use these actions for common user requests:
 
 * add a new canonical entry: run `make new kind=<workflow> title="..." section=...`, plus optional `slug=...`, `nav_title="..."`, `summary="..."`, `priority=...`, comma-separated `tags="a,b"`, comma-separated `related_manual="/x,/y"`, and hide flags like `hide_backlinks=1`
 * bootstrap a private content repo: run `make WORKSPACE=/path/to/private/repo init-workspace`
+* install the cross-project CLI: run `make install-cli`
+* install the project-shipped global skill for other agents: run `make install-skill`
 * process rough incoming files: run `make process-incoming`
 * accept a reviewed draft: run `make accept-review file=incoming/review/...`
 * validate canonical sources: run `make validate`

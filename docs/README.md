@@ -17,6 +17,8 @@ These files explain the supported usage modes, authoring flow, and workflow-spec
 
 Recommended reading order:
 
+- `cli.md` for the installed cross-project command wrapper
+- `skills.md` for the manually installable cross-project Archive skill
 - `authoring.md` for the end-to-end human and agent authoring workflow
 - `note.md` for note-specific structure and constraints
 - `doc.md` for doc-specific structure and constraints

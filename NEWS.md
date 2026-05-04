@@ -2,6 +2,14 @@
 
 This file gives a short, release-oriented view of what changed between versions.
 
+## Unreleased
+
+- added an installed `archive` CLI for cross-project authoring, raw Markdown import, intake processing, review acceptance, validation, and builds against standalone or private workspaces
+- added a project-shipped `archive-authoring` skill plus install/uninstall helpers so agents outside this repo can learn the Archive workflow explicitly
+- made `note` and `doc` body structure less rigid by keeping only `Summary`/`Details` and `Overview`/`Details` required while leaving `Related` and `References` optional
+- clarified that private workspace repos should keep using the forwarding `Makefile` for local human usage while external agents can use the installed CLI
+- fixed the generated private-workspace forwarding `Makefile` so plain `make` correctly forwards to Archive help instead of becoming a no-op
+
 ## v1.0.0 - 2026-04-29
 
 Archive 1.0.0 is the first public release of the source-first documentation system.

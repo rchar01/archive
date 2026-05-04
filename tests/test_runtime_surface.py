@@ -53,12 +53,15 @@ class RuntimeSurfaceTests(unittest.TestCase):
             "dev-logs:",
             "dev-status:",
             "dev-stop:",
+            "install-cli:",
+            "install-skill:",
             "init-workspace:",
             "runtime-build:",
             "runtime-run:",
             "runtime-logs:",
             "runtime-status:",
             "runtime-stop:",
+            "uninstall-skill:",
         ):
             self.assertIn(target, makefile)
 

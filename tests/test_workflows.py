@@ -48,7 +48,7 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(normalized.frontmatter["section"], "containers")
         self.assertIn("## Summary", normalized.body)
         self.assertIn("## Details", normalized.body)
-        self.assertIn("## Related", normalized.body)
+        self.assertNotIn("## Related", normalized.body)
         self.assertEqual(page.title, "Docker DNS Issue")
         self.assertEqual(page.tags, ["docker", "dns"])
         self.assertEqual(page.description, "Author summary.")
@@ -83,7 +83,7 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(normalized.frontmatter["section"], "homelab/networking")
         self.assertIn("## Overview", normalized.body)
         self.assertIn("## Details", normalized.body)
-        self.assertIn("## References", normalized.body)
+        self.assertNotIn("## References", normalized.body)
         self.assertEqual(page.title, "Homelab Firewall")
         self.assertEqual(page.tags, ["firewall"])
 

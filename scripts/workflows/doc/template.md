@@ -14,5 +14,3 @@ updated: "{{ date }}"
 ## Overview
 
 ## Details
-
-## References

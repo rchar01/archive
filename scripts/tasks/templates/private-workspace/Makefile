@@ -5,5 +5,8 @@ WORKSPACE := $(CURDIR)
 
 .PHONY: help
 
+help:
+	$(MAKE) -C $(ARCHIVE_DIR) WORKSPACE="$(WORKSPACE)" help
+
 %:
 	$(MAKE) -C $(ARCHIVE_DIR) WORKSPACE="$(WORKSPACE)" $@

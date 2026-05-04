@@ -5,6 +5,27 @@ All notable changes to `archive` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- an installed `archive` CLI with `init-workspace`, `new`, `import`, `process`, `accept`, `validate`, `build-content`, `build`, and `check` commands for cross-project usage
+- `make install-cli` plus `scripts/install-cli` to install the user-facing `archive` command into `~/.local/bin` by default
+- a project-shipped `archive-authoring` skill under `skills/` for agents outside this repo, plus `make install-skill`, `make uninstall-skill`, `scripts/install-skill`, and `scripts/uninstall-skill`
+- `docs/cli.md` and `docs/skills.md` documenting the installed CLI and manually installable cross-project skill
+- CLI and skill surface tests covering workspace inference, raw import staging, installer behavior, and skill install/uninstall flows
+
+### Changed
+
+- made `note` require only `Summary` and `Details`, with `Related` now optional
+- made `doc` require only `Overview` and `Details`, with `References` now optional
+- stopped scaffolding and intake-normalization from auto-generating empty trailing `Related` and `References` sections
+- updated private-workspace docs and template guidance to keep `make` as the default interface inside the private repo while reserving the installed CLI for cross-project and external-agent workflows
+
+### Fixed
+
+- the generated private-workspace forwarding `Makefile` now forwards plain `make` to Archive help instead of resolving to an empty local `help` target
+
 ## [1.0.0] - 2026-04-29
 
 ### Added

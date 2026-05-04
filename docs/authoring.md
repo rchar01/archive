@@ -4,6 +4,8 @@
 
 Use this playbook when a human or agent needs to add or update canonical content in this repository.
 
+If you want to run Archive from other directories or other projects, install and use the wrapper documented in `docs/cli.md`.
+
 Canonical flow:
 
 ```text
@@ -159,8 +161,13 @@ Route and navigation behavior:
 
 Required sections by workflow:
 
-- `note`: `Summary`, `Details`, `Related`
-- `doc`: `Overview`, `Details`, `References`
+- `note`: `Summary`, `Details`
+- `doc`: `Overview`, `Details`
+
+Optional sections:
+
+- `note`: `Related`
+- `doc`: `References`
 
 Prefer keeping the required workflow structure intact even when the body is brief.
 

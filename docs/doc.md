@@ -18,7 +18,8 @@ For the full end-to-end authoring flow, including when to use `make new` versus 
 
 - `Overview`
 - `Details`
-- `References`
+
+`References` is optional. Add it only when the page has real references to preserve.
 
 ## Intake Rules
 

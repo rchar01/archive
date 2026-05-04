@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -eu
+
+SCRIPT_DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+ARCHIVE_ROOT=$(readlink -f "$SCRIPT_DIR/..")
+BIN_DIR=${BIN_DIR:-$HOME/.local/bin}
+TARGET="$BIN_DIR/archive"
+
+mkdir -p "$BIN_DIR"
+
+cat >"$TARGET" <<EOF
+#!/usr/bin/env bash
+exec python3 "$ARCHIVE_ROOT/scripts/cli/archive.py" "\$@"
+EOF
+
+chmod +x "$TARGET"
+printf '%s\n' "$TARGET"

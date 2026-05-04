@@ -18,7 +18,8 @@ For the full end-to-end authoring flow, including when to use `make new` versus 
 
 - `Summary`
 - `Details`
-- `Related`
+
+`Related` is optional. Add it only when you want explicit in-body links beyond the generated knowledge panel.
 
 ## Intake Rules
 

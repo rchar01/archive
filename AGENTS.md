@@ -60,6 +60,9 @@ Good examples:
 ## Commands
 
 - `make container-build` builds the dev image from `Containerfile.dev`.
+- `make install-cli` installs the user-facing `archive` command into `~/.local/bin` by default.
+- `make install-skill` installs the project-shipped `archive-authoring` skill into `~/.agents/skills` by default.
+- `make uninstall-skill` removes the project-shipped `archive-authoring` skill from `~/.agents/skills` by default.
 - `make devshell` opens an interactive shell inside the dev container.
 - `make new` creates a canonical source file.
 - `make init-workspace` bootstraps a private content repo skeleton at `WORKSPACE`.

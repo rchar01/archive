@@ -25,3 +25,5 @@ make build
 ```
 
 Those commands forward to Archive with `WORKSPACE=$(CURDIR)`.
+Use this forwarding `Makefile` as the default interface when you are already inside the private repo.
+The installed `archive` CLI is optional and is most useful for cross-project or external-agent workflows.

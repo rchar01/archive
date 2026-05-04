@@ -42,7 +42,7 @@ def optional_string(document: MarkdownDocument, name: str) -> str | None:
 
 def build_body(body: str, title: str) -> str:
     cleaned = body.strip()
-    if has_section(cleaned, "Summary") and has_section(cleaned, "Details") and has_section(cleaned, "Related"):
+    if has_section(cleaned, "Summary") and has_section(cleaned, "Details"):
         return normalize_heading_spacing(ensure_h1(cleaned, title)).rstrip() + "\n"
 
     summary = summary_from_body(cleaned)
@@ -52,7 +52,6 @@ def build_body(body: str, title: str) -> str:
     lines.extend(["## Details", ""])
     if cleaned:
         lines.extend([cleaned, ""])
-    lines.extend(["## Related", ""])
     return "\n".join(lines).rstrip() + "\n"
 
 

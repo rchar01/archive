@@ -60,6 +60,19 @@ make install
 make check
 ```
 
+Optional installed CLI for cross-project use:
+
+```sh
+make install-cli
+archive --help
+```
+
+Optional installable global skill for agents in other repos:
+
+```sh
+make install-skill
+```
+
 Start the local preview server:
 
 ```sh
@@ -188,6 +201,8 @@ Human-facing documentation lives under `docs/`.
 Start with:
 
 - `docs/README.md`: documentation index
+- `docs/cli.md`: installed cross-project command wrapper
+- `docs/skills.md`: installable global skill for cross-project agents
 - `docs/authoring.md`: end-to-end human and agent authoring playbook
 - `docs/note.md`: note-specific structure and rules
 - `docs/doc.md`: doc-specific structure and rules

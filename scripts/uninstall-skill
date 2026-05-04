@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -eu
+
+SKILLS_DIR=${SKILLS_DIR:-$HOME/.agents/skills}
+SKILL_NAME=archive-authoring
+TARGET_DIR="$SKILLS_DIR/$SKILL_NAME"
+
+rm -rf "$TARGET_DIR"
+printf '%s\n' "$TARGET_DIR"

@@ -168,6 +168,8 @@ class TaskPipelineTests(unittest.TestCase):
             self.assertTrue((workspace_root / "sources" / "docs").is_dir())
             self.assertIn("ARCHIVE_DIR ?= ../archive", (workspace_root / "Makefile").read_text())
             self.assertIn('WORKSPACE := $(CURDIR)', (workspace_root / "Makefile").read_text())
+            self.assertIn("help:", (workspace_root / "Makefile").read_text())
+            self.assertIn('$(MAKE) -C $(ARCHIVE_DIR) WORKSPACE="$(WORKSPACE)" help', (workspace_root / "Makefile").read_text())
             self.assertIn("canonical Archive content", (workspace_root / "README.md").read_text())
             self.assertIn(".DS_Store", (workspace_root / ".gitignore").read_text())
 

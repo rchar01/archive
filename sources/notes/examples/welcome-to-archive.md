@@ -28,5 +28,3 @@ Archive builds a site from canonical Markdown sources. This starter note links t
 - Read [How Archive Works](/docs/examples/archive-pipeline) for the `incoming -> sources -> content -> site` pipeline.
 - Read [Local Assets Example](/docs/examples/local-assets-example) for the sibling `.assets/` folder convention.
 - Delete `sources/notes/examples/` and `sources/docs/examples/` if you want to start from a blank corpus, then rebuild.
-
-## Related

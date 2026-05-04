@@ -3,7 +3,7 @@ SHELL := /bin/sh
 WORKSPACE ?= .
 export WORKSPACE
 
-.PHONY: help install container-build devshell init-workspace new process-incoming accept-review validate build-content build-linkgraph build-related indexes sidebar dev dev-bg dev-logs dev-status dev-stop build runtime-build runtime-run runtime-logs runtime-status runtime-stop check clean doctor
+.PHONY: help install install-cli install-skill uninstall-skill container-build devshell init-workspace new process-incoming accept-review validate build-content build-linkgraph build-related indexes sidebar dev dev-bg dev-logs dev-status dev-stop build runtime-build runtime-run runtime-logs runtime-status runtime-stop check clean doctor
 
 ## Show available commands
 help:
@@ -23,6 +23,18 @@ help:
 ## Build the Podman dev image
 install:
 	$(MAKE) container-build
+
+## Install the archive CLI into ~/.local/bin
+install-cli:
+	./scripts/install-cli
+
+## Install the archive-authoring skill into ~/.agents/skills
+install-skill:
+	./scripts/install-skill
+
+## Remove the archive-authoring skill from ~/.agents/skills
+uninstall-skill:
+	./scripts/uninstall-skill
 
 ## Build the Podman dev image
 container-build:

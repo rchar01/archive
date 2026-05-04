@@ -53,6 +53,9 @@ make process-incoming
 make build
 ```
 
+Inside the private repo, `make` is the default human-facing interface.
+The installed `archive` CLI is most useful when you are operating from other repositories or when external agents need to target this workspace explicitly.
+
 Canonical content stays in the private repo. Generated `content/`, `site/`, and generated `.vitepress/*` artifacts stay in the public Archive tool repo.
 
 For the recommended pinned CI and Kubernetes-oriented packaging flow, see `docs/private-ci.md`.

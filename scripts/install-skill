@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -eu
+
+SCRIPT_DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+ARCHIVE_ROOT=$(readlink -f "$SCRIPT_DIR/..")
+SKILLS_DIR=${SKILLS_DIR:-$HOME/.agents/skills}
+SKILL_NAME=archive-authoring
+SOURCE_DIR="$ARCHIVE_ROOT/skills/$SKILL_NAME"
+TARGET_DIR="$SKILLS_DIR/$SKILL_NAME"
+
+mkdir -p "$SKILLS_DIR"
+rm -rf "$TARGET_DIR"
+cp -R "$SOURCE_DIR" "$TARGET_DIR"
+printf '%s\n' "$TARGET_DIR"
