@@ -2,7 +2,7 @@
 
 This file gives a short, release-oriented view of what changed between versions.
 
-## Unreleased
+## v1.1.0 - 2026-05-04
 
 - added an installed `archive` CLI for cross-project authoring, raw Markdown import, intake processing, review acceptance, validation, and builds against standalone or private workspaces
 - added a project-shipped `archive-authoring` skill plus install/uninstall helpers so agents outside this repo can learn the Archive workflow explicitly
