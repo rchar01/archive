@@ -5,6 +5,20 @@ All notable changes to `archive` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-05-07
+
+### Changed
+
+- made `note` require only `Summary`, with later major `##` sections added as needed
+- made `doc` require only `Overview`, with later major `##` sections added as needed
+- updated workflow templates and intake normalization to stop auto-generating `## Details` as the default follow-on section
+- updated agent and human authoring guidance to teach the single-required-section model and discourage manual thematic breaks immediately before `##` headings
+
+### Fixed
+
+- duplicate visual separators when authored content placed `---`, `***`, or `___` immediately before a `##` heading on pages rendered with the default VitePress `h2` divider
+- imported rough content duplicating lead content around the generated `Overview` or `Summary` boundary
+
 ## [1.1.0] - 2026-05-04
 
 ### Added

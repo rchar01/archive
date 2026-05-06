@@ -2,6 +2,13 @@
 
 This file gives a short, release-oriented view of what changed between versions.
 
+## v1.2.0 - 2026-05-07
+
+- simplified canonical body structure so `note` requires only `Summary` and `doc` requires only `Overview`
+- stopped scaffolding and intake normalization from auto-inserting `## Details`, while still allowing later major `##` sections when the page needs them
+- normalized manual thematic breaks like `---`, `***`, and `___` immediately before `##` headings so generated pages do not show duplicate separators alongside the default VitePress section divider
+- updated agent skills, authoring docs, and examples to teach the new heading model and separator rule
+
 ## v1.1.0 - 2026-05-04
 
 - added an installed `archive` CLI for cross-project authoring, raw Markdown import, intake processing, review acceptance, validation, and builds against standalone or private workspaces
