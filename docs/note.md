@@ -32,6 +32,20 @@ For the full end-to-end authoring flow, including when to use `make new` versus 
 - `make new` can scaffold `slug`, `nav_title`, `summary`, `priority`, comma-separated `tags`, comma-separated `related_manual`, and knowledge-panel hide flags
 - `id`, `created`, `updated`, and default `status: draft` remain system-managed
 - use `slug` for stable short routes and `nav_title` for compact navigation labels when needed
+- keep `section` lowercase and slash-separated; use `WORKSPACE/sources/notes/_sections.yaml` for display labels or default sidebar fold state
+
+Example `_sections.yaml`:
+
+```yaml
+sections:
+  homelab:
+    title: Homelab
+    collapsed: false
+
+  homelab/omv:
+    title: OMV
+    collapsed: true
+```
 
 ## Ownership
 

@@ -141,6 +141,7 @@ The same command works from a private repo forwarding `Makefile`, or from the Ar
 Common author-controlled fields:
 
 - `title`: full canonical page title and generated H1
+- `section`: canonical lowercase slash-separated section path such as `homelab/security` or `kubernetes/omv`
 - `slug`: optional stable route segment; lowercase letters, numbers, and hyphens only
 - `nav_title`: optional compact label for sidebar and generated index pages
 - `summary`: optional short description reused in generated indexes and the knowledge panel
@@ -156,6 +157,40 @@ Route and navigation behavior:
 - generated page URLs use `slug` when present
 - sidebar and generated index labels use `nav_title` when present
 - page bodies continue to use the full `title`
+- keep canonical `section` paths lowercase and stable; use workflow-local `_sections.yaml` overrides for display casing or sidebar collapse behavior
+
+## Section Display Overrides
+
+Section labels and default sidebar collapse behavior can be overridden per workflow with optional `_sections.yaml` files that live beside canonical content:
+
+- `WORKSPACE/sources/docs/_sections.yaml`
+- `WORKSPACE/sources/notes/_sections.yaml`
+
+Example:
+
+```yaml
+sections:
+  homelab:
+    title: Homelab
+    collapsed: false
+
+  homelab/security:
+    title: Security
+    collapsed: true
+
+  homelab/omv:
+    title: OMV
+    collapsed: true
+```
+
+Rules:
+
+- `_sections.yaml` is workflow-wide, not page-local
+- list only the paths you want to override; unlisted sections still work from document frontmatter
+- `title` controls display text in the generated sidebar and workflow index headings
+- `collapsed` controls the default fold state for that section group in the left sidebar
+- top-level sections default to expanded; nested sections default to collapsed when no override is present
+- in private workspace mode, these files live in the private repo because `sources/` is canonical there
 
 ## Body Structure
 

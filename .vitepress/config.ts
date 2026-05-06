@@ -39,6 +39,7 @@ export default defineConfig({
   themeConfig: {
     nav,
     sidebar,
+    outline: { level: [2, 3] },
     knowledgePanel: true,
     knowledgePanelBacklinks: true,
     knowledgePanelRelated: true,

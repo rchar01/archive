@@ -2,29 +2,103 @@ from __future__ import annotations
 
 import json
 from collections import defaultdict
+from collections.abc import Mapping
 from typing import Any, Iterable
 
-from scripts.core.index_builder import IndexEntry, section_title
+from scripts.core.index_builder import IndexEntry
+from scripts.core.sections import (
+    SectionOverride,
+    load_section_overrides,
+    resolve_section_collapsed,
+    resolve_section_title,
+    section_parts,
+)
 
 
-def build_sidebar_data(entries: Iterable[IndexEntry]) -> dict[str, list[dict[str, Any]]]:
-    grouped: dict[str, dict[str, list[IndexEntry]]] = defaultdict(lambda: defaultdict(list))
+def _new_section_node() -> dict[str, Any]:
+    return {"entries": [], "children": {}}
+
+
+def _insert_section_entry(tree: dict[str, Any], entry: IndexEntry) -> None:
+    node = tree
+    for part in section_parts(entry.section):
+        children = node["children"]
+        if part not in children:
+            children[part] = _new_section_node()
+        node = children[part]
+    node["entries"].append(entry)
+
+
+def _sorted_links(entries: list[IndexEntry]) -> list[dict[str, str]]:
+    return [{"text": entry.display_title, "link": entry.link} for entry in entries]
+
+
+def _render_section_nodes(
+    children: dict[str, Any],
+    overrides: Mapping[str, SectionOverride],
+    *,
+    prefix: tuple[str, ...] = (),
+    depth: int = 0,
+    default_section: str = "general",
+) -> list[dict[str, Any]]:
+    items: list[dict[str, Any]] = []
+    def sort_key(value: str) -> tuple[str, str]:
+        path = "/".join((*prefix, value))
+        return (resolve_section_title(path, overrides, default_section=default_section).lower(), value)
+
+    for segment in sorted(children, key=sort_key):
+        node = children[segment]
+        section_path = "/".join((*prefix, segment))
+        child_items = _render_section_nodes(
+            node["children"],
+            overrides,
+            prefix=(*prefix, segment),
+            depth=depth + 1,
+            default_section=default_section,
+        )
+        rendered = {
+            "text": resolve_section_title(section_path, overrides, default_section=default_section),
+            "items": _sorted_links(node["entries"]) + child_items,
+            "collapsed": resolve_section_collapsed(
+                section_path,
+                overrides,
+                depth=depth,
+                default_section=default_section,
+            ),
+        }
+        items.append(rendered)
+    return items
+
+
+def build_sidebar_data(
+    entries: Iterable[IndexEntry],
+    *,
+    workflow_definitions: Mapping[str, Any] | None = None,
+) -> dict[str, list[dict[str, Any]]]:
+    grouped: dict[str, dict[str, Any]] = defaultdict(_new_section_node)
     labels: dict[str, str] = {}
+    section_overrides_by_root: dict[str, Mapping[str, SectionOverride]] = {}
+    default_sections_by_root: dict[str, str] = {}
+
+    for workflow in (workflow_definitions or {}).values():
+        workflow_root = workflow.output_root.name
+        section_overrides_by_root[workflow_root] = load_section_overrides(
+            workflow.source_root,
+            default_section=workflow.default_section,
+        )
+        default_sections_by_root[workflow_root] = workflow.default_section
 
     for entry in sorted(entries, key=lambda item: (item.workflow_root, item.section, item.title.lower(), item.link)):
-        grouped[entry.workflow_root][entry.section].append(entry)
+        _insert_section_entry(grouped[entry.workflow_root], entry)
         labels[entry.workflow_root] = entry.workflow_label
 
     sidebar: dict[str, list[dict[str, Any]]] = {}
-    for workflow_root, sections in grouped.items():
-        items: list[dict[str, Any]] = []
-        for section, section_entries in sections.items():
-            items.append(
-                {
-                    "text": section_title(section),
-                    "items": [{"text": entry.display_title, "link": entry.link} for entry in section_entries],
-                }
-            )
+    for workflow_root, tree in grouped.items():
+        items = _render_section_nodes(
+            tree["children"],
+            section_overrides_by_root.get(workflow_root, {}),
+            default_section=default_sections_by_root.get(workflow_root, "general"),
+        )
         sidebar[f"/{workflow_root}/"] = [{"text": labels[workflow_root], "items": items}]
     return sidebar
 

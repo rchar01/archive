@@ -17,6 +17,7 @@
 - in private workspace mode, canonical `incoming/` and `sources/` live under `WORKSPACE` while generated `content/`, `site/`, `build/`, and generated `.vitepress/*` output stay in the Archive tool repo
 - canonical frontmatter may use `slug` for stable generated routes and `nav_title` for compact navigation labels
 - canonical source pages may keep page-local assets in sibling `<page-stem>.assets/` directories and reference them with ordinary relative Markdown paths
+- canonical workflow-local section display overrides may live in sibling `_sections.yaml` files under `sources/<workflow>/`; use those for labels like `OMV` or default sidebar collapse behavior instead of encoding display casing into `section`
 - canonical source pages may use plain ` ```mermaid ` fences; the local VitePress theme renders them client-side, so do not replace them with manual Vue components in page content
 - `incoming/new/` and `incoming/review/` are the only intake queues
 - `Containerfile.runtime` packages a prebuilt static site into a self-contained Caddy image
@@ -87,6 +88,7 @@ Good examples:
 - Keep `README.md`, `AGENTS.md`, and skill docs current when repository behavior changes.
 - When docs mention canonical content paths, distinguish `WORKSPACE`-owned paths from Archive tool-repo generated paths.
 - Keep local page assets in sibling `<page-stem>.assets/` directories under `sources/`; do not hand-edit copied asset folders under `content/`.
+- Keep canonical `section` paths lowercase and slash-separated; use `sources/<workflow>/_sections.yaml` for display-label overrides.
 - Preserve explicit `slug` and `nav_title` unless the task is specifically about changing routes or navigation labels.
 - Use a verification-focused subagent for non-trivial test runs or runtime-backed checks.
 - Use a review-focused subagent after substantial edits to catch regressions and doc/code drift.

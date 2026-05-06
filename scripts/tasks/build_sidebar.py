@@ -17,7 +17,10 @@ def main(argv: list[str] | None = None) -> int:
     workflows = discover_workflows()
     entries = collect_index_entries(workflows, content_dir=CONTENT_DIR)
 
-    write_text(ROOT / ".vitepress" / "sidebar.generated.ts", render_sidebar_ts(build_sidebar_data(entries)))
+    write_text(
+        ROOT / ".vitepress" / "sidebar.generated.ts",
+        render_sidebar_ts(build_sidebar_data(entries, workflow_definitions=workflows)),
+    )
     write_text(ROOT / ".vitepress" / "nav.generated.ts", render_nav_ts(build_nav_data(entries)))
     print("Built generated sidebar and nav")
     return 0

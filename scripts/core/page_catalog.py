@@ -40,7 +40,7 @@ def collect_page_catalog(
             title = str(require_field(document.frontmatter, "title")).strip()
             nav_title = require_optional_string(document.frontmatter, "nav_title") or ""
             slug = require_optional_slug(document.frontmatter, "slug") or ""
-            section = str(require_field(document.frontmatter, "section")).strip()
+            section = workflow.normalize_section(str(require_field(document.frontmatter, "section")).strip())
             output_path = workflow.output_path_for(title, section, slug=slug)
             link = normalize_content_link(output_path.relative_to(content_dir).as_posix())
             pages[link] = {

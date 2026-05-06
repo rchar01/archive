@@ -26,7 +26,7 @@ def main(argv: list[str] | None = None) -> int:
             document = read_markdown(path)
             validator.validate(document, required_sections=workflow.required_sections)
             title = str(require_field(document.frontmatter, "title")).strip()
-            section = str(require_field(document.frontmatter, "section")).strip()
+            section = workflow.normalize_section(str(require_field(document.frontmatter, "section")).strip())
             slug = require_optional_slug(document.frontmatter, "slug")
             ids.append(str(require_field(document.frontmatter, "id")).strip())
             output_paths.append(workflow.output_path_for(title, section, slug=slug).as_posix())

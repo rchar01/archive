@@ -102,9 +102,9 @@ function humanizeSection(section: string): string {
   }
   return section
     .split('/')
-    .filter((part) => part.trim().length > 0)
-    .map((part) => part.replace(/[-_]/gu, ' ').replace(/\b\w/gu, (match) => match.toUpperCase()))
-    .join(' / ')
+    .map((part) => part.trim().toLowerCase())
+    .filter((part) => part.length > 0)
+    .join('/')
 }
 
 function buildItems(links: string[]): PanelItem[] {
@@ -197,8 +197,8 @@ const autoRelatedLinks = computed(() => {
 })
 
 const relatedLinks = computed(() => [
-  ...manualRelatedLinks.value.map((item) => ({ ...item, sourceLabel: 'Curated', sourceTone: 'brand' as const })),
-  ...autoRelatedLinks.value.map((item) => ({ ...item, sourceLabel: 'Suggested', sourceTone: 'muted' as const })),
+  ...manualRelatedLinks.value.map((item) => ({ ...item, sourceLabel: 'curated', sourceTone: 'brand' as const })),
+  ...autoRelatedLinks.value.map((item) => ({ ...item, sourceLabel: 'suggested', sourceTone: 'muted' as const })),
 ])
 
 const backlinks = computed(() => buildItems(linkgraph[currentPath.value]?.backlinks ?? []))

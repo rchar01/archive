@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import io
+import json
 import tempfile
 import unittest
 from contextlib import redirect_stdout
@@ -648,6 +649,98 @@ class TaskPipelineTests(unittest.TestCase):
             self.assertEqual(page_catalog["/docs/testing/knowledge-panel-guardrail-stress-test"]["slug"], "knowledge-panel-guardrail-stress-test")
             self.assertIn("nav_title: Knowledge Panel Guardrail Stress Test", generated_doc)
             self.assertIn("slug: knowledge-panel-guardrail-stress-test", generated_doc)
+
+    def test_build_sidebar_nests_section_paths_dynamically(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir)
+            workflow = self.make_workflow(root, "doc")
+            workflow.source_root.mkdir(parents=True)
+            (workflow.source_root / "_sections.yaml").write_text(
+                "sections:\n"
+                "  homelab:\n"
+                "    title: Homelab\n"
+                "    collapsed: false\n"
+                "  homelab/security:\n"
+                "    title: Security\n"
+                "    collapsed: true\n"
+                "  homelab/omv:\n"
+                "    title: OMV\n"
+                "    collapsed: true\n"
+            )
+
+            for title, section, slug in (
+                ("Homelab HTTPS Setup", "homelab/security", "homelab-https-setup"),
+                (
+                    "Homelab HTTPS Certificates with Local ECDSA CA",
+                    "homelab/security",
+                    "homelab-https-certificates-with-local-ecdsa-ca",
+                ),
+                (
+                    "Internal HTTPS Setup with Local DNS for OMV",
+                    "homelab/networking",
+                    "internal-https-setup-with-local-dns-for-omv",
+                ),
+                ("OMV Backup and Restore Strategy", "homelab/omv", "omv-backup-and-restore-strategy"),
+                ("Linux Review", "linux", "linux-review"),
+            ):
+                write_markdown(
+                    workflow.source_path_for(title, section),
+                    MarkdownDocument(
+                        frontmatter={
+                            "id": f"20260506T{slug[:6]}",
+                            "title": title,
+                            "kind": "doc",
+                            "section": section,
+                            "slug": slug,
+                            "status": "draft",
+                            "tags": [],
+                            "created": "2026-05-06",
+                            "updated": "2026-05-06",
+                        },
+                        body="# Placeholder\n\n## Overview\n\nOne.\n\n## Details\n\nTwo.\n",
+                    ),
+                )
+
+            workflows = {"doc": workflow}
+            with patch("scripts.tasks.build_indexes.discover_workflows", return_value=workflows), patch(
+                "scripts.tasks.build_indexes.CONTENT_DIR", root / "content"
+            ), patch("scripts.tasks.build_sidebar.discover_workflows", return_value=workflows), patch(
+                "scripts.tasks.build_sidebar.CONTENT_DIR", root / "content"
+            ), patch("scripts.tasks.build_sidebar.ROOT", root):
+                build_indexes.main([])
+                build_sidebar.main([])
+
+            sidebar_text = (root / ".vitepress" / "sidebar.generated.ts").read_text()
+            sidebar = json.loads(sidebar_text.removeprefix("export default "))
+            docs_index = (root / "content" / "docs" / "index.md").read_text()
+
+            docs_items = sidebar["/docs/"][0]["items"]
+            self.assertEqual(docs_items[0]["text"], "Homelab")
+            self.assertEqual(docs_items[0]["collapsed"], False)
+            self.assertEqual(docs_items[0]["items"][0]["text"], "Networking")
+            self.assertEqual(docs_items[0]["items"][0]["collapsed"], True)
+            self.assertEqual(docs_items[0]["items"][1]["text"], "OMV")
+            self.assertEqual(docs_items[0]["items"][1]["collapsed"], True)
+            self.assertEqual(docs_items[0]["items"][2]["text"], "Security")
+            self.assertEqual(docs_items[0]["items"][2]["collapsed"], True)
+            self.assertEqual(
+                docs_items[0]["items"][2]["items"],
+                [
+                    {
+                        "text": "Homelab HTTPS Certificates with Local ECDSA CA",
+                        "link": "/docs/homelab/security/homelab-https-certificates-with-local-ecdsa-ca",
+                    },
+                    {
+                        "text": "Homelab HTTPS Setup",
+                        "link": "/docs/homelab/security/homelab-https-setup",
+                    },
+                ],
+            )
+            self.assertEqual(docs_items[1]["text"], "Linux")
+            self.assertEqual(docs_items[1]["collapsed"], False)
+            self.assertEqual(docs_items[1]["items"], [{"text": "Linux Review", "link": "/docs/linux/linux-review"}])
+            self.assertIn("## Homelab / OMV", docs_index)
+            self.assertIn("## Homelab / Security", docs_index)
 
     def test_build_content_copies_adjacent_assets_when_output_uses_slug(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:

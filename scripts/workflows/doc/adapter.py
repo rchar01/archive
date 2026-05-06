@@ -6,13 +6,13 @@ from scripts.core.frontmatter import MarkdownDocument
 from scripts.core.identifiers import generate_entry_id
 from scripts.core.markdown import ensure_h1, has_section, normalize_heading_spacing
 from scripts.core.paths import trim
+from scripts.core.sections import normalize_section_path
 from scripts.core.summaries import summary_from_body
 from scripts.core.validation import require_choice, require_field, require_list
 
 
 def normalize_section(section: str, default_section: str) -> str:
-    cleaned = section.strip().strip("/").replace("\\", "/")
-    return cleaned or default_section
+    return normalize_section_path(section, default_section=default_section)
 
 
 def normalize_tags(raw_tags: object) -> list[str]:

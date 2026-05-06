@@ -23,8 +23,9 @@ def main(argv: list[str] | None = None) -> int:
     document = read_markdown(review_path)
     kind = str(require_field(document.frontmatter, "kind")).strip()
     title = str(require_field(document.frontmatter, "title")).strip()
-    section = str(require_field(document.frontmatter, "section")).strip()
     workflow = get_workflow(kind)
+    section = workflow.normalize_section(str(require_field(document.frontmatter, "section")).strip())
+    document.frontmatter["section"] = section
     target = workflow.source_path_for(title, section)
 
     if target.exists() and not args.force:

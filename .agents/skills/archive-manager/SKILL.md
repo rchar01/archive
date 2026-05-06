@@ -87,6 +87,7 @@ When the user asks to update content:
 * in private workspace mode, that canonical path is `WORKSPACE/sources/<workflow>/...`, not the Archive tool repo
 * do not hand-edit `content/`, `site/`, `.vitepress/nav.generated.ts`, `.vitepress/sidebar.generated.ts`, or `.vitepress/knowledge/*.generated.json`
 * when creating a new canonical page, prefer `make new` for scaffoldable metadata and keep `id`, `created`, `updated`, and default `status` system-managed
+* keep canonical `section` paths lowercase and slash-separated; use `WORKSPACE/sources/<workflow>/_sections.yaml` for display labels like `OMV` or default sidebar collapse behavior
 * keep page-local images and files in sibling `<page-stem>.assets/` directories under `sources/`; let `make build-content` copy them beside generated pages
 * prefer plain ` ```mermaid ` fences in canonical Markdown instead of embedding manual Vue components for diagrams
 * if the change is workflow-specific behavior, edit `scripts/workflows/<kind>/`

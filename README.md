@@ -239,12 +239,20 @@ In private workspace mode, those generated files still land in the Archive tool 
 Canonical content lives in `sources/` and may include optional routing and navigation helpers in frontmatter.
 
 - `title`: canonical full page title and generated H1
+- `section`: canonical lowercase slash-separated section path such as `homelab/security` or `kubernetes/omv`
 - `slug`: optional stable output URL segment; falls back to a slugified `title`
 - `nav_title`: optional compact label for sidebar and generated index surfaces
 - `summary`: optional description reused in generated indexes and the knowledge panel
 - `related_manual`: optional curated related links
 - `make new` can set `slug`, `nav_title`, `summary`, `priority`, comma-separated `tags`, comma-separated `related_manual`, and knowledge-panel hide flags at creation time
 - `id`, `created`, `updated`, and the default `status: draft` remain system-managed
+
+Optional workflow-local section display overrides live beside canonical content:
+
+- `sources/docs/_sections.yaml`
+- `sources/notes/_sections.yaml`
+
+Use `_sections.yaml` to override displayed section labels such as `OMV` and default sidebar collapse behavior without changing canonical `section` paths.
 
 See `docs/authoring.md` for the full authoring reference.
 

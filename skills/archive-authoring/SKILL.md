@@ -44,6 +44,7 @@ The default global skill target is `~/.agents/skills/archive-authoring`.
 
 - use `note` for smaller atomic entries
 - use `doc` for larger articles, guides, references, and architecture pages
+- keep canonical `section` paths lowercase and slash-separated such as `homelab/security` or `kubernetes/omv`
 
 Required sections:
 
@@ -97,7 +98,21 @@ archive check --workspace /path/to/repo
 - keep page-local assets in sibling `<page-stem>.assets/` directories beside the canonical source page
 - plain ` ```mermaid ` fences are supported in canonical Markdown
 - preserve explicit `slug` and `nav_title` unless the user asks to change routes or navigation labels
+- use workflow-local `_sections.yaml` files under `sources/docs/` or `sources/notes/` to override displayed section labels such as `OMV` or default sidebar fold state
 - use `processing: review` for rough or AI-generated imports that should be inspected before acceptance
+
+Example section overrides:
+
+```yaml
+sections:
+  homelab:
+    title: Homelab
+    collapsed: false
+
+  homelab/omv:
+    title: OMV
+    collapsed: true
+```
 
 ## Human vs Agent UX
 

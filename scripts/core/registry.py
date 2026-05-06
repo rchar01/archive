@@ -9,6 +9,7 @@ from typing import Any
 import yaml
 
 from scripts.core import paths
+from scripts.core.sections import normalize_section_path
 from scripts.core.slug import slugify
 
 
@@ -42,8 +43,7 @@ class WorkflowDefinition:
         return self.workflow_dir / f"{name}.py"
 
     def normalize_section(self, section: str | None = None) -> str:
-        cleaned = str(section or "").strip().strip("/").replace("\\", "/")
-        return cleaned or self.default_section
+        return normalize_section_path(section, default_section=self.default_section)
 
     def source_path_for(self, title: str, section: str | None = None) -> Path:
         normalized_section = self.normalize_section(section)

@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import date
 from html import escape
 from pathlib import Path
-from typing import Iterable
+from typing import Any, Iterable
 
 from scripts.core.content_links import normalize_content_link
 from scripts.core.frontmatter import dump_frontmatter
@@ -14,6 +14,7 @@ from scripts.core.frontmatter import read_markdown
 from scripts.core.markdown import markdown_files
 from scripts.core.paths import CONTENT_DIR
 from scripts.core.page_catalog import resolve_summary
+from scripts.core.sections import SectionOverride, load_section_overrides, section_display_title
 from scripts.core.validation import require_field, require_iso_date, require_optional_string, require_optional_slug
 
 MAX_NAV_TITLE_LENGTH = 60
@@ -66,7 +67,7 @@ def collect_index_entries(workflows: Mapping[str, object], *, content_dir: Path 
             document = read_markdown(path)
             title = str(require_field(document.frontmatter, "title")).strip()
             nav_title = require_optional_string(document.frontmatter, "nav_title") or ""
-            section = str(require_field(document.frontmatter, "section")).strip()
+            section = workflow.normalize_section(str(require_field(document.frontmatter, "section")).strip())
             created = require_iso_date(document.frontmatter, "created")
             slug = require_optional_slug(document.frontmatter, "slug")
             output_path = workflow.output_path_for(title, section, slug=slug)
@@ -89,8 +90,13 @@ def humanize_segment(value: str) -> str:
     return value.replace("-", " ").replace("_", " ").strip().title()
 
 
-def section_title(section: str) -> str:
-    return " / ".join(humanize_segment(part) for part in section.split("/") if part.strip()) or "General"
+def section_title(
+    section: str,
+    overrides: Mapping[str, SectionOverride] | None = None,
+    *,
+    default_section: str = "general",
+) -> str:
+    return section_display_title(section, overrides or {}, default_section=default_section)
 
 
 def group_entries(entries: Iterable[IndexEntry]) -> dict[str, dict[str, list[IndexEntry]]]:
@@ -242,7 +248,13 @@ def render_home_page(workflows: list[WorkflowOverview], recent: list[IndexEntry]
     return "\n".join(lines).rstrip() + "\n"
 
 
-def render_workflow_index(title: str, sections: dict[str, list[IndexEntry]]) -> str:
+def render_workflow_index(
+    title: str,
+    sections: dict[str, list[IndexEntry]],
+    *,
+    section_overrides: Mapping[str, SectionOverride] | None = None,
+    default_section: str = "general",
+) -> str:
     entry_count = sum(len(section_entries) for section_entries in sections.values())
     section_count = len(sections)
     intro = f"{entry_count} {pluralize(entry_count, 'page')} across {section_count} {pluralize(section_count, 'section')}."
@@ -254,14 +266,26 @@ def render_workflow_index(title: str, sections: dict[str, list[IndexEntry]]) -> 
         f'<p class="archive-index__intro">{escape(intro)}</p>',
     ]
     for section, entries in sections.items():
-        lines.extend(["", f"## {section_title(section)}", "", '<div class="archive-index__entries">'])
+        lines.extend(
+            [
+                "",
+                f"## {section_title(section, section_overrides, default_section=default_section)}",
+                "",
+                '<div class="archive-index__entries">',
+            ]
+        )
         for entry in entries:
             lines.append(render_entry_row(entry, show_workflow_label=False))
         lines.append("</div>")
     return "\n".join(lines).rstrip() + "\n"
 
 
-def build_index_pages(entries: Iterable[IndexEntry], workflows: Iterable[tuple[str, str]] | None = None) -> dict[str, str]:
+def build_index_pages(
+    entries: Iterable[IndexEntry],
+    workflows: Iterable[tuple[str, str]] | None = None,
+    *,
+    workflow_definitions: Mapping[str, Any] | None = None,
+) -> dict[str, str]:
     entry_list = list(entries)
     grouped = group_entries(entry_list)
     pages: dict[str, str] = {}
@@ -280,6 +304,21 @@ def build_index_pages(entries: Iterable[IndexEntry], workflows: Iterable[tuple[s
 
     pages["index.md"] = render_home_page(build_workflow_overviews(entry_list, active_workflows), recent_entries(entry_list))
 
+    section_overrides_by_root: dict[str, Mapping[str, SectionOverride]] = {}
+    default_sections_by_root: dict[str, str] = {}
+    for workflow in (workflow_definitions or {}).values():
+        workflow_root = workflow.output_root.name
+        section_overrides_by_root[workflow_root] = load_section_overrides(
+            workflow.source_root,
+            default_section=workflow.default_section,
+        )
+        default_sections_by_root[workflow_root] = workflow.default_section
+
     for workflow_root, workflow_label in active_workflows:
-        pages[f"{workflow_root}/index.md"] = render_workflow_index(workflow_label, grouped.get(workflow_root, {}))
+        pages[f"{workflow_root}/index.md"] = render_workflow_index(
+            workflow_label,
+            grouped.get(workflow_root, {}),
+            section_overrides=section_overrides_by_root.get(workflow_root),
+            default_section=default_sections_by_root.get(workflow_root, "general"),
+        )
     return pages
