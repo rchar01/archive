@@ -17,6 +17,9 @@ export default defineConfig({
   description: 'Source-first documentation system',
   srcDir: 'content',
   outDir: 'site',
+  head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/vitepress-logo-mini.svg' }],
+  ],
   markdown: {
     config(md) {
       const defaultFence = md.renderer.rules.fence

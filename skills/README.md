@@ -8,17 +8,5 @@ Current skill:
 
 - `archive-authoring/`: cross-project Archive authoring via the installed `archive` CLI
 
-Install the skill globally from the Archive repo:
-
-```sh
-make install-skill
-```
-
-Uninstall it later:
-
-```sh
-make uninstall-skill
-```
-
-By default the installer targets `~/.agents/skills`.
-Override that location with `SKILLS_DIR=/path/to/skills`.
+For installation and usage guidance, see `docs/skills.md`.
+For the agent-facing workflow instructions, see `archive-authoring/SKILL.md`.

@@ -2,16 +2,14 @@
 
 Archive ships a project-local installable skill for agents that work outside this repository.
 
+`docs/skills.md` is the human install and usage page.
+The skill file itself is the agent-facing source for cross-project Archive workflow behavior.
+
 ## Available Skill
 
 - `archive-authoring`
 
-Use it when an agent in another repo or directory still needs to:
-
-- create new Archive notes or docs
-- import raw Markdown into Archive intake
-- process and accept review drafts
-- validate and build an Archive workspace
+Use it when an agent in another repo or directory still needs Archive-specific guidance for creating, importing, reviewing, validating, and building notes or docs.
 
 The skill is intentionally stored under `skills/` instead of `.agents/skills/` so it is not auto-loaded from the project.
 Install it manually when you want it globally available.
@@ -49,3 +47,9 @@ Use the split like this:
 
 - humans inside a private workspace repo: prefer the generated forwarding `Makefile`
 - agents working from other repos or arbitrary directories: prefer the installed `archive` CLI plus the `archive-authoring` skill
+
+## Source of Truth
+
+- `skills/archive-authoring/SKILL.md`: agent workflow behavior, guardrails, and command patterns
+- `docs/cli.md`: installed CLI behavior, workspace resolution, and command surface
+- `docs/authoring.md`: canonical Archive authoring model and workflow-specific structure

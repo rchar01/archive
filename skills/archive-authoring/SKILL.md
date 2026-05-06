@@ -15,10 +15,11 @@ metadata:
 Use this skill when an agent is not working inside the Archive repository but still needs to operate on Archive content in a standalone repo or a private workspace.
 
 Prefer the installed `archive` CLI over raw `make -C ... WORKSPACE=...` commands.
+Treat this skill as the agent-facing source for cross-project Archive workflow behavior.
 
-## Install
+## Prerequisites
 
-This skill ships inside the Archive repository and must be installed manually.
+Install the `archive` CLI and this skill from the Archive repository.
 
 Recommended commands from the Archive repo:
 
