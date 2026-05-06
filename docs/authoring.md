@@ -196,8 +196,8 @@ Rules:
 
 Required sections by workflow:
 
-- `note`: `Summary`, `Details`
-- `doc`: `Overview`, `Details`
+- `note`: `Summary`
+- `doc`: `Overview`
 
 Optional sections:
 
@@ -205,6 +205,51 @@ Optional sections:
 - `doc`: `References`
 
 Prefer keeping the required workflow structure intact even when the body is brief.
+
+Writing guidance:
+
+- one page should have one `#` heading only
+- keep required workflow headings as `##` sections
+- add more `##` headings after `Summary` or `Overview` for major sections when the page needs them
+- do not place manual thematic breaks like `---`, `***`, or `___` immediately before a `##` heading; use the `##` heading itself as the section boundary
+- use `###` for real subsections under those major `##` sections
+- use `note` for atomic, reusable content such as a finding, command pattern, or focused troubleshooting page
+- use `doc` for larger guides, reference pages, and architecture explanations
+- `Summary` should state the note's takeaway quickly
+- `Overview` should explain what the doc covers and when to use it
+- `Details` is now optional; use `## Details` as a generic fallback when rough imported content has no clearer section structure yet
+- `Related` and `References` are optional; include them only when they add real value
+
+Split one page into multiple pages when:
+
+- sections answer different questions
+- sections would be useful as standalone links
+- the page mixes unrelated guide, reference, and troubleshooting material
+
+Keep one page when:
+
+- the content serves one topic or one task
+- the subsections are parts of the same explanation
+
+## Linking and Backlinks
+
+Use normal internal Archive links in the body when the prose naturally references another page:
+
+```md
+See [/docs/networking/dns-basics](/docs/networking/dns-basics).
+```
+
+Rules:
+
+- backlinks are generated automatically from internal Archive links; do not hand-maintain backlink sections
+- auto-related suggestions are generated from metadata and linking patterns
+- use `related_manual` when two pages should be associated even if the body does not need an inline link
+- do not use `related_manual` as a replacement for a normal in-body link when the current sentence directly depends on another page
+
+Use this split:
+
+- body link: when the current step, command, or explanation directly references another page
+- `related_manual`: when the relationship is useful for discovery but not necessary to the prose
 
 ## Local Assets
 

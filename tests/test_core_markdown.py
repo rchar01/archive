@@ -4,7 +4,14 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.core.markdown import load_markdown, markdown_files, parse_frontmatter, render_frontmatter, save_markdown
+from scripts.core.markdown import (
+    load_markdown,
+    markdown_files,
+    parse_frontmatter,
+    render_frontmatter,
+    save_markdown,
+    strip_thematic_breaks_before_h2,
+)
 
 
 class MarkdownTests(unittest.TestCase):
@@ -46,6 +53,33 @@ class MarkdownTests(unittest.TestCase):
             paths = markdown_files(root)
 
         self.assertEqual([path.name for path in paths], ["a.md", "b.md"])
+
+    def test_strip_thematic_break_before_h2(self) -> None:
+        body = "Lead paragraph.\n\n---\n\n## Next\n\nMore.\n"
+
+        cleaned = strip_thematic_breaks_before_h2(body)
+
+        self.assertEqual(cleaned, "Lead paragraph.\n\n## Next\n\nMore.")
+
+    def test_strip_star_and_underscore_breaks_before_h2(self) -> None:
+        self.assertEqual(
+            strip_thematic_breaks_before_h2("Lead\n\n***\n\n## Next\n"),
+            "Lead\n\n## Next",
+        )
+        self.assertEqual(
+            strip_thematic_breaks_before_h2("Lead\n\n___\n\n## Next\n"),
+            "Lead\n\n## Next",
+        )
+
+    def test_preserves_thematic_breaks_not_before_h2(self) -> None:
+        self.assertEqual(
+            strip_thematic_breaks_before_h2("Lead\n\n---\n\nStill prose.\n"),
+            "Lead\n\n---\n\nStill prose.",
+        )
+        self.assertEqual(
+            strip_thematic_breaks_before_h2("Lead\n\n---\n\n### Nested\n"),
+            "Lead\n\n---\n\n### Nested",
+        )
 
 
 if __name__ == "__main__":

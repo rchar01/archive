@@ -46,5 +46,30 @@ def normalize_heading_spacing(body: str) -> str:
     return re.sub(r"^(#{1,6}\s+.+)\n(?!\n)", r"\1\n\n", body, flags=re.MULTILINE)
 
 
+def strip_thematic_breaks_before_h2(body: str) -> str:
+    lines = body.splitlines()
+    cleaned: list[str] = []
+    index = 0
+
+    while index < len(lines):
+        line = lines[index]
+        if re.fullmatch(r"\s*(?:-{3,}|\*{3,}|_{3,})\s*", line):
+            next_index = index + 1
+            while next_index < len(lines) and not lines[next_index].strip():
+                next_index += 1
+            if next_index < len(lines) and re.match(r"##\s+", lines[next_index]):
+                while cleaned and not cleaned[-1].strip():
+                    cleaned.pop()
+                if cleaned:
+                    cleaned.append("")
+                index = next_index
+                continue
+
+        cleaned.append(line)
+        index += 1
+
+    return "\n".join(cleaned)
+
+
 def markdown_files(base: Path) -> list[Path]:
     return sorted(path for path in base.rglob("*.md") if path.is_file())

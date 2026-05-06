@@ -17,9 +17,10 @@ For the full end-to-end authoring flow, including when to use `make new` versus 
 ## Required Sections
 
 - `Summary`
-- `Details`
 
 `Related` is optional. Add it only when you want explicit in-body links beyond the generated knowledge panel.
+Add more `##` headings after `Summary` when the note needs structure. `## Details` is optional and works as a generic fallback when a rough imported note has no clearer major sections yet.
+Do not place manual thematic breaks like `---`, `***`, or `___` immediately before a `##` heading; use the heading itself as the section boundary.
 
 ## Intake Rules
 

@@ -17,8 +17,8 @@ and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- made `note` require only `Summary` and `Details`, with `Related` now optional
-- made `doc` require only `Overview` and `Details`, with `References` now optional
+- made `note` require only `Summary`, with `Related` and later major `##` sections optional
+- made `doc` require only `Overview`, with `References` and later major `##` sections optional
 - stopped scaffolding and intake-normalization from auto-generating empty trailing `Related` and `References` sections
 - updated private-workspace docs and template guidance to keep `make` as the default interface inside the private repo while reserving the installed CLI for cross-project and external-agent workflows
 

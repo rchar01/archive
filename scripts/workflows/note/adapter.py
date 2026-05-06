@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 from datetime import date
+import re
 
 from scripts.core.frontmatter import MarkdownDocument
 from scripts.core.identifiers import generate_entry_id
-from scripts.core.markdown import ensure_h1, has_section, normalize_heading_spacing
+from scripts.core.markdown import ensure_h1, has_section, normalize_heading_spacing, strip_thematic_breaks_before_h2
 from scripts.core.paths import trim
 from scripts.core.sections import normalize_section_path
 from scripts.core.summaries import summary_from_body
@@ -41,17 +42,26 @@ def optional_string(document: MarkdownDocument, name: str) -> str | None:
 
 
 def build_body(body: str, title: str) -> str:
-    cleaned = body.strip()
-    if has_section(cleaned, "Summary") and has_section(cleaned, "Details"):
+    cleaned = strip_thematic_breaks_before_h2(body.strip())
+    if has_section(cleaned, "Summary"):
         return normalize_heading_spacing(ensure_h1(cleaned, title)).rstrip() + "\n"
 
-    summary = summary_from_body(cleaned)
+    later_heading = next((match for match in re.finditer(r"(?m)^##\s+", cleaned)), None)
+    if later_heading:
+        summary = cleaned[: later_heading.start()].strip()
+        remainder = cleaned[later_heading.start() :].strip()
+    else:
+        summary = cleaned
+        remainder = ""
+
+    if not summary:
+        summary = summary_from_body(cleaned)
+
     lines = [f"# {title}", "", "## Summary", ""]
     if summary:
         lines.extend([summary, ""])
-    lines.extend(["## Details", ""])
-    if cleaned:
-        lines.extend([cleaned, ""])
+    if remainder:
+        lines.extend([remainder, ""])
     return "\n".join(lines).rstrip() + "\n"
 
 

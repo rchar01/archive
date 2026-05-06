@@ -12,5 +12,3 @@ updated: "{{ date }}"
 # {{ title }}
 
 ## Summary
-
-## Details

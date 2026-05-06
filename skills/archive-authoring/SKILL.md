@@ -48,13 +48,83 @@ The default global skill target is `~/.agents/skills/archive-authoring`.
 
 Required sections:
 
-- `note`: `Summary`, `Details`
-- `doc`: `Overview`, `Details`
+- `note`: `Summary`
+- `doc`: `Overview`
 
 Optional sections:
 
 - `note`: `Related`
 - `doc`: `References`
+
+## Writing Model
+
+- one page should have one `#` heading only
+- keep required workflow headings as `##` sections
+- add more `##` headings after `Summary` or `Overview` for major sections when the page needs them
+- do not place manual thematic breaks like `---`, `***`, or `___` immediately before a `##` heading; use the `##` heading itself as the section boundary
+- use `###` for real subsections under those major `##` sections
+- prefer small focused pages over one page that mixes unrelated topics
+
+Use `note` when the content is:
+
+- atomic
+- reusable
+- one problem, finding, command set, or concept
+- easy to link from other pages
+
+Use `doc` when the content is:
+
+- a guide
+- a reference page
+- an architecture explanation
+- a larger workflow with multiple subsections
+
+Writing guidance for required sections:
+
+- `Summary` in a note should state the takeaway quickly in 1-3 short paragraphs or bullets
+- `Overview` in a doc should explain what the page covers and when to use it
+- after `Summary` or `Overview`, add additional `##` headings for the real major sections of the page
+- `Details` is optional and works as a generic fallback when a rough imported draft does not already have clearer major headings
+- add `Related` only when you want explicit in-body links beyond the generated knowledge panel
+- add `References` only when the page has real source material or canonical external references worth preserving
+
+## Splitting Pages
+
+Split one page into multiple pages when:
+
+- sections answer different questions
+- sections would be useful as standalone links
+- one page mixes guide, reference, troubleshooting, and notes without a single through-line
+- the title feels like two or more topics joined together
+
+Keep one page when:
+
+- the content serves one task or one topic
+- subsections are steps or parts of the same explanation
+- readers benefit from reading it in one place end to end
+
+## Linking and Knowledge Graph
+
+- link directly to other Archive pages in the body when the text naturally references them
+- use internal Archive links such as `/docs/...` or `/notes/...`
+- backlinks are generated automatically from those internal links; do not hand-maintain backlink sections
+- auto-related suggestions are generated from metadata and linking patterns
+- use `related_manual` when a page should appear as related even if the body does not naturally link to it
+- do not use `related_manual` as a substitute for normal in-body links when a direct reference belongs in the prose
+
+Use this pattern:
+
+- body link: when the current sentence or step directly depends on another page
+- `related_manual`: when two pages are strongly associated but the body does not need an inline link
+
+## Metadata Guidance
+
+- keep `section` lowercase and slash-separated
+- use `slug` when you want a stable short route
+- use `nav_title` when the full `title` is too long for sidebar and index display
+- use `summary` when you want tighter control over generated previews
+- use tags for lightweight categorization, not as a substitute for clear sections or links
+- preserve explicit `slug` and `nav_title` unless the user asks to change routes or navigation labels
 
 ## Canonical Flow
 
@@ -96,8 +166,10 @@ archive check --workspace /path/to/repo
 
 - do not hand-edit generated files under `content/`, `site/`, or generated `.vitepress/*`
 - keep page-local assets in sibling `<page-stem>.assets/` directories beside the canonical source page
+- reference local assets with ordinary relative Markdown paths such as `![Topology](./firewall.assets/topology.svg)`
 - plain ` ```mermaid ` fences are supported in canonical Markdown
 - preserve explicit `slug` and `nav_title` unless the user asks to change routes or navigation labels
+- do not place manual thematic breaks like `---`, `***`, or `___` immediately before a `##` heading; Archive normalizes those away because VitePress already renders a section divider for `##`
 - use workflow-local `_sections.yaml` files under `sources/docs/` or `sources/notes/` to override displayed section labels such as `OMV` or default sidebar fold state
 - use `processing: review` for rough or AI-generated imports that should be inspected before acceptance
 
@@ -112,6 +184,75 @@ sections:
   homelab/omv:
     title: OMV
     collapsed: true
+```
+
+## Examples
+
+Minimal note:
+
+```md
+---
+title: Docker DNS Issue
+kind: note
+section: containers
+tags:
+  - docker
+  - dns
+related_manual:
+  - /docs/networking/dns-basics
+---
+
+# Docker DNS Issue
+
+## Summary
+
+Containers can reach raw IPs but fail DNS lookups because the resolver path is broken.
+
+### Symptoms
+
+- container can `ping 1.1.1.1`
+- container cannot resolve hostnames
+
+### Fix
+
+Check the Docker daemon DNS settings and compare them with `/etc/resolv.conf` on the host.
+
+See [/docs/networking/dns-basics](/docs/networking/dns-basics) for the resolver model.
+```
+
+Minimal doc:
+
+```md
+---
+title: Homelab Firewall
+kind: doc
+section: homelab/networking
+slug: edge-firewall
+nav_title: Edge Firewall
+summary: Firewall overview and operating notes.
+tags:
+  - firewall
+  - homelab
+  - networking
+---
+
+# Homelab Firewall
+
+## Overview
+
+This page explains the firewall role, network position, and the main operating rules for the homelab edge.
+
+## Topology
+
+Describe interfaces, zones, and traffic expectations.
+
+## Operating Rules
+
+List the rules that should remain true during changes and troubleshooting.
+
+## Related Pages
+
+See [/docs/homelab/security/homelab-https-setup](/docs/homelab/security/homelab-https-setup) for the HTTPS side of the same environment.
 ```
 
 ## Human vs Agent UX

@@ -17,9 +17,10 @@ For the full end-to-end authoring flow, including when to use `make new` versus 
 ## Required Sections
 
 - `Overview`
-- `Details`
 
 `References` is optional. Add it only when the page has real references to preserve.
+Add more `##` headings after `Overview` when the doc needs structure. `## Details` is optional and works as a generic fallback when a rough imported doc has no clearer major sections yet.
+Do not place manual thematic breaks like `---`, `***`, or `___` immediately before a `##` heading; use the heading itself as the section boundary.
 
 ## Intake Rules
 

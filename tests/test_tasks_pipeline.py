@@ -55,6 +55,7 @@ class TaskPipelineTests(unittest.TestCase):
             frontmatter, body = read_markdown(target).frontmatter, read_markdown(target).body
             self.assertEqual(frontmatter["kind"], "note")
             self.assertIn("## Summary", body)
+            self.assertNotIn("## Details", body)
 
     def test_new_entry_prints_workspace_relative_path(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
@@ -115,6 +116,8 @@ class TaskPipelineTests(unittest.TestCase):
             self.assertEqual(saved.frontmatter["hide_knowledge_panel"], True)
             self.assertEqual(saved.frontmatter["hide_backlinks"], True)
             self.assertEqual(saved.frontmatter["hide_related"], True)
+            self.assertIn("## Overview", saved.body)
+            self.assertNotIn("## Details", saved.body)
 
     def test_new_entry_rejects_invalid_slug(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
