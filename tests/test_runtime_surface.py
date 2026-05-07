@@ -144,6 +144,18 @@ class RuntimeSurfaceTests(unittest.TestCase):
 
         self.assertIn("build/runtime-image/", gitignore)
 
+    def test_theme_mounts_outline_auto_scroll_helper(self) -> None:
+        theme_index = (self.repo_root() / ".vitepress" / "theme" / "index.ts").read_text()
+        helper = (self.repo_root() / ".vitepress" / "theme" / "OutlineAutoScroll.ts").read_text()
+
+        self.assertIn("import OutlineAutoScroll from './OutlineAutoScroll'", theme_index)
+        self.assertIn("'aside-outline-after': () => h(OutlineAutoScroll)", theme_index)
+        self.assertIn("scrollActiveOutlineIntoView", helper)
+        self.assertIn(".VPDocAsideOutline .outline-link.active", helper)
+        self.assertIn("easeOutCubic", helper)
+        self.assertIn("requestAnimationFrame(step)", helper)
+        self.assertIn("ANIMATION_DURATION_MS = 340", helper)
+
 
 if __name__ == "__main__":
     unittest.main()

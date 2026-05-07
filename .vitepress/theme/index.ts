@@ -6,6 +6,7 @@ import './archive.css'
 import './mermaid.css'
 import KnowledgePanel from './KnowledgePanel.vue'
 import MermaidDiagram from './MermaidDiagram.vue'
+import OutlineAutoScroll from './OutlineAutoScroll'
 
 const theme: Theme = {
   extends: DefaultTheme,
@@ -14,6 +15,7 @@ const theme: Theme = {
   },
   Layout() {
     return h(DefaultTheme.Layout, null, {
+      'aside-outline-after': () => h(OutlineAutoScroll),
       'doc-after': () => h(KnowledgePanel),
     })
   },
