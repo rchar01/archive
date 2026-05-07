@@ -170,7 +170,11 @@ archive check --workspace /path/to/repo
 - plain ` ```mermaid ` fences are supported in canonical Markdown
 - preserve explicit `slug` and `nav_title` unless the user asks to change routes or navigation labels
 - do not place manual thematic breaks like `---`, `***`, or `___` immediately before a `##` heading; Archive normalizes those away because VitePress already renders a section divider for `##`
-- use workflow-local `_sections.yaml` files under `sources/docs/` or `sources/notes/` to override displayed section labels such as `OMV` or default sidebar fold state
+- use workflow-local `_sections.yaml` files to override displayed section labels such as `OMV` or default sidebar fold state
+- exact paths are workflow-scoped:
+  - standalone mode: `sources/docs/_sections.yaml` and `sources/notes/_sections.yaml`
+  - private workspace mode: `WORKSPACE/sources/docs/_sections.yaml` and `WORKSPACE/sources/notes/_sections.yaml`
+- docs and notes are independent; if you want `OMV` only for docs, change only the docs file, and if you want it in both workflows, add the override to both files
 - use `processing: review` for rough or AI-generated imports that should be inspected before acceptance
 
 Example section overrides:
@@ -185,6 +189,8 @@ sections:
     title: OMV
     collapsed: true
 ```
+
+If no matching override exists, Archive falls back to auto-humanized labels, so a canonical section path like `homelab/omv` displays as `Omv`.
 
 ## Examples
 

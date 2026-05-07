@@ -52,4 +52,4 @@ Use the split like this:
 
 - `skills/archive-authoring/SKILL.md`: agent workflow behavior, guardrails, and command patterns
 - `docs/cli.md`: installed CLI behavior, workspace resolution, and command surface
-- `docs/authoring.md`: canonical Archive authoring model and workflow-specific structure
+- `docs/authoring.md`: canonical Archive authoring model, workflow-specific structure, and exact workflow-scoped `_sections.yaml` override paths for standalone and private-workspace modes
