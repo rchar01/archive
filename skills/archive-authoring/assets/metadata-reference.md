@@ -28,6 +28,7 @@ Agents should preserve these unless the user explicitly asks to change them and 
 ## Notes
 
 - `section` should stay lowercase and slash-separated.
+- normal Archive authoring flows create missing parent directories automatically; do not hand-create `sources/<workflow>/<section>/` when using `archive new` or `archive process`.
 - `slug` should use lowercase letters, numbers, and hyphens only.
 - `nav_title` is for compact navigation labels; `title` remains the full canonical page title.
 - `tags` and `related_manual` are scaffolded from comma-separated input.

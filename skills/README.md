@@ -10,6 +10,7 @@ Current skill:
 
 Bundled reference assets inside `archive-authoring/assets/` include:
 
+- command-choice guidance for `new` vs `import` vs `process` vs `accept`
 - exact generated note/doc scaffold examples
 - metadata ownership notes
 - `_sections.yaml` example overrides

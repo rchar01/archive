@@ -128,6 +128,7 @@ Use this pattern:
 
 Exact helper-generated scaffold references shipped with this skill:
 
+- `assets/command-choice.md`
 - `assets/generated-note.md`
 - `assets/generated-doc.md`
 - `assets/metadata-reference.md`
@@ -163,6 +164,16 @@ archive process --workspace /path/to/repo
 archive accept incoming/review/raw.md --workspace /path/to/repo
 ```
 
+## When to Use What
+
+- use `archive new` when creating a brand-new canonical page from scratch and you already know the workflow and target `section`
+- use `archive import` when the starting point is already a rough Markdown file, imported note, or AI-generated draft that should be normalized into Archive format
+- use `archive process` after files are in `incoming/new/`; it normalizes the intake and either writes directly to `sources/...` for `processing: auto` or stages a normalized draft in `incoming/review/...` for `processing: review`
+- use `archive accept` only after a review-gated draft already exists in `incoming/review/...` and should become canonical content
+- if the page already exists in `sources/...`, edit that canonical file directly instead of using `archive new`, `archive import`, or `archive accept`
+- do not run `archive new` first for rough incoming content that needs cleanup; use `archive import` followed by `archive process` instead
+- see `assets/command-choice.md` for the compact decision guide
+
 Validate and build:
 
 ```sh
@@ -174,6 +185,8 @@ archive check --workspace /path/to/repo
 ## Authoring Rules
 
 - do not hand-edit generated files under `content/`, `site/`, or generated `.vitepress/*`
+- do not manually create section directories under `sources/` when using normal Archive authoring flows; `archive new` and `archive process` create missing parent directories automatically
+- prefer `archive new ...` for direct canonical pages and `archive process ...` for intake normalization instead of hand-creating `sources/<workflow>/<section>/`
 - keep page-local assets in sibling `<page-stem>.assets/` directories beside the canonical source page
 - reference local assets with ordinary relative Markdown paths such as `![Topology](./firewall.assets/topology.svg)`
 - plain ` ```mermaid ` fences are supported in canonical Markdown

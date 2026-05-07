@@ -63,11 +63,15 @@ When this skill is active, read in this order:
 Use these actions for common user requests:
 
 * add a new canonical entry: run `make new kind=<workflow> title="..." section=...`, plus optional `slug=...`, `nav_title="..."`, `summary="..."`, `priority=...`, comma-separated `tags="a,b"`, comma-separated `related_manual="/x,/y"`, and hide flags like `hide_backlinks=1`
+* use `make new` only for brand-new canonical pages from scratch; it creates the scaffolded source file and any missing parent directories automatically
+* do not start with `make new` when the starting point is already rough Markdown or AI-generated content that needs normalization
+* stage rough Markdown in `incoming/new/` or use `archive import ... --processing auto|review`, then run `make process-incoming`
+* if the note or doc already exists in `sources/...`, edit that canonical file directly instead of using `make new`, `archive import`, or `make accept-review`
 * bootstrap a private content repo: run `make WORKSPACE=/path/to/private/repo init-workspace`
 * install the cross-project CLI: run `make install-cli`
 * install the project-shipped global skill for other agents: run `make install-skill`
 * process rough incoming files: run `make process-incoming`
-* accept a reviewed draft: run `make accept-review file=incoming/review/...`
+* accept a reviewed draft: run `make accept-review file=incoming/review/...` only after intake normalization produced a review-gated draft that is ready to become canonical
 * validate canonical sources: run `make validate`
 * regenerate generated Markdown, knowledge metadata, indexes, and nav/sidebar data: run `make build-content`
 * build the static site: run `make build`
@@ -86,6 +90,8 @@ When the user asks to update content:
 * edit canonical Markdown in `sources/<workflow>/...`
 * in private workspace mode, that canonical path is `WORKSPACE/sources/<workflow>/...`, not the Archive tool repo
 * do not hand-edit `content/`, `site/`, `.vitepress/nav.generated.ts`, `.vitepress/sidebar.generated.ts`, or `.vitepress/knowledge/*.generated.json`
+* do not manually create section directories under `sources/` during normal Archive authoring; `make new`, `archive new`, and intake processing create missing parent directories automatically
+* prefer the normal authoring flow over hand-creating `sources/<workflow>/<section>/` paths unless the user explicitly asks for manual directory setup
 * when creating a new canonical page, prefer `make new` for scaffoldable metadata and keep `id`, `created`, `updated`, and default `status` system-managed
 * keep canonical `section` paths lowercase and slash-separated; use workflow-scoped `_sections.yaml` files for display labels like `OMV` or default sidebar collapse behavior
 * exact override paths are `sources/docs/_sections.yaml` and `sources/notes/_sections.yaml` in standalone mode, or `WORKSPACE/sources/docs/_sections.yaml` and `WORKSPACE/sources/notes/_sections.yaml` in private-workspace mode
