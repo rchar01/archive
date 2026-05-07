@@ -1,0 +1,12 @@
+sections:
+  homelab:
+    title: Homelab
+    collapsed: false
+
+  homelab/omv:
+    title: OMV
+    collapsed: true
+
+  homelab/security:
+    title: Security
+    collapsed: true

@@ -126,6 +126,15 @@ Use this pattern:
 - use tags for lightweight categorization, not as a substitute for clear sections or links
 - preserve explicit `slug` and `nav_title` unless the user asks to change routes or navigation labels
 
+Exact helper-generated scaffold references shipped with this skill:
+
+- `assets/generated-note.md`
+- `assets/generated-doc.md`
+- `assets/metadata-reference.md`
+- `assets/sections.example.yaml`
+
+If these references ever conflict with repository code, treat the repository templates and `scripts/tasks/new_entry.py` as canonical.
+
 ## Canonical Flow
 
 ```text
@@ -177,7 +186,7 @@ archive check --workspace /path/to/repo
 - docs and notes are independent; if you want `OMV` only for docs, change only the docs file, and if you want it in both workflows, add the override to both files
 - use `processing: review` for rough or AI-generated imports that should be inspected before acceptance
 
-Example section overrides:
+Example section overrides are also bundled in `assets/sections.example.yaml`:
 
 ```yaml
 sections:

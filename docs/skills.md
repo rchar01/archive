@@ -51,5 +51,6 @@ Use the split like this:
 ## Source of Truth
 
 - `skills/archive-authoring/SKILL.md`: agent workflow behavior, guardrails, and command patterns
+- `skills/archive-authoring/assets/`: exact generated note/doc scaffold references, metadata ownership notes, and `_sections.yaml` example overrides that install with the skill
 - `docs/cli.md`: installed CLI behavior, workspace resolution, and command surface
 - `docs/authoring.md`: canonical Archive authoring model, workflow-specific structure, and exact workflow-scoped `_sections.yaml` override paths for standalone and private-workspace modes
