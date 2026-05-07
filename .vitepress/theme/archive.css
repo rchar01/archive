@@ -144,6 +144,11 @@
   text-align: right;
 }
 
+.VPSidebarItem.collapsible:not(.is-link) > .item:hover > .text,
+.VPSidebarItem.collapsible:not(.is-link) > .item:focus-visible > .text {
+  color: var(--vp-c-brand-1);
+}
+
 @media (max-width: 640px) {
   .archive-home .VPHero {
     padding-bottom: 24px;
