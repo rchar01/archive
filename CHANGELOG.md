@@ -5,6 +5,13 @@ All notable changes to `archive` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-05-07
+
+### Changed
+
+- bumped the pinned `PyYAML` dependency from `6.0.2` to `6.0.3` to match the current stable release
+- kept `vitepress` at `1.6.4` and `mermaid` at `11.14.0` because both direct frontend dependencies are already on their latest stable releases
+
 ## [1.2.0] - 2026-05-07
 
 ### Changed

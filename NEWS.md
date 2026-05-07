@@ -2,6 +2,11 @@
 
 This file gives a short, release-oriented view of what changed between versions.
 
+## v1.2.1 - 2026-05-07
+
+- bumped the pinned `PyYAML` dependency from `6.0.2` to the current stable `6.0.3`
+- left `vitepress` at `1.6.4` and `mermaid` at `11.14.0` because both are already on their latest stable releases
+
 ## v1.2.0 - 2026-05-07
 
 - simplified canonical body structure so `note` requires only `Summary` and `doc` requires only `Overview`
