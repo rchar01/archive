@@ -99,7 +99,7 @@ def build_sidebar_data(
             section_overrides_by_root.get(workflow_root, {}),
             default_section=default_sections_by_root.get(workflow_root, "general"),
         )
-        sidebar[f"/{workflow_root}/"] = [{"text": labels[workflow_root], "items": items}]
+        sidebar[f"/{workflow_root}/"] = items
     return sidebar
 
 

@@ -780,7 +780,7 @@ class TaskPipelineTests(unittest.TestCase):
             sidebar = json.loads(sidebar_text.removeprefix("export default "))
             docs_index = (root / "content" / "docs" / "index.md").read_text()
 
-            docs_items = sidebar["/docs/"][0]["items"]
+            docs_items = sidebar["/docs/"]
             self.assertEqual(docs_items[0]["text"], "Homelab")
             self.assertEqual(docs_items[0]["collapsed"], False)
             self.assertEqual(docs_items[0]["items"][0]["text"], "Networking")
