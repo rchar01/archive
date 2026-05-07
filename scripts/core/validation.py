@@ -6,11 +6,16 @@ from datetime import date
 import re
 from typing import Any
 
+from scripts.core.frontmatter import split_frontmatter_and_body
 from scripts.core.markdown import has_section
 
 
 class ValidationError(ValueError):
     pass
+
+
+THEMATIC_BREAK_RE = re.compile(r"\s*(?:-{3,}|\*{3,}|_{3,})\s*")
+H2_HEADING_RE = re.compile(r"##\s+")
 
 
 def require_field(frontmatter: Mapping[str, Any], name: str) -> Any:
@@ -80,6 +85,37 @@ def require_sections(body: str, required_sections: Sequence[str]) -> None:
     missing = [section for section in required_sections if not has_section(body, section)]
     if missing:
         raise ValidationError(f"Missing required sections: {', '.join(missing)}")
+
+
+def body_start_line(text: str) -> int:
+    _, body = split_frontmatter_and_body(text)
+    return text[: len(text) - len(body)].count("\n") + 1
+
+
+def lint_body(body: str, *, start_line: int = 1) -> list[str]:
+    errors: list[str] = []
+    lines = body.splitlines()
+
+    for index, line in enumerate(lines):
+        if not THEMATIC_BREAK_RE.fullmatch(line):
+            continue
+
+        next_index = index + 1
+        while next_index < len(lines) and not lines[next_index].strip():
+            next_index += 1
+
+        if next_index < len(lines) and H2_HEADING_RE.match(lines[next_index]):
+            errors.append(
+                f"line {start_line + index}: thematic break immediately before ## heading; remove the break and use the heading as the section boundary"
+            )
+
+    return errors
+
+
+def check_body_lints(body: str, *, start_line: int = 1) -> None:
+    errors = lint_body(body, start_line=start_line)
+    if errors:
+        raise ValidationError("; ".join(errors))
 
 
 def find_duplicates(values: Iterable[str]) -> list[str]:

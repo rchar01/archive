@@ -444,6 +444,69 @@ class TaskPipelineTests(unittest.TestCase):
                 with self.assertRaises(Exception):
                     validate_sources.main([])
 
+    def test_validate_sources_rejects_thematic_break_immediately_before_h2(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir)
+            workflow = self.make_workflow(root, "note")
+            workflow.source_root.mkdir(parents=True)
+
+            target = workflow.source_root / "containers" / "docker-dns-issue.md"
+            write_markdown(
+                target,
+                MarkdownDocument(
+                    frontmatter={
+                        "id": "20260424T103000",
+                        "title": "Docker DNS Issue",
+                        "kind": "note",
+                        "section": "containers",
+                        "status": "draft",
+                        "tags": [],
+                        "created": "2026-04-24",
+                        "updated": "2026-04-24",
+                    },
+                    body="# Docker DNS Issue\n\n## Summary\n\nOne.\n\n---\n\n## Fix\n\nTwo.\n",
+                ),
+            )
+
+            with patch("scripts.tasks.validate_sources.discover_workflows", return_value={"note": workflow}), patch(
+                "scripts.tasks.validate_sources.write_json_report"
+            ):
+                with self.assertRaises(ValidationError) as exc:
+                    validate_sources.main([])
+
+            self.assertIn("sources/notes/containers/docker-dns-issue.md", str(exc.exception))
+            self.assertIn("line ", str(exc.exception))
+            self.assertIn("thematic break immediately before ## heading", str(exc.exception))
+
+    def test_validate_sources_allows_thematic_break_before_prose(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir)
+            workflow = self.make_workflow(root, "note")
+            workflow.source_root.mkdir(parents=True)
+
+            target = workflow.source_root / "containers" / "docker-dns-issue.md"
+            write_markdown(
+                target,
+                MarkdownDocument(
+                    frontmatter={
+                        "id": "20260424T103000",
+                        "title": "Docker DNS Issue",
+                        "kind": "note",
+                        "section": "containers",
+                        "status": "draft",
+                        "tags": [],
+                        "created": "2026-04-24",
+                        "updated": "2026-04-24",
+                    },
+                    body="# Docker DNS Issue\n\n## Summary\n\nOne.\n\n---\n\nStill prose.\n",
+                ),
+            )
+
+            with patch("scripts.tasks.validate_sources.discover_workflows", return_value={"note": workflow}), patch(
+                "scripts.tasks.validate_sources.write_json_report"
+            ):
+                validate_sources.main([])
+
     def test_validate_sources_rejects_duplicate_ids(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             root = Path(tmp_dir)

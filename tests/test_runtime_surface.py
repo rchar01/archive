@@ -139,6 +139,11 @@ class RuntimeSurfaceTests(unittest.TestCase):
         self.assertIn("incoming/", containerignore)
         self.assertIn('"mermaid":', package_json)
 
+    def test_gitignore_excludes_generated_runtime_build_context(self) -> None:
+        gitignore = (self.repo_root() / ".gitignore").read_text()
+
+        self.assertIn("build/runtime-image/", gitignore)
+
 
 if __name__ == "__main__":
     unittest.main()

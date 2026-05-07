@@ -11,6 +11,7 @@ site/
 # Build outputs
 build/cache/
 build/reports/
+build/runtime-image/
 
 # VitePress cache
 .vitepress/cache/
