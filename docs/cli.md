@@ -38,7 +38,7 @@ When you run the command elsewhere, pass `--workspace /path/to/repo` explicitly.
 
 - by default it creates any missing `incoming/...` and `sources/...` directories and only writes missing root bootstrap files
 - it does not delete or overwrite existing canonical content under `sources/...`
-- pass `--force` only when you intentionally want to overwrite the root `.gitignore`, `README.md`, and forwarding `Makefile` templates
+- pass `--force` only when you intentionally want to overwrite the root `.gitignore`, `README.md`, `AGENTS.md`, and forwarding `Makefile` templates
 
 ## Common Commands
 

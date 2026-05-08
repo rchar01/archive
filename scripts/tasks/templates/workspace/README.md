@@ -16,6 +16,7 @@ This bootstrap stays intentionally empty; the public repo's optional `examples/`
 ## Usage
 
 Set `ARCHIVE_DIR` in the forwarding `Makefile` if your Archive clone is not at `../archive`.
+See `AGENTS.md` in this repo for workspace-local agent guidance.
 
 Then run commands from this workspace repo:
 

@@ -39,6 +39,7 @@ def main(argv: list[str] | None = None) -> int:
 
     write_template(workspace_root / ".gitignore", ".gitignore", force=args.force)
     write_template(workspace_root / "README.md", "README.md", force=args.force)
+    write_template(workspace_root / "AGENTS.md", "AGENTS.md", force=args.force)
     write_template(workspace_root / "Makefile", "Makefile", force=args.force)
 
     print(workspace_root)
