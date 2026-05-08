@@ -2,9 +2,9 @@
 import { computed, ref, watch } from 'vue'
 import { useData, useRoute } from 'vitepress'
 
-import linkgraphData from '../knowledge/linkgraph.generated.json'
-import pagesData from '../knowledge/pages.generated.json'
-import relatedData from '../knowledge/related.generated.json'
+import linkgraphData from '@archive-generated/knowledge/linkgraph.generated.json'
+import pagesData from '@archive-generated/knowledge/pages.generated.json'
+import relatedData from '@archive-generated/knowledge/related.generated.json'
 
 type PageInfo = {
   title?: string

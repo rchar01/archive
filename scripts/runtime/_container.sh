@@ -8,22 +8,38 @@ CONTAINER_EXTERNAL_WORKSPACE_ROOT=/workspace-workspace
 PODMAN=${PODMAN:-podman}
 IMAGE_TAG=${IMAGE_TAG:-archive-dev:local}
 CONTAINERFILE=${CONTAINERFILE:-"$REPO_ROOT/Containerfile.dev"}
-RUNTIME_IMAGE_TAG=${RUNTIME_IMAGE_TAG:-archive-runtime:local}
 RUNTIME_CONTAINERFILE=${RUNTIME_CONTAINERFILE:-"$REPO_ROOT/Containerfile.runtime"}
-DEV_CONTAINER_NAME=${DEV_CONTAINER_NAME:-archive-dev-server}
-RUNTIME_CONTAINER_NAME=${RUNTIME_CONTAINER_NAME:-archive-runtime}
 HOST_UID=$(id -u)
 HOST_GID=$(id -g)
-BUILD_DIR=${BUILD_DIR:-"$REPO_ROOT/build"}
-SITE_DIR=${SITE_DIR:-"$REPO_ROOT/site"}
-RUNTIME_BUILD_CONTEXT_ROOT=${RUNTIME_BUILD_CONTEXT_ROOT:-"$BUILD_DIR/runtime-image"}
 CONTAINER_HOME=${CONTAINER_HOME:-/tmp/archive-home}
 WORKSPACE=${WORKSPACE:-.}
+ARCHIVE_INSTANCE_RAW=${ARCHIVE_INSTANCE:-}
+ARCHIVE_INSTANCE=
+INSTANCE_SLUG=
+INSTANCE_ROOT=
+USE_LEGACY_GENERATED_LAYOUT=0
+DEV_CONTAINER_NAME=${DEV_CONTAINER_NAME:-}
+RUNTIME_CONTAINER_NAME=${RUNTIME_CONTAINER_NAME:-}
+RUNTIME_IMAGE_TAG=${RUNTIME_IMAGE_TAG:-}
+BUILD_DIR=${BUILD_DIR:-}
+SITE_DIR=${SITE_DIR:-}
+RUNTIME_BUILD_CONTEXT_ROOT=${RUNTIME_BUILD_CONTEXT_ROOT:-}
 VITEPRESS_DEV_PORT=${VITEPRESS_DEV_PORT:-5173}
 RUNTIME_PORT=${RUNTIME_PORT:-8080}
 HOST_WORKSPACE=
 CONTAINER_WORKSPACE=
 WORKSPACE_VOLUME_ARGS=()
+
+normalize_instance_name() {
+  local raw=${1:-}
+  local cleaned
+  cleaned=$(printf '%s' "$raw" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//')
+  if [ -z "$cleaned" ]; then
+    printf '%s\n' default
+    return 0
+  fi
+  printf '%s\n' "$cleaned"
+}
 
 shell_join() {
   local arg
@@ -91,7 +107,67 @@ resolve_workspace_context() {
   build_workspace_volume_args
 }
 
+initialize_instance_context() {
+  local default_instance
+  if [ -n "$ARCHIVE_INSTANCE_RAW" ]; then
+    ARCHIVE_INSTANCE=$(normalize_instance_name "$ARCHIVE_INSTANCE_RAW")
+  elif [ "$HOST_WORKSPACE" = "$REPO_ROOT" ]; then
+    ARCHIVE_INSTANCE=default
+  else
+    default_instance=$(basename "$HOST_WORKSPACE")
+    ARCHIVE_INSTANCE=$(normalize_instance_name "$default_instance")
+  fi
+
+  INSTANCE_SLUG=$ARCHIVE_INSTANCE
+  INSTANCE_ROOT="$REPO_ROOT/.instances/$ARCHIVE_INSTANCE"
+
+  if [ "$ARCHIVE_INSTANCE" = default ] && [ "$HOST_WORKSPACE" = "$REPO_ROOT" ]; then
+    USE_LEGACY_GENERATED_LAYOUT=1
+  else
+    USE_LEGACY_GENERATED_LAYOUT=0
+  fi
+
+  if [ "$USE_LEGACY_GENERATED_LAYOUT" -eq 1 ]; then
+    if [ -z "$DEV_CONTAINER_NAME" ]; then
+      DEV_CONTAINER_NAME=archive-dev-server
+    fi
+    if [ -z "$RUNTIME_CONTAINER_NAME" ]; then
+      RUNTIME_CONTAINER_NAME=archive-runtime
+    fi
+    if [ -z "$RUNTIME_IMAGE_TAG" ]; then
+      RUNTIME_IMAGE_TAG=archive-runtime:local
+    fi
+    if [ -z "$BUILD_DIR" ]; then
+      BUILD_DIR="$REPO_ROOT/build"
+    fi
+    if [ -z "$SITE_DIR" ]; then
+      SITE_DIR="$REPO_ROOT/site"
+    fi
+  else
+    if [ -z "$DEV_CONTAINER_NAME" ]; then
+      DEV_CONTAINER_NAME="archive-dev-server-$INSTANCE_SLUG"
+    fi
+    if [ -z "$RUNTIME_CONTAINER_NAME" ]; then
+      RUNTIME_CONTAINER_NAME="archive-runtime-$INSTANCE_SLUG"
+    fi
+    if [ -z "$RUNTIME_IMAGE_TAG" ]; then
+      RUNTIME_IMAGE_TAG="archive-runtime:$INSTANCE_SLUG"
+    fi
+    if [ -z "$BUILD_DIR" ]; then
+      BUILD_DIR="$INSTANCE_ROOT/build"
+    fi
+    if [ -z "$SITE_DIR" ]; then
+      SITE_DIR="$INSTANCE_ROOT/site"
+    fi
+  fi
+
+  if [ -z "$RUNTIME_BUILD_CONTEXT_ROOT" ]; then
+    RUNTIME_BUILD_CONTEXT_ROOT="$BUILD_DIR/runtime-image"
+  fi
+}
+
 resolve_workspace_context
+initialize_instance_context
 
 build_image() {
   "$PODMAN" build -t "$IMAGE_TAG" -f "$CONTAINERFILE" "$REPO_ROOT"
@@ -154,6 +230,7 @@ run_container() {
     --user "$HOST_UID:$HOST_GID" \
     --env HOME="$CONTAINER_HOME" \
     --env WORKSPACE="$CONTAINER_WORKSPACE" \
+    --env ARCHIVE_INSTANCE="$ARCHIVE_INSTANCE" \
     "${WORKSPACE_VOLUME_ARGS[@]}" \
     -w "$CONTAINER_TOOL_ROOT" \
     --entrypoint /bin/bash \
@@ -169,6 +246,7 @@ run_container_with_dev_port() {
     --user "$HOST_UID:$HOST_GID" \
     --env HOME="$CONTAINER_HOME" \
     --env WORKSPACE="$CONTAINER_WORKSPACE" \
+    --env ARCHIVE_INSTANCE="$ARCHIVE_INSTANCE" \
     --env VITEPRESS_DEV_PORT="$VITEPRESS_DEV_PORT" \
     "${WORKSPACE_VOLUME_ARGS[@]}" \
     -w "$CONTAINER_TOOL_ROOT" \
@@ -185,6 +263,7 @@ run_container_interactive() {
     --user "$HOST_UID:$HOST_GID" \
     --env HOME="$CONTAINER_HOME" \
     --env WORKSPACE="$CONTAINER_WORKSPACE" \
+    --env ARCHIVE_INSTANCE="$ARCHIVE_INSTANCE" \
     "${WORKSPACE_VOLUME_ARGS[@]}" \
     -w "$CONTAINER_TOOL_ROOT" \
     -p "$VITEPRESS_DEV_PORT:$VITEPRESS_DEV_PORT" \
@@ -220,6 +299,7 @@ run_container_with_dev_port_background() {
     --user "$HOST_UID:$HOST_GID" \
     --env HOME="$CONTAINER_HOME" \
     --env WORKSPACE="$CONTAINER_WORKSPACE" \
+    --env ARCHIVE_INSTANCE="$ARCHIVE_INSTANCE" \
     --env VITEPRESS_DEV_PORT="$VITEPRESS_DEV_PORT" \
     "${WORKSPACE_VOLUME_ARGS[@]}" \
     -w "$CONTAINER_TOOL_ROOT" \

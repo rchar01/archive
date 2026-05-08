@@ -77,7 +77,7 @@ def load_workflow_config(path: Path) -> WorkflowDefinition:
 
     label = str(data.get("label") or kind.title()).strip()
     source_root = paths.resolve_workspace_path(str(data.get("source_root") or ""))
-    output_root = paths.resolve_tool_path(str(data.get("output_root") or ""))
+    output_root = paths.resolve_workflow_output_root(str(data.get("output_root") or ""))
     default_section = str(data.get("default_section") or "general").strip() or "general"
     required_sections = tuple(str(section).strip() for section in data.get("required_sections") or [] if str(section).strip())
 

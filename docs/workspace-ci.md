@@ -10,7 +10,7 @@ The workspace repo CI should:
 
 1. check out the workspace repo
 2. check out the Archive repo at a pinned tag or commit
-3. run Archive with `WORKSPACE` pointing at the workspace repo
+3. run Archive with `WORKSPACE` pointing at the workspace repo and `ARCHIVE_INSTANCE` selecting the generated-output namespace
 4. build the static site
 5. package the runtime image from the prebuilt `site/`
 6. push the image and optionally deploy it to Kubernetes
@@ -26,6 +26,7 @@ workspace/
     Makefile
     scripts/
     .vitepress/
+    .instances/
     content/
     site/
 ```
@@ -33,27 +34,32 @@ workspace/
 The workspace repo owns canonical content.
 The Archive repo owns tooling and generated output.
 
+In workspace-instance mode, generated output lands under `.instances/<instance>/...`.
+The legacy root `content/` and `site/` paths are still used for standalone mode.
+
 ## Build Sequence
 
 From the checked-out Archive repo:
 
 ```sh
-make WORKSPACE=../workspace-repo validate
-make WORKSPACE=../workspace-repo build
+make WORKSPACE=../workspace-repo ARCHIVE_INSTANCE=workspace-repo validate
+make WORKSPACE=../workspace-repo ARCHIVE_INSTANCE=workspace-repo build
 make runtime-build
 ```
 
 Important contract:
 
-- `make build` reads canonical content from the workspace repo and writes generated `content/` and `site/` output into the Archive repo
+- `make build` reads canonical content from the workspace repo and writes generated output into the Archive repo, using `.instances/<instance>/...` when `ARCHIVE_INSTANCE` is set for workspace-instance mode
 - `make runtime-build` packages the prebuilt `site/` output and does not rebuild canonical content inside the image build
 
 Recommended sequence:
 
-1. `make WORKSPACE=../workspace-repo validate`
-2. `make WORKSPACE=../workspace-repo build`
+1. `make WORKSPACE=../workspace-repo ARCHIVE_INSTANCE=workspace-repo validate`
+2. `make WORKSPACE=../workspace-repo ARCHIVE_INSTANCE=workspace-repo build`
 3. `make runtime-build`
 4. push the runtime image
+
+If the same Archive checkout is used for multiple workspace builds in one CI environment, give each build a distinct `ARCHIVE_INSTANCE` value.
 
 ## Pin Archive
 
@@ -86,6 +92,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ARCHIVE_REF: v1.0.0
+      ARCHIVE_INSTANCE: workspace-repo
       ARCHIVE_IMAGE: ghcr.io/example/workspace-archive-site:${{ github.sha }}
     steps:
       - name: Check out workspace repo
@@ -104,12 +111,12 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y podman make
 
       - name: Build static site from workspace content
-        run: make -C archive WORKSPACE=../workspace-repo build
+        run: make -C archive WORKSPACE=../workspace-repo ARCHIVE_INSTANCE=${{ env.ARCHIVE_INSTANCE }} build
 
       - name: Package runtime image from prebuilt site
         run: |
-          make -C archive runtime-build
-          podman tag archive-runtime:local "$ARCHIVE_IMAGE"
+          make -C archive WORKSPACE=../workspace-repo ARCHIVE_INSTANCE=${{ env.ARCHIVE_INSTANCE }} runtime-build
+          podman tag archive-runtime:${{ env.ARCHIVE_INSTANCE }} "$ARCHIVE_IMAGE"
 
       - name: Push image
         run: podman push "$ARCHIVE_IMAGE"
@@ -118,6 +125,7 @@ jobs:
 Adjust:
 
 - `repository: example/archive` to your Archive repository location
+- `ARCHIVE_INSTANCE` to a stable generated-output namespace for this workspace build
 - `ARCHIVE_IMAGE` to your registry destination
 - authentication and deployment steps to match your registry and cluster
 

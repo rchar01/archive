@@ -47,8 +47,8 @@ When this skill is active, read in this order:
 * the canonical flow is `incoming/ -> sources/ -> content/ -> site/`
 * `sources/` is the only editable content root
 * Archive supports standalone mode and workspace mode
-* in workspace mode, canonical `incoming/` and `sources/` live under `WORKSPACE` while generated `content/`, `site/`, `build/`, and generated `.vitepress/*` output stay in the Archive tool repo
-* `content/`, `site/`, `.vitepress/nav.generated.ts`, `.vitepress/sidebar.generated.ts`, and `.vitepress/knowledge/*.generated.json` are generated
+* in workspace mode, canonical `incoming/` and `sources/` live under `WORKSPACE` while generated output stays in the Archive tool repo, either in the standalone root paths or under `.instances/<instance>/...`
+* generated content, site output, nav/sidebar data, and knowledge metadata are machine-owned output
 * workflows are discovered from `scripts/workflows/*/workflow.yml`
 * the repo currently ships `note` and `doc`, but more workflows may be added later
 * source frontmatter may set `slug` for stable routes and `nav_title` for compact navigation labels
@@ -89,7 +89,7 @@ When the user asks to update content:
 
 * edit canonical Markdown in `sources/<workflow>/...`
 * in workspace mode, that canonical path is `WORKSPACE/sources/<workflow>/...`, not the Archive tool repo
-* do not hand-edit `content/`, `site/`, `.vitepress/nav.generated.ts`, `.vitepress/sidebar.generated.ts`, or `.vitepress/knowledge/*.generated.json`
+* do not hand-edit generated content, site output, nav/sidebar data, or generated knowledge metadata
 * do not manually create section directories under `sources/` during normal Archive authoring; `make new`, `archive new`, and intake processing create missing parent directories automatically
 * prefer the normal authoring flow over hand-creating `sources/<workflow>/<section>/` paths unless the user explicitly asks for manual directory setup
 * when creating a new canonical page, prefer `make new` for scaffoldable metadata and keep `id`, `created`, `updated`, and default `status` system-managed

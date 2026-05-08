@@ -12,13 +12,16 @@ site/
 build/cache/
 build/reports/
 build/runtime-image/
+.instances/
 
 # VitePress cache
 .vitepress/cache/
 .vitepress/dist/
 
 # Generated VitePress metadata
+.vitepress/nav.generated.json
 .vitepress/nav.generated.ts
+.vitepress/sidebar.generated.json
 .vitepress/sidebar.generated.ts
 .vitepress/knowledge/
 

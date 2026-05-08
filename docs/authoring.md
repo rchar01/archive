@@ -15,7 +15,7 @@ incoming/ -> sources/ -> content/ -> site/
 Rules:
 
 - edit canonical content in `sources/`
-- treat `content/`, `site/`, `.vitepress/nav.generated.ts`, `.vitepress/sidebar.generated.ts`, and `.vitepress/knowledge/*.generated.json` as generated output
+- treat generated content, site output, nav/sidebar data, and knowledge metadata as generated output
 - use `note` for smaller atomic knowledge entries
 - use `doc` for larger structured documentation pages
 
@@ -30,7 +30,7 @@ Use standalone mode for the simplest local setup.
 Use workspace mode when canonical docs and notes should stay in a separate repo, whether that repo is private or public.
 
 Canonical roots always live under `WORKSPACE`.
-Generated `content/`, `site/`, and generated `.vitepress/*` output always live in the Archive tool repo.
+Generated output always lives in the Archive tool repo, either in the standalone root paths or under `.instances/<instance>/...` for workspace-instance runs.
 
 The public repo ships a tiny optional starter corpus under `WORKSPACE/sources/notes/examples/` and `WORKSPACE/sources/docs/examples/` in standalone mode.
 Delete those two directories and rebuild if you want a blank standalone corpus.

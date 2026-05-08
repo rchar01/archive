@@ -1,7 +1,9 @@
 SHELL := /bin/sh
 .DEFAULT_GOAL := help
 WORKSPACE ?= .
-export WORKSPACE
+WORKSPACE_ABS := $(abspath $(WORKSPACE))
+ARCHIVE_INSTANCE ?= $(if $(filter $(CURDIR),$(WORKSPACE_ABS)),default,$(notdir $(WORKSPACE_ABS)))
+export WORKSPACE ARCHIVE_INSTANCE
 
 .PHONY: help install install-cli install-skill uninstall-skill container-build devshell init-workspace new process-incoming accept-review validate build-content build-linkgraph build-related indexes sidebar dev dev-bg dev-logs dev-status dev-stop build runtime-build runtime-run runtime-logs runtime-status runtime-stop check clean doctor
 
@@ -134,7 +136,11 @@ check:
 
 ## Remove generated output and reports
 clean:
-	rm -rf content site build/cache build/reports
+	@if [ "$(ARCHIVE_INSTANCE)" = "default" ] && [ "$(WORKSPACE_ABS)" = "$(CURDIR)" ]; then \
+		rm -rf content site build/cache build/reports .vitepress/nav.generated.json .vitepress/sidebar.generated.json .vitepress/nav.generated.ts .vitepress/sidebar.generated.ts .vitepress/knowledge; \
+	else \
+		rm -rf ".instances/$(ARCHIVE_INSTANCE)"; \
+	fi
 
 ## Check repository health
 doctor:

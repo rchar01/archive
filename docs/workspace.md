@@ -46,9 +46,11 @@ By default it expects the Archive clone at `../archive`:
 ```make
 ARCHIVE_DIR ?= ../archive
 WORKSPACE := $(CURDIR)
+ARCHIVE_INSTANCE ?= $(notdir $(CURDIR))
 ```
 
 Update `ARCHIVE_DIR` if your Archive clone lives elsewhere.
+`ARCHIVE_INSTANCE` selects the generated-output namespace inside the Archive tool repo; override it if you need a different stable name.
 
 ## Requirements
 
@@ -86,6 +88,28 @@ make build
 
 Inside the workspace repo, `make` is the default human-facing interface.
 The installed `archive` CLI is most useful when you are operating from other repositories or when external agents need to target this workspace explicitly.
+
+## Multiple Workspaces, One Archive Clone
+
+One Archive clone can host multiple workspace repos at the same time.
+
+- canonical `incoming/` and `sources/` content still live in each workspace repo
+- generated output stays in the Archive tool repo under `.instances/<instance>/...`
+- the workspace template defaults `ARCHIVE_INSTANCE` to the workspace directory name
+
+If you want multiple live preview servers, use different ports:
+
+```sh
+make ARCHIVE_INSTANCE=notes-a VITEPRESS_DEV_PORT=5173 dev-bg
+make ARCHIVE_INSTANCE=notes-b VITEPRESS_DEV_PORT=5174 dev-bg
+```
+
+If you want multiple local runtime containers, use different ports there too:
+
+```sh
+make ARCHIVE_INSTANCE=notes-a RUNTIME_PORT=8080 runtime-run
+make ARCHIVE_INSTANCE=notes-b RUNTIME_PORT=8081 runtime-run
+```
 
 ## Preview Server
 
@@ -128,6 +152,6 @@ make runtime-stop
 
 `runtime-build` packages the prebuilt static site into the Caddy runtime image.
 
-Canonical content stays in the workspace repo. Generated `content/`, `site/`, and generated `.vitepress/*` artifacts stay in the Archive tool repo.
+Canonical content stays in the workspace repo. Generated output stays in the Archive tool repo, either in the standalone root paths or under `.instances/<instance>/...` for workspace-instance runs.
 
 For the recommended pinned CI and Kubernetes-oriented packaging flow, see `docs/workspace-ci.md`.

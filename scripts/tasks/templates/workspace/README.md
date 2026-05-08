@@ -20,7 +20,7 @@ You need:
 - `sources/notes/`: canonical notes
 - `sources/docs/`: canonical docs
 
-Generated `content/`, `site/`, and `.vitepress/*generated*` output stay in the Archive tool clone.
+Generated output stays in the Archive tool clone. In workspace-instance mode, it lands under `.instances/<instance>/...` there.
 This bootstrap stays intentionally empty; the public repo's optional `examples/` starter content is not copied into the workspace repo.
 
 ## If You Only Have This Workspace Repo
@@ -41,6 +41,7 @@ make ARCHIVE_DIR=/path/to/archive help
 ## Usage
 
 Set `ARCHIVE_DIR` in the forwarding `Makefile` if your Archive clone is not at `../archive`.
+This repo's `Makefile` defaults `ARCHIVE_INSTANCE` to the workspace directory name so one Archive clone can host multiple workspaces concurrently.
 See `AGENTS.md` in this repo for workspace-local agent guidance.
 That file includes generic guidance for agents that support specialist tools or subagents for exploration, verification, review, or research.
 Treat it as a starting point for your own environment and edit it freely if your preferred agent runtime uses different capabilities or conventions.
@@ -88,6 +89,13 @@ make dev-stop
 
 Use `make dev` instead if you want the foreground dev server.
 
+To run multiple workspace preview servers from one Archive clone, use different ports and, if needed, different explicit instance names:
+
+```sh
+make ARCHIVE_INSTANCE=notes-a VITEPRESS_DEV_PORT=5173 dev-bg
+make ARCHIVE_INSTANCE=notes-b VITEPRESS_DEV_PORT=5174 dev-bg
+```
+
 ## Static Runtime Server
 
 Build the static site and run the local Caddy runtime image:
@@ -109,7 +117,14 @@ make runtime-stop
 
 `runtime-build` packages the prebuilt static site into the Caddy runtime image.
 
+To run multiple local runtime servers from one Archive clone, use different ports and, if needed, different explicit instance names:
+
+```sh
+make ARCHIVE_INSTANCE=notes-a RUNTIME_PORT=8080 runtime-run
+make ARCHIVE_INSTANCE=notes-b RUNTIME_PORT=8081 runtime-run
+```
+
 ## Ownership
 
 - this repo owns canonical `incoming/` and `sources/` content
-- the Archive repo owns tooling, generated `content/`, generated `site/`, and generated `.vitepress/*` output
+- the Archive repo owns tooling and generated output, including instance-scoped output under `.instances/<instance>/...`

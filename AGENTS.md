@@ -12,9 +12,9 @@
 - Workflow discovery is dynamic; the repo currently ships `note` and `doc`
 - `sources/` is canonical editable content
 - `content/` and `site/` are generated
-- `.vitepress/nav.generated.ts`, `.vitepress/sidebar.generated.ts`, and `.vitepress/knowledge/*.generated.json` are generated
+- generated nav/sidebar data and generated knowledge metadata are machine-owned output
 - Archive supports two modes: standalone and workspace mode
-- in workspace mode, canonical `incoming/` and `sources/` live under `WORKSPACE` while generated `content/`, `site/`, `build/`, and generated `.vitepress/*` output stay in the Archive tool repo
+- in workspace mode, canonical `incoming/` and `sources/` live under `WORKSPACE` while generated output stays in the Archive tool repo, either in the standalone root paths or under `.instances/<instance>/...`
 - canonical frontmatter may use `slug` for stable generated routes and `nav_title` for compact navigation labels
 - canonical source pages may keep page-local assets in sibling `<page-stem>.assets/` directories and reference them with ordinary relative Markdown paths
 - canonical workflow-local section display overrides may live in sibling `_sections.yaml` files under `sources/<workflow>/`; use those for labels like `OMV` or default sidebar collapse behavior instead of encoding display casing into `section`

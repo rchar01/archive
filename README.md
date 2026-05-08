@@ -123,6 +123,7 @@ make WORKSPACE=. validate
 
 The public command form is `make WORKSPACE=<canonical-root> <target>`.
 `WORKSPACE` selects the canonical content root for `incoming/` and `sources/` while generated output stays in the Archive tool repo.
+`ARCHIVE_INSTANCE` selects the generated-output namespace inside the Archive tool repo. Standalone mode defaults to `default`; workspace repos default to their directory name.
 
 For the supported workspace repo layout, see `docs/workspace.md`.
 For a workspace repo CI and Kubernetes-oriented packaging flow, see `docs/workspace-ci.md`.
@@ -146,12 +147,9 @@ For a workspace repo CI and Kubernetes-oriented packaging flow, see `docs/worksp
 - `scripts/`
 - `Makefile`
 - `.vitepress/`
-- `content/`
-- `site/`
-- `build/`
-- generated `.vitepress/nav.generated.ts`
-- generated `.vitepress/sidebar.generated.ts`
-- generated `.vitepress/knowledge/*.generated.json`
+- standalone generated `content/`, `site/`, and `build/`
+- instance-scoped generated output under `.instances/<instance>/...` in workspace mode or when `ARCHIVE_INSTANCE` is set explicitly
+- generated nav/sidebar data and generated knowledge metadata
 - `Containerfile.dev`
 - `Containerfile.runtime`
 - `Caddyfile.runtime`
@@ -182,10 +180,11 @@ Rules:
 - `incoming/review/`: normalized drafts waiting for approval
 - `sources/notes/`: canonical note sources
 - `sources/docs/`: canonical doc sources
-- `content/`: generated VitePress source tree
-- `site/`: generated static site output
+- `content/`: standalone generated VitePress source tree
+- `site/`: standalone generated static site output
+- `.instances/`: instance-scoped generated content, site, build, and generated data for concurrent workspace runs
 - `docs/`: human-facing documentation and reference guides
-- `.vitepress/`: repo-root VitePress config, local theme, generated nav/sidebar, and generated knowledge metadata
+- `.vitepress/`: repo-root VitePress config, local theme, and standalone generated metadata
 - `scripts/core/`: reusable platform primitives
 - `scripts/workflows/`: workflow-local note/doc behavior
 - `scripts/tasks/`: thin executable orchestration
@@ -219,17 +218,17 @@ Start with:
 - the sidebar is generated from non-empty workflows and their sections
 - sidebar and generated index labels prefer `nav_title` when present, otherwise they derive a shortened label from `title`
 - the knowledge panel is rendered by a repo-local VitePress theme component mounted in the `doc-after` slot
-- `.vitepress/knowledge/pages.generated.json`, `linkgraph.generated.json`, and `related.generated.json` drive the knowledge panel
+- generated knowledge metadata drives the knowledge panel from `.vitepress/knowledge/*.generated.json` in standalone mode or `.instances/<instance>/generated/knowledge/*.generated.json` in workspace-instance mode
 - the home page shows up to 10 recently added items across all workflows
-- `content/`, `site/`, `.vitepress/nav.generated.ts`, `.vitepress/sidebar.generated.ts`, and `.vitepress/knowledge/*.generated.json` are machine-owned generated output
+- generated content, site output, nav/sidebar data, and knowledge metadata are machine-owned output
 
 `make build-content` rebuilds generated pages, knowledge metadata, generated home/workflow indexes, and nav/sidebar data.
 
-In workspace mode, those generated files still land in the Archive tool repo, not in the workspace repo.
+In workspace mode, those generated files still land in the Archive tool repo, not in the workspace repo. Use distinct `ARCHIVE_INSTANCE` values when you want multiple workspaces active at the same time from one Archive clone.
 
 ## Knowledge Panel
 
-- the knowledge panel reads generated metadata from `.vitepress/knowledge/*.generated.json`
+- the knowledge panel reads generated metadata from the active instance output (`.vitepress/knowledge/*.generated.json` in standalone mode or `.instances/<instance>/generated/knowledge/*.generated.json` in workspace-instance mode)
 - global defaults live in `.vitepress/config.ts` via `themeConfig.knowledgePanel`, `knowledgePanelBacklinks`, and `knowledgePanelRelated`
 - workflow defaults live in `scripts/workflows/*/workflow.yml`
 - per-page frontmatter may use `hide_knowledge_panel`, `hide_backlinks`, and `hide_related`

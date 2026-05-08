@@ -8,5 +8,6 @@ incoming/
 content/
 site/
 build/
+.instances/
 .vitepress/cache/
 .vitepress/dist/

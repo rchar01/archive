@@ -172,8 +172,12 @@ class TaskPipelineTests(unittest.TestCase):
             self.assertTrue((workspace_root / "sources" / "docs").is_dir())
             self.assertIn("ARCHIVE_DIR ?= ../archive", (workspace_root / "Makefile").read_text())
             self.assertIn('WORKSPACE := $(CURDIR)', (workspace_root / "Makefile").read_text())
+            self.assertIn('ARCHIVE_INSTANCE ?= $(notdir $(CURDIR))', (workspace_root / "Makefile").read_text())
             self.assertIn("help:", (workspace_root / "Makefile").read_text())
-            self.assertIn('$(MAKE) -C $(ARCHIVE_DIR) WORKSPACE="$(WORKSPACE)" help', (workspace_root / "Makefile").read_text())
+            self.assertIn(
+                '$(MAKE) -C $(ARCHIVE_DIR) WORKSPACE="$(WORKSPACE)" ARCHIVE_INSTANCE="$(ARCHIVE_INSTANCE)" help',
+                (workspace_root / "Makefile").read_text(),
+            )
             self.assertIn("canonical Archive content", (workspace_root / "README.md").read_text())
             self.assertIn("Archive workspace repo", (workspace_root / "AGENTS.md").read_text())
             self.assertIn("Use Available Specialist Tools", (workspace_root / "AGENTS.md").read_text())
@@ -366,6 +370,7 @@ class TaskPipelineTests(unittest.TestCase):
             )
             workflows = {"note": note_workflow}
             knowledge_dir = tool_root / ".vitepress" / "knowledge"
+            generated_vitepress_dir = tool_root / ".vitepress"
 
             init_workspace.main([workspace_dir])
 
@@ -402,7 +407,7 @@ class TaskPipelineTests(unittest.TestCase):
                 "scripts.tasks.build_indexes.discover_workflows", return_value=workflows
             ), patch("scripts.tasks.build_sidebar.CONTENT_DIR", tool_root / "content"), patch(
                 "scripts.tasks.build_sidebar.discover_workflows", return_value=workflows
-            ), patch("scripts.tasks.build_sidebar.ROOT", tool_root):
+            ), patch("scripts.tasks.build_sidebar.GENERATED_VITEPRESS_DIR", generated_vitepress_dir):
                 process_incoming.main([])
                 validate_sources.main([])
                 build_content.main([])
@@ -423,8 +428,8 @@ class TaskPipelineTests(unittest.TestCase):
             self.assertTrue(generated_vlan.exists())
             self.assertTrue((tool_root / "content" / "index.md").exists())
             self.assertTrue((tool_root / "content" / "notes" / "index.md").exists())
-            self.assertTrue((tool_root / ".vitepress" / "nav.generated.ts").exists())
-            self.assertTrue((tool_root / ".vitepress" / "sidebar.generated.ts").exists())
+            self.assertTrue((generated_vitepress_dir / "nav.generated.ts").exists())
+            self.assertTrue((generated_vitepress_dir / "sidebar.generated.ts").exists())
             self.assertTrue((knowledge_dir / "pages.generated.json").exists())
             self.assertTrue((knowledge_dir / "linkgraph.generated.json").exists())
             self.assertTrue((knowledge_dir / "related.generated.json").exists())
@@ -652,6 +657,7 @@ class TaskPipelineTests(unittest.TestCase):
 
             workflows = {"note": note_workflow, "doc": doc_workflow}
             knowledge_dir = root / ".vitepress" / "knowledge"
+            generated_vitepress_dir = root / ".vitepress"
             with patch("scripts.tasks.validate_sources.discover_workflows", return_value=workflows), patch(
                 "scripts.tasks.validate_sources.write_json_report"
             ), patch("scripts.tasks.build_content.discover_workflows", return_value=workflows), patch(
@@ -663,7 +669,7 @@ class TaskPipelineTests(unittest.TestCase):
             ), patch("scripts.tasks.build_indexes.discover_workflows", return_value=workflows), patch(
                 "scripts.tasks.build_sidebar.CONTENT_DIR", root / "content"
             ), patch("scripts.tasks.build_sidebar.discover_workflows", return_value=workflows), patch(
-                "scripts.tasks.build_sidebar.ROOT", root
+                "scripts.tasks.build_sidebar.GENERATED_VITEPRESS_DIR", generated_vitepress_dir
             ):
                 validate_sources.main([])
                 build_content.main([])
@@ -678,8 +684,8 @@ class TaskPipelineTests(unittest.TestCase):
             self.assertTrue((root / "content" / "index.md").exists())
             self.assertTrue((root / "content" / "notes" / "index.md").exists())
             self.assertTrue((root / "content" / "docs" / "index.md").exists())
-            self.assertTrue((root / ".vitepress" / "sidebar.generated.ts").exists())
-            self.assertTrue((root / ".vitepress" / "nav.generated.ts").exists())
+            self.assertTrue((generated_vitepress_dir / "sidebar.generated.ts").exists())
+            self.assertTrue((generated_vitepress_dir / "nav.generated.ts").exists())
             self.assertTrue((knowledge_dir / "pages.generated.json").exists())
             self.assertTrue((knowledge_dir / "linkgraph.generated.json").exists())
             self.assertTrue((knowledge_dir / "related.generated.json").exists())
@@ -687,8 +693,8 @@ class TaskPipelineTests(unittest.TestCase):
             home_page = (root / "content" / "index.md").read_text()
             docs_index = (root / "content" / "docs" / "index.md").read_text()
             generated_doc = (root / "content" / "docs" / "testing" / "knowledge-panel-guardrail-stress-test.md").read_text()
-            nav = (root / ".vitepress" / "nav.generated.ts").read_text()
-            sidebar = (root / ".vitepress" / "sidebar.generated.ts").read_text()
+            nav = (generated_vitepress_dir / "nav.generated.ts").read_text()
+            sidebar = (generated_vitepress_dir / "sidebar.generated.ts").read_text()
             page_catalog = read_json(knowledge_dir / "pages.generated.json")
 
             self.assertIn("layout: home", home_page)
@@ -802,15 +808,16 @@ class TaskPipelineTests(unittest.TestCase):
                 )
 
             workflows = {"doc": workflow}
+            generated_vitepress_dir = root / ".vitepress"
             with patch("scripts.tasks.build_indexes.discover_workflows", return_value=workflows), patch(
                 "scripts.tasks.build_indexes.CONTENT_DIR", root / "content"
             ), patch("scripts.tasks.build_sidebar.discover_workflows", return_value=workflows), patch(
                 "scripts.tasks.build_sidebar.CONTENT_DIR", root / "content"
-            ), patch("scripts.tasks.build_sidebar.ROOT", root):
+            ), patch("scripts.tasks.build_sidebar.GENERATED_VITEPRESS_DIR", generated_vitepress_dir):
                 build_indexes.main([])
                 build_sidebar.main([])
 
-            sidebar_text = (root / ".vitepress" / "sidebar.generated.ts").read_text()
+            sidebar_text = (generated_vitepress_dir / "sidebar.generated.ts").read_text()
             sidebar = json.loads(sidebar_text.removeprefix("export default "))
             docs_index = (root / "content" / "docs" / "index.md").read_text()
 
@@ -1021,16 +1028,17 @@ class TaskPipelineTests(unittest.TestCase):
             )
 
             workflows = {"doc": doc_workflow}
+            generated_vitepress_dir = root / ".vitepress"
             with patch("scripts.tasks.build_indexes.discover_workflows", return_value=workflows), patch(
                 "scripts.tasks.build_indexes.CONTENT_DIR", root / "content"
             ), patch("scripts.tasks.build_sidebar.discover_workflows", return_value=workflows), patch(
                 "scripts.tasks.build_sidebar.CONTENT_DIR", root / "content"
-            ), patch("scripts.tasks.build_sidebar.ROOT", root):
+            ), patch("scripts.tasks.build_sidebar.GENERATED_VITEPRESS_DIR", generated_vitepress_dir):
                 build_indexes.main([])
                 build_sidebar.main([])
 
             docs_index = (root / "content" / "docs" / "index.md").read_text()
-            sidebar = (root / ".vitepress" / "sidebar.generated.ts").read_text()
+            sidebar = (generated_vitepress_dir / "sidebar.generated.ts").read_text()
 
             self.assertIn(
                 'href="/docs/testing/knowledge-panel-automatic-navigation-title-fallback-evaluation"',
@@ -1207,17 +1215,18 @@ class TaskPipelineTests(unittest.TestCase):
             )
 
             workflows = {"playbook": playbook_workflow}
+            generated_vitepress_dir = root / ".vitepress"
             with patch("scripts.tasks.build_indexes.discover_workflows", return_value=workflows), patch(
                 "scripts.tasks.build_indexes.CONTENT_DIR", root / "content"
             ), patch("scripts.tasks.build_sidebar.discover_workflows", return_value=workflows), patch(
                 "scripts.tasks.build_sidebar.CONTENT_DIR", root / "content"
-            ), patch("scripts.tasks.build_sidebar.ROOT", root):
+            ), patch("scripts.tasks.build_sidebar.GENERATED_VITEPRESS_DIR", generated_vitepress_dir):
                 build_indexes.main([])
                 build_sidebar.main([])
 
             home_page = (root / "content" / "index.md").read_text()
-            nav = (root / ".vitepress" / "nav.generated.ts").read_text()
-            sidebar = (root / ".vitepress" / "sidebar.generated.ts").read_text()
+            nav = (generated_vitepress_dir / "nav.generated.ts").read_text()
+            sidebar = (generated_vitepress_dir / "sidebar.generated.ts").read_text()
 
             self.assertIn('href="/playbooks/"', home_page)
             self.assertIn("Playbooks", home_page)
