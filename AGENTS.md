@@ -90,10 +90,12 @@ Good examples:
 - Keep local page assets in sibling `<page-stem>.assets/` directories under `sources/`; do not hand-edit copied asset folders under `content/`.
 - Keep canonical `section` paths lowercase and slash-separated; use `sources/<workflow>/_sections.yaml` for display-label overrides.
 - Preserve explicit `slug` and `nav_title` unless the task is specifically about changing routes or navigation labels.
-- Use a verification-focused subagent for non-trivial test runs or runtime-backed checks.
-- Use a review-focused subagent after substantial edits to catch regressions and doc/code drift.
-- Use a research-focused subagent when behavior depends on external tooling or upstream docs.
-- Summarize any subagent findings you rely on.
+- If your runtime provides specialized tools or subagents for codebase exploration, use them when the repository structure, ownership boundaries, or relevant files are unclear.
+- If your runtime provides specialized tools or subagents for verification, use them for non-trivial test runs, runtime-backed checks, or command-heavy validation.
+- If your runtime provides specialized tools or subagents for review, use them after substantial edits to catch regressions, missing updates, or doc/code drift.
+- If your runtime provides specialized tools or subagents for research, use them when behavior depends on external tooling or upstream docs.
+- Prefer local repository docs, scripts, and configuration first; use web research when local sources are insufficient or freshness matters.
+- Summarize any specialist-tool or subagent findings you rely on.
 - Do not revert unrelated worktree changes.
 
 Final rule:
