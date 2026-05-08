@@ -34,7 +34,8 @@ It does not copy the public repo's starter examples. A new workspace repo begins
 
 You can rerun `make -C ~/tools/archive WORKSPACE=~/repos/my-notes init-workspace` on an existing workspace repo.
 By default it only creates missing directories and missing root bootstrap files, so existing `sources/...` content and existing root files are preserved.
-Use `archive init-workspace --force ~/repos/my-notes` only when you intentionally want to refresh the root `.gitignore`, `README.md`, `AGENTS.md`, and forwarding `Makefile` templates.
+Use `make -C ~/tools/archive WORKSPACE=~/repos/my-notes FORCE=1 init-workspace` when you intentionally want to refresh the root `.gitignore`, `README.md`, `AGENTS.md`, and forwarding `Makefile` templates.
+`archive init-workspace --force ~/repos/my-notes` remains available too.
 The generated `AGENTS.md` is a default workspace-local guide for LLMs and agents; customize it for your own runtime if needed.
 
 ## Forwarding Makefile

@@ -40,6 +40,8 @@ When you run the command elsewhere, pass `--workspace /path/to/repo` explicitly.
 - it does not delete or overwrite existing canonical content under `sources/...`
 - pass `--force` only when you intentionally want to overwrite the root `.gitignore`, `README.md`, `AGENTS.md`, and forwarding `Makefile` templates
 
+The equivalent Make workflow is `make WORKSPACE=/path/to/workspace FORCE=1 init-workspace`.
+
 ## Common Commands
 
 Create a canonical note or doc:

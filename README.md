@@ -46,6 +46,7 @@ Then open `http://localhost:5173`.
 
 Workspace bootstrap stays empty on purpose; it does not copy the public starter examples into your workspace repo.
 You can safely rerun `make -C ~/tools/archive WORKSPACE=~/repos/my-notes init-workspace`; by default it only fills in missing directories and missing root bootstrap files.
+Use `make -C ~/tools/archive WORKSPACE=~/repos/my-notes FORCE=1 init-workspace` when you intentionally want to refresh the root `.gitignore`, `README.md`, `AGENTS.md`, and forwarding `Makefile` templates.
 
 ### Shared Prerequisites
 

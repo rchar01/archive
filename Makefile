@@ -46,9 +46,9 @@ container-build:
 devshell:
 	./scripts/runtime/devshell
 
-## Initialize a private workspace skeleton at WORKSPACE
+## Initialize a workspace skeleton at WORKSPACE
 init-workspace:
-	python3 scripts/tasks/init_workspace.py "$(WORKSPACE)"
+	python3 scripts/tasks/init_workspace.py $(if $(strip $(FORCE)),--force) "$(WORKSPACE)"
 
 ## Create a new canonical source entry
 new:
