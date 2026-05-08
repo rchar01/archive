@@ -16,7 +16,7 @@ Archive supports two first-run paths. Start with standalone mode unless your can
 Use this when you want the simplest out-of-the-box workflow.
 
 ```sh
-git clone <archive>
+git clone https://codeberg.org/rch/archive
 cd archive
 make install
 make check
@@ -33,7 +33,7 @@ Delete those two `examples/` directories and run `make build` if you want to sta
 Use this when canonical docs and notes should stay in a separate repo while Archive remains the tooling repo.
 
 ```sh
-git clone <archive> ~/tools/archive
+git clone https://codeberg.org/rch/archive ~/tools/archive
 mkdir -p ~/repos/my-notes
 
 make -C ~/tools/archive WORKSPACE=~/repos/my-notes init-workspace

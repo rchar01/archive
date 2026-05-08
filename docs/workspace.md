@@ -9,7 +9,7 @@ The workspace repo may be private or public.
 Create the workspace repo skeleton with the Archive tool clone:
 
 ```sh
-git clone <archive> ~/tools/archive
+git clone https://codeberg.org/rch/archive ~/tools/archive
 mkdir -p ~/repos/my-notes
 
 make -C ~/tools/archive WORKSPACE=~/repos/my-notes init-workspace
@@ -58,21 +58,16 @@ You need:
 
 - `make`
 - `podman`
-- a local checkout of the Archive repo
+- a local checkout of the Archive repo from `https://codeberg.org/rch/archive`
 
-If you only have the workspace repo, clone Archive separately:
+If you cloned only the workspace repo, clone the Archive repo separately and confirm forwarding works:
 
 ```sh
 git clone https://codeberg.org/rch/archive ../archive
-```
-
-Then confirm forwarding works:
-
-```sh
 make help
 ```
 
-If your Archive clone lives elsewhere:
+Or point at a different Archive checkout explicitly:
 
 ```sh
 make ARCHIVE_DIR=/path/to/archive help
@@ -91,6 +86,47 @@ make build
 
 Inside the workspace repo, `make` is the default human-facing interface.
 The installed `archive` CLI is most useful when you are operating from other repositories or when external agents need to target this workspace explicitly.
+
+## Preview Server
+
+Start the local VitePress preview server from the workspace repo:
+
+```sh
+make dev-bg
+make dev-status
+make dev-logs
+```
+
+Then open `http://localhost:5173`.
+
+Stop it later with:
+
+```sh
+make dev-stop
+```
+
+Use `make dev` instead if you want the foreground dev server.
+
+## Static Runtime Server
+
+Build the static site and run the local Caddy runtime image:
+
+```sh
+make runtime-build
+make runtime-run
+make runtime-status
+make runtime-logs
+```
+
+Then open `http://localhost:8080`.
+
+Stop it later with:
+
+```sh
+make runtime-stop
+```
+
+`runtime-build` packages the prebuilt static site into the Caddy runtime image.
 
 Canonical content stays in the workspace repo. Generated `content/`, `site/`, and generated `.vitepress/*` artifacts stay in the Archive tool repo.
 
