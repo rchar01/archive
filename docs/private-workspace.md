@@ -29,6 +29,10 @@ Makefile
 
 It does not copy the public repo's starter examples. A new private workspace begins with empty `sources/notes/` and `sources/docs/` trees.
 
+You can rerun `make -C ~/tools/archive WORKSPACE=~/private/my-notes init-workspace` on an existing private repo.
+By default it only creates missing directories and missing root bootstrap files, so existing `sources/...` content and existing root files are preserved.
+Use `archive init-workspace --force ~/private/my-notes` only when you intentionally want to refresh the root `.gitignore`, `README.md`, and forwarding `Makefile` templates.
+
 ## Forwarding Makefile
 
 The generated private-repo `Makefile` forwards commands to Archive with `WORKSPACE=$(CURDIR)`.

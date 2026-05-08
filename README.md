@@ -45,6 +45,7 @@ make -C ~/tools/archive WORKSPACE=~/private/my-notes dev-bg
 Then open `http://localhost:5173`.
 
 Private workspace bootstrap stays empty on purpose; it does not copy the public starter examples into your private repo.
+You can safely rerun `make -C ~/tools/archive WORKSPACE=~/private/my-notes init-workspace`; by default it only fills in missing directories and missing root bootstrap files.
 
 ### Shared Prerequisites
 

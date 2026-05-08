@@ -177,14 +177,42 @@ class TaskPipelineTests(unittest.TestCase):
             self.assertIn("canonical Archive content", (workspace_root / "README.md").read_text())
             self.assertIn(".DS_Store", (workspace_root / ".gitignore").read_text())
 
-    def test_init_workspace_refuses_to_overwrite_templates_without_force(self) -> None:
+    def test_init_workspace_preserves_existing_templates_and_canonical_docs_without_force(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             workspace_root = Path(tmp_dir) / "private-workspace"
-            workspace_root.mkdir(parents=True)
+            canonical_doc = workspace_root / "sources" / "docs" / "homelab" / "dns.md"
+            canonical_doc.parent.mkdir(parents=True, exist_ok=True)
+            canonical_doc.write_text("# DNS\n")
             (workspace_root / "README.md").write_text("existing\n")
+            (workspace_root / "Makefile").write_text("custom-makefile\n")
+            (workspace_root / ".gitignore").write_text("custom-ignore\n")
 
-            with self.assertRaises(SystemExit):
-                init_workspace.main([str(workspace_root)])
+            init_workspace.main([str(workspace_root)])
+
+            self.assertEqual((workspace_root / "README.md").read_text(), "existing\n")
+            self.assertEqual((workspace_root / "Makefile").read_text(), "custom-makefile\n")
+            self.assertEqual((workspace_root / ".gitignore").read_text(), "custom-ignore\n")
+            self.assertEqual(canonical_doc.read_text(), "# DNS\n")
+            self.assertTrue((workspace_root / "incoming" / "new").is_dir())
+            self.assertTrue((workspace_root / "incoming" / "review").is_dir())
+            self.assertTrue((workspace_root / "sources" / "notes").is_dir())
+
+    def test_init_workspace_force_overwrites_root_templates_only(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            workspace_root = Path(tmp_dir) / "private-workspace"
+            canonical_doc = workspace_root / "sources" / "docs" / "homelab" / "dns.md"
+            canonical_doc.parent.mkdir(parents=True, exist_ok=True)
+            canonical_doc.write_text("# DNS\n")
+            (workspace_root / "README.md").write_text("existing\n")
+            (workspace_root / "Makefile").write_text("custom-makefile\n")
+            (workspace_root / ".gitignore").write_text("custom-ignore\n")
+
+            init_workspace.main(["--force", str(workspace_root)])
+
+            self.assertIn("canonical Archive content", (workspace_root / "README.md").read_text())
+            self.assertIn("ARCHIVE_DIR ?= ../archive", (workspace_root / "Makefile").read_text())
+            self.assertIn(".DS_Store", (workspace_root / ".gitignore").read_text())
+            self.assertEqual(canonical_doc.read_text(), "# DNS\n")
 
     def test_process_incoming_auto_writes_to_sources(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:

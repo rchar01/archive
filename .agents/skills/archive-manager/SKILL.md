@@ -67,7 +67,7 @@ Use these actions for common user requests:
 * do not start with `make new` when the starting point is already rough Markdown or AI-generated content that needs normalization
 * stage rough Markdown in `incoming/new/` or use `archive import ... --processing auto|review`, then run `make process-incoming`
 * if the note or doc already exists in `sources/...`, edit that canonical file directly instead of using `make new`, `archive import`, or `make accept-review`
-* bootstrap a private content repo: run `make WORKSPACE=/path/to/private/repo init-workspace`
+* bootstrap a private content repo: run `make WORKSPACE=/path/to/private/repo init-workspace`; rerunning it is non-destructive by default and only fills in missing directories or missing root bootstrap files unless you explicitly force overwrites
 * install the cross-project CLI: run `make install-cli`
 * install the project-shipped global skill for other agents: run `make install-skill`
 * process rough incoming files: run `make process-incoming`

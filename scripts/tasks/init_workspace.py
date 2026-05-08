@@ -21,7 +21,7 @@ DIRECTORY_SKELETON = (
 
 def write_template(target: Path, template_name: str, *, force: bool) -> None:
     if target.exists() and not force:
-        raise SystemExit(f"Refusing to overwrite existing file: {target}")
+        return
     shutil.copyfile(TEMPLATES_DIR / template_name, target)
 
 

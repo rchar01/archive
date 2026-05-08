@@ -32,6 +32,14 @@ That includes:
 
 When you run the command elsewhere, pass `--workspace /path/to/repo` explicitly.
 
+## Bootstrap Behavior
+
+`archive init-workspace PATH` is safe to rerun on an existing private workspace.
+
+- by default it creates any missing `incoming/...` and `sources/...` directories and only writes missing root bootstrap files
+- it does not delete or overwrite existing canonical content under `sources/...`
+- pass `--force` only when you intentionally want to overwrite the root `.gitignore`, `README.md`, and forwarding `Makefile` templates
+
 ## Common Commands
 
 Create a canonical note or doc:
@@ -68,7 +76,7 @@ archive check --workspace ~/private/my-notes
 
 ## Command Surface
 
-- `archive init-workspace PATH`
+- `archive init-workspace PATH [--force]`
 - `archive new note ...`
 - `archive new doc ...`
 - `archive import FILE ...`
