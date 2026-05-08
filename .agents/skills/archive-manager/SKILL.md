@@ -46,8 +46,8 @@ When this skill is active, read in this order:
 
 * the canonical flow is `incoming/ -> sources/ -> content/ -> site/`
 * `sources/` is the only editable content root
-* Archive supports standalone mode and private workspace mode
-* in private workspace mode, canonical `incoming/` and `sources/` live under `WORKSPACE` while generated `content/`, `site/`, `build/`, and generated `.vitepress/*` output stay in the Archive tool repo
+* Archive supports standalone mode and workspace mode
+* in workspace mode, canonical `incoming/` and `sources/` live under `WORKSPACE` while generated `content/`, `site/`, `build/`, and generated `.vitepress/*` output stay in the Archive tool repo
 * `content/`, `site/`, `.vitepress/nav.generated.ts`, `.vitepress/sidebar.generated.ts`, and `.vitepress/knowledge/*.generated.json` are generated
 * workflows are discovered from `scripts/workflows/*/workflow.yml`
 * the repo currently ships `note` and `doc`, but more workflows may be added later
@@ -67,7 +67,7 @@ Use these actions for common user requests:
 * do not start with `make new` when the starting point is already rough Markdown or AI-generated content that needs normalization
 * stage rough Markdown in `incoming/new/` or use `archive import ... --processing auto|review`, then run `make process-incoming`
 * if the note or doc already exists in `sources/...`, edit that canonical file directly instead of using `make new`, `archive import`, or `make accept-review`
-* bootstrap a private content repo: run `make WORKSPACE=/path/to/private/repo init-workspace`; rerunning it is non-destructive by default and only fills in missing directories or missing root bootstrap files unless you explicitly force overwrites
+* bootstrap a workspace repo: run `make WORKSPACE=/path/to/workspace init-workspace`; rerunning it is non-destructive by default and only fills in missing directories or missing root bootstrap files unless you explicitly force overwrites
 * install the cross-project CLI: run `make install-cli`
 * install the project-shipped global skill for other agents: run `make install-skill`
 * process rough incoming files: run `make process-incoming`
@@ -88,13 +88,13 @@ Use these actions for common user requests:
 When the user asks to update content:
 
 * edit canonical Markdown in `sources/<workflow>/...`
-* in private workspace mode, that canonical path is `WORKSPACE/sources/<workflow>/...`, not the Archive tool repo
+* in workspace mode, that canonical path is `WORKSPACE/sources/<workflow>/...`, not the Archive tool repo
 * do not hand-edit `content/`, `site/`, `.vitepress/nav.generated.ts`, `.vitepress/sidebar.generated.ts`, or `.vitepress/knowledge/*.generated.json`
 * do not manually create section directories under `sources/` during normal Archive authoring; `make new`, `archive new`, and intake processing create missing parent directories automatically
 * prefer the normal authoring flow over hand-creating `sources/<workflow>/<section>/` paths unless the user explicitly asks for manual directory setup
 * when creating a new canonical page, prefer `make new` for scaffoldable metadata and keep `id`, `created`, `updated`, and default `status` system-managed
 * keep canonical `section` paths lowercase and slash-separated; use workflow-scoped `_sections.yaml` files for display labels like `OMV` or default sidebar collapse behavior
-* exact override paths are `sources/docs/_sections.yaml` and `sources/notes/_sections.yaml` in standalone mode, or `WORKSPACE/sources/docs/_sections.yaml` and `WORKSPACE/sources/notes/_sections.yaml` in private-workspace mode
+* exact override paths are `sources/docs/_sections.yaml` and `sources/notes/_sections.yaml` in standalone mode, or `WORKSPACE/sources/docs/_sections.yaml` and `WORKSPACE/sources/notes/_sections.yaml` in workspace mode
 * docs and notes are independent; a label override such as `homelab/omv: { title: OMV }` only applies in the workflow file where you define it
 * keep one `#` heading per page, preserve required `##` workflow sections, add more `##` headings after `Summary` or `Overview` when needed, do not place manual thematic breaks like `---`, `***`, or `___` immediately before a `##` heading, and use `###` for real subsections under those major sections
 * prefer normal internal `/docs/...` or `/notes/...` links in the body when the prose directly references another page; backlinks are generated automatically from those links

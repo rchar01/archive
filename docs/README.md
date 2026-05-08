@@ -22,5 +22,5 @@ Recommended reading order:
 - `authoring.md` for the end-to-end human and agent authoring workflow
 - `note.md` for note-specific structure and constraints
 - `doc.md` for doc-specific structure and constraints
-- `private-workspace.md` for the split public-tooling/private-content repository model
-- `private-ci.md` for the recommended private CI and deployment pattern
+- `workspace.md` for the split tooling/workspace-repo model
+- `workspace-ci.md` for the recommended workspace CI and deployment pattern

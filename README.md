@@ -5,11 +5,11 @@ Archive is a source-first documentation pipeline built around VitePress and Pyth
 Archive supports two usage modes:
 
 - standalone mode: clone `archive` and keep canonical content in that repo
-- private workspace mode: use the public `archive` clone as tooling and keep canonical `incoming/` and `sources/` content in a separate private Git repo
+- workspace mode: use the `archive` clone as tooling and keep canonical `incoming/` and `sources/` content in a separate repo
 
 ## Quickstart
 
-Archive supports two first-run paths. Start with standalone mode unless your canonical content must live in private Git.
+Archive supports two first-run paths. Start with standalone mode unless your canonical content should live in a separate repo.
 
 ### Standalone Mode
 
@@ -28,24 +28,24 @@ Then open `http://localhost:5173`.
 The public repo ships a tiny starter corpus under `sources/notes/examples/` and `sources/docs/examples/` so the first build shows real content, local assets, Mermaid rendering, and knowledge-panel links.
 Delete those two `examples/` directories and run `make build` if you want to start from a blank standalone corpus.
 
-### Private Workspace Mode
+### Workspace Mode
 
-Use this when canonical docs and notes should stay in private Git while Archive remains public tooling.
+Use this when canonical docs and notes should stay in a separate repo while Archive remains the tooling repo.
 
 ```sh
 git clone <archive> ~/tools/archive
-mkdir -p ~/private/my-notes
+mkdir -p ~/repos/my-notes
 
-make -C ~/tools/archive WORKSPACE=~/private/my-notes init-workspace
-make -C ~/tools/archive WORKSPACE=~/private/my-notes install
-make -C ~/tools/archive WORKSPACE=~/private/my-notes check
-make -C ~/tools/archive WORKSPACE=~/private/my-notes dev-bg
+make -C ~/tools/archive WORKSPACE=~/repos/my-notes init-workspace
+make -C ~/tools/archive WORKSPACE=~/repos/my-notes install
+make -C ~/tools/archive WORKSPACE=~/repos/my-notes check
+make -C ~/tools/archive WORKSPACE=~/repos/my-notes dev-bg
 ```
 
 Then open `http://localhost:5173`.
 
-Private workspace bootstrap stays empty on purpose; it does not copy the public starter examples into your private repo.
-You can safely rerun `make -C ~/tools/archive WORKSPACE=~/private/my-notes init-workspace`; by default it only fills in missing directories and missing root bootstrap files.
+Workspace bootstrap stays empty on purpose; it does not copy the public starter examples into your workspace repo.
+You can safely rerun `make -C ~/tools/archive WORKSPACE=~/repos/my-notes init-workspace`; by default it only fills in missing directories and missing root bootstrap files.
 
 ### Shared Prerequisites
 
@@ -124,12 +124,12 @@ make WORKSPACE=. validate
 The public command form is `make WORKSPACE=<canonical-root> <target>`.
 `WORKSPACE` selects the canonical content root for `incoming/` and `sources/` while generated output stays in the Archive tool repo.
 
-For the supported private workspace layout, see `docs/private-workspace.md`.
-For a private repo CI and Kubernetes-oriented packaging flow, see `docs/private-ci.md`.
+For the supported workspace repo layout, see `docs/workspace.md`.
+For a workspace repo CI and Kubernetes-oriented packaging flow, see `docs/workspace-ci.md`.
 
 ## Ownership Model
 
-### Private Repo Owns
+### Workspace Repo Owns
 
 - `incoming/`
 - `incoming/new/`
@@ -137,9 +137,9 @@ For a private repo CI and Kubernetes-oriented packaging flow, see `docs/private-
 - `sources/`
 - `sources/notes/`
 - `sources/docs/`
-- the forwarding private-repo `Makefile`
-- the private-repo `README.md`
-- the private-repo `.gitignore`
+- the forwarding workspace-repo `Makefile`
+- the workspace-repo `README.md`
+- the workspace-repo `.gitignore`
 
 ### Archive Tool Repo Owns
 
@@ -156,7 +156,7 @@ For a private repo CI and Kubernetes-oriented packaging flow, see `docs/private-
 - `Containerfile.runtime`
 - `Caddyfile.runtime`
 
-In private workspace mode, canonical content stays in the private repo while generated output stays in the Archive tool repo.
+In workspace mode, canonical content stays in the workspace repo while generated output stays in the Archive tool repo.
 
 ## Architecture
 
@@ -193,7 +193,7 @@ Rules:
 
 Workflow config is discovered from `scripts/workflows/*/workflow.yml`.
 
-In private workspace mode, treat the layout above as the Archive tool repo layout. The private repo layout is documented in `docs/private-workspace.md`.
+In workspace mode, treat the layout above as the Archive tool repo layout. The workspace repo layout is documented in `docs/workspace.md`.
 
 ## Documentation
 
@@ -207,8 +207,8 @@ Start with:
 - `docs/authoring.md`: end-to-end human and agent authoring playbook
 - `docs/note.md`: note-specific structure and rules
 - `docs/doc.md`: doc-specific structure and rules
-- `docs/private-workspace.md`: private repo bootstrap flow and wrapper `Makefile` approach
-- `docs/private-ci.md`: private CI checkout, build, packaging, and deployment pattern
+- `docs/workspace.md`: workspace repo bootstrap flow and wrapper `Makefile` approach
+- `docs/workspace-ci.md`: workspace CI checkout, build, packaging, and deployment pattern
 
 ## Generated UI
 
@@ -225,7 +225,7 @@ Start with:
 
 `make build-content` rebuilds generated pages, knowledge metadata, generated home/workflow indexes, and nav/sidebar data.
 
-In private workspace mode, those generated files still land in the Archive tool repo, not in the private repo.
+In workspace mode, those generated files still land in the Archive tool repo, not in the workspace repo.
 
 ## Knowledge Panel
 

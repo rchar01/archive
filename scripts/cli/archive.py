@@ -283,7 +283,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="archive", description="Archive authoring CLI")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    init_workspace = subparsers.add_parser("init-workspace", help="Bootstrap a private workspace")
+    init_workspace = subparsers.add_parser("init-workspace", help="Bootstrap a workspace repo")
     init_workspace.add_argument("path")
     init_workspace.add_argument("--force", action="store_true")
     init_workspace.set_defaults(func=command_init_workspace)

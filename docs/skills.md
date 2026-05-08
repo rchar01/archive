@@ -45,7 +45,7 @@ make install-skill
 
 Use the split like this:
 
-- humans inside a private workspace repo: prefer the generated forwarding `Makefile`
+- humans inside a workspace repo: prefer the generated forwarding `Makefile`
 - agents working from other repos or arbitrary directories: prefer the installed `archive` CLI plus the `archive-authoring` skill
 
 ## Source of Truth
@@ -53,4 +53,4 @@ Use the split like this:
 - `skills/archive-authoring/SKILL.md`: agent workflow behavior, guardrails, and command patterns
 - `skills/archive-authoring/assets/`: command-choice guidance, exact generated note/doc scaffold references, metadata ownership notes, and `_sections.yaml` example overrides that install with the skill
 - `docs/cli.md`: installed CLI behavior, workspace resolution, and command surface
-- `docs/authoring.md`: canonical Archive authoring model, workflow-specific structure, and exact workflow-scoped `_sections.yaml` override paths for standalone and private-workspace modes
+- `docs/authoring.md`: canonical Archive authoring model, workflow-specific structure, and exact workflow-scoped `_sections.yaml` override paths for standalone and workspace modes

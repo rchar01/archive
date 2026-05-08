@@ -24,17 +24,17 @@ Rules:
 Archive supports two authoring modes:
 
 - standalone mode: run commands from the Archive repo with canonical content in that repo
-- private workspace mode: run Archive against a separate private repo with `WORKSPACE=/path/to/private/repo` or from the private repo forwarding `Makefile`
+- workspace mode: run Archive against a separate repo with `WORKSPACE=/path/to/workspace` or from the workspace repo forwarding `Makefile`
 
 Use standalone mode for the simplest local setup.
-Use private workspace mode when canonical docs and notes should stay in private Git.
+Use workspace mode when canonical docs and notes should stay in a separate repo, whether that repo is private or public.
 
 Canonical roots always live under `WORKSPACE`.
 Generated `content/`, `site/`, and generated `.vitepress/*` output always live in the Archive tool repo.
 
 The public repo ships a tiny optional starter corpus under `WORKSPACE/sources/notes/examples/` and `WORKSPACE/sources/docs/examples/` in standalone mode.
 Delete those two directories and rebuild if you want a blank standalone corpus.
-Private workspaces created with `make WORKSPACE=/path/to/private/repo init-workspace` do not include those examples.
+Workspace repos created with `make WORKSPACE=/path/to/workspace init-workspace` do not include those examples.
 
 ## Choose a Workflow
 
@@ -64,10 +64,10 @@ Example:
 make new kind=note title="Docker DNS Issue" section=containers
 ```
 
-Private workspace example:
+Workspace mode example:
 
 ```sh
-make WORKSPACE=/path/to/private/repo new kind=note title="Docker DNS Issue" section=containers
+make WORKSPACE=/path/to/workspace new kind=note title="Docker DNS Issue" section=containers
 ```
 
 You can scaffold common metadata at creation time:
@@ -117,10 +117,10 @@ Then run:
 make process-incoming
 ```
 
-Private workspace example:
+Workspace mode example:
 
 ```sh
-make WORKSPACE=/path/to/private/repo process-incoming
+make WORKSPACE=/path/to/workspace process-incoming
 ```
 
 Processing behavior:
@@ -134,7 +134,7 @@ To accept a reviewed draft:
 make accept-review file=incoming/review/example.md
 ```
 
-The same command works from a private repo forwarding `Makefile`, or from the Archive repo with `WORKSPACE=/path/to/private/repo`.
+The same command works from a workspace repo forwarding `Makefile`, or from the Archive repo with `WORKSPACE=/path/to/workspace`.
 
 ## Common Frontmatter
 
@@ -190,7 +190,7 @@ Rules:
 - `title` controls display text in the generated sidebar and workflow index headings
 - `collapsed` controls the default fold state for that section group in the left sidebar
 - top-level sections default to expanded; nested sections default to collapsed when no override is present
-- in private workspace mode, these files live in the private repo because `sources/` is canonical there
+- in workspace mode, these files live in the workspace repo because `sources/` is canonical there
 
 ## Body Structure
 
@@ -333,8 +333,8 @@ make check
 ### Human or Agent Creating a Canonical Page Directly
 
 1. Choose `note` or `doc`.
-2. Choose standalone mode or private workspace mode.
-3. Run `make new ...` with any scaffoldable metadata. In private workspace mode, use `make WORKSPACE=/path/to/private/repo new ...` or run the command from the private repo wrapper `Makefile`.
+2. Choose standalone mode or workspace mode.
+3. Run `make new ...` with any scaffoldable metadata. In workspace mode, use `make WORKSPACE=/path/to/workspace new ...` or run the command from the workspace repo wrapper `Makefile`.
 4. Edit the generated source file under `sources/`.
 5. Add any sibling `<page-stem>.assets/` folder if needed.
 6. Add plain ` ```mermaid ` fences if diagrams help.
@@ -345,7 +345,7 @@ make check
 
 1. Put the draft in `incoming/new/`.
 2. Set `kind` and `processing` in frontmatter.
-3. Run `make process-incoming`. In private workspace mode, use `make WORKSPACE=/path/to/private/repo process-incoming` or run the command from the private repo wrapper `Makefile`.
+3. Run `make process-incoming`. In workspace mode, use `make WORKSPACE=/path/to/workspace process-incoming` or run the command from the workspace repo wrapper `Makefile`.
 4. If the result lands in `incoming/review/`, inspect it and run `make accept-review ...`.
 5. Refine the canonical source under `sources/` if needed.
 6. Run `make validate`.

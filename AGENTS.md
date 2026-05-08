@@ -13,8 +13,8 @@
 - `sources/` is canonical editable content
 - `content/` and `site/` are generated
 - `.vitepress/nav.generated.ts`, `.vitepress/sidebar.generated.ts`, and `.vitepress/knowledge/*.generated.json` are generated
-- Archive supports two modes: standalone and private workspace
-- in private workspace mode, canonical `incoming/` and `sources/` live under `WORKSPACE` while generated `content/`, `site/`, `build/`, and generated `.vitepress/*` output stay in the Archive tool repo
+- Archive supports two modes: standalone and workspace mode
+- in workspace mode, canonical `incoming/` and `sources/` live under `WORKSPACE` while generated `content/`, `site/`, `build/`, and generated `.vitepress/*` output stay in the Archive tool repo
 - canonical frontmatter may use `slug` for stable generated routes and `nav_title` for compact navigation labels
 - canonical source pages may keep page-local assets in sibling `<page-stem>.assets/` directories and reference them with ordinary relative Markdown paths
 - canonical workflow-local section display overrides may live in sibling `_sections.yaml` files under `sources/<workflow>/`; use those for labels like `OMV` or default sidebar collapse behavior instead of encoding display casing into `section`
@@ -66,7 +66,7 @@ Good examples:
 - `make uninstall-skill` removes the project-shipped `archive-authoring` skill from `~/.agents/skills` by default.
 - `make devshell` opens an interactive shell inside the dev container.
 - `make new` creates a canonical source file.
-- `make init-workspace` bootstraps a private content repo skeleton at `WORKSPACE`.
+- `make init-workspace` bootstraps a workspace repo skeleton at `WORKSPACE`.
 - `make process-incoming` normalizes files from `incoming/new/`.
 - `make accept-review` moves a reviewed draft into `sources/`.
 - `make validate` validates canonical sources.

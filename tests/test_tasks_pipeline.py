@@ -159,7 +159,7 @@ class TaskPipelineTests(unittest.TestCase):
 
     def test_init_workspace_creates_private_workspace_skeleton_and_templates(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
-            workspace_root = Path(tmp_dir) / "private-workspace"
+            workspace_root = Path(tmp_dir) / "workspace"
             output = io.StringIO()
 
             with redirect_stdout(output):
@@ -179,7 +179,7 @@ class TaskPipelineTests(unittest.TestCase):
 
     def test_init_workspace_preserves_existing_templates_and_canonical_docs_without_force(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
-            workspace_root = Path(tmp_dir) / "private-workspace"
+            workspace_root = Path(tmp_dir) / "workspace"
             canonical_doc = workspace_root / "sources" / "docs" / "homelab" / "dns.md"
             canonical_doc.parent.mkdir(parents=True, exist_ok=True)
             canonical_doc.write_text("# DNS\n")
@@ -199,7 +199,7 @@ class TaskPipelineTests(unittest.TestCase):
 
     def test_init_workspace_force_overwrites_root_templates_only(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
-            workspace_root = Path(tmp_dir) / "private-workspace"
+            workspace_root = Path(tmp_dir) / "workspace"
             canonical_doc = workspace_root / "sources" / "docs" / "homelab" / "dns.md"
             canonical_doc.parent.mkdir(parents=True, exist_ok=True)
             canonical_doc.write_text("# DNS\n")

@@ -28,13 +28,13 @@ The CLI infers `--workspace` when you run it from inside a valid Archive workspa
 That includes:
 
 - the standalone Archive repo
-- a private repo created with `archive init-workspace` or `make init-workspace`
+- a workspace repo created with `archive init-workspace` or `make init-workspace`
 
 When you run the command elsewhere, pass `--workspace /path/to/repo` explicitly.
 
 ## Bootstrap Behavior
 
-`archive init-workspace PATH` is safe to rerun on an existing private workspace.
+`archive init-workspace PATH` is safe to rerun on an existing workspace repo.
 
 - by default it creates any missing `incoming/...` and `sources/...` directories and only writes missing root bootstrap files
 - it does not delete or overwrite existing canonical content under `sources/...`
@@ -53,7 +53,7 @@ Import a raw Markdown file from another location into the intake queue:
 
 ```sh
 archive import ~/Downloads/raw.md \
-  --workspace ~/private/my-notes \
+  --workspace ~/repos/my-notes \
   --kind doc \
   --section inbox \
   --processing review
@@ -62,16 +62,16 @@ archive import ~/Downloads/raw.md \
 Normalize the intake queue and accept a reviewed draft:
 
 ```sh
-archive process --workspace ~/private/my-notes
-archive accept incoming/review/raw.md --workspace ~/private/my-notes
+archive process --workspace ~/repos/my-notes
+archive accept incoming/review/raw.md --workspace ~/repos/my-notes
 ```
 
 Validate and build:
 
 ```sh
-archive validate --workspace ~/private/my-notes
-archive build --workspace ~/private/my-notes
-archive check --workspace ~/private/my-notes
+archive validate --workspace ~/repos/my-notes
+archive build --workspace ~/repos/my-notes
+archive check --workspace ~/repos/my-notes
 ```
 
 ## Command Surface

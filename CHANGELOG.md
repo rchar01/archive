@@ -41,11 +41,11 @@ and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - made `note` require only `Summary`, with `Related` and later major `##` sections optional
 - made `doc` require only `Overview`, with `References` and later major `##` sections optional
 - stopped scaffolding and intake-normalization from auto-generating empty trailing `Related` and `References` sections
-- updated private-workspace docs and template guidance to keep `make` as the default interface inside the private repo while reserving the installed CLI for cross-project and external-agent workflows
+- updated workspace docs and template guidance to keep `make` as the default interface inside the workspace repo while reserving the installed CLI for cross-project and external-agent workflows
 
 ### Fixed
 
-- the generated private-workspace forwarding `Makefile` now forwards plain `make` to Archive help instead of resolving to an empty local `help` target
+- the generated workspace forwarding `Makefile` now forwards plain `make` to Archive help instead of resolving to an empty local `help` target
 
 ## [1.0.0] - 2026-04-29
 
@@ -62,8 +62,8 @@ and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Mermaid support for plain Markdown ` ```mermaid ` fences rendered by the local VitePress theme
 - local dev and runtime container flows via `make dev`, `make dev-bg`, `make build`, `make runtime-build`, and `make runtime-run`
 - repository health and validation surfaces via `make validate`, `make check`, and `make doctor`
-- `make init-workspace` bootstrap flow and private-workspace template files for private content repositories
-- `docs/private-workspace.md` and `docs/private-ci.md` documenting the split public-tooling/private-content operating model and pinned private CI flow
+- `make init-workspace` bootstrap flow and workspace template files for separate content repositories
+- `docs/workspace.md` and `docs/workspace-ci.md` documenting the split tooling/workspace-repo operating model and pinned workspace CI flow
 - a small optional starter corpus under `sources/notes/examples/` and `sources/docs/examples/` for first-run standalone usage
 
 ### Changed
@@ -72,7 +72,7 @@ and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - moved related-links and backlink presentation out of generated Markdown bodies and into the VitePress theme layer
 - made generated routes slug-aware and navigation labels `nav_title`-aware while preserving full canonical page titles in page bodies
 - updated authoring docs to describe direct canonical authoring, intake/review flows, local assets, Mermaid usage, and validation/build loops
-- documented standalone mode, private workspace mode, wrapper `Makefile` usage, generated-output ownership, and prebuilt-site runtime packaging under `docs/`
+- documented standalone mode, workspace mode, wrapper `Makefile` usage, generated-output ownership, and prebuilt-site runtime packaging under `docs/`
 
 ### Fixed
 

@@ -12,7 +12,7 @@ metadata:
 
 ## Purpose
 
-Use this skill when an agent is not working inside the Archive repository but still needs to operate on Archive content in a standalone repo or a private workspace.
+Use this skill when an agent is not working inside the Archive repository but still needs to operate on Archive content in a standalone repo or a workspace repo.
 
 Prefer the installed `archive` CLI over raw `make -C ... WORKSPACE=...` commands.
 Treat this skill as the agent-facing source for cross-project Archive workflow behavior.
@@ -36,7 +36,7 @@ The default global skill target is `~/.agents/skills/archive-authoring`.
 - `content/`, `site/`, generated nav/sidebar data, and generated knowledge metadata are machine-owned output
 - Archive supports two modes:
   - standalone repo
-  - private workspace with canonical `incoming/` and `sources/` in a separate repo
+  - workspace mode with canonical `incoming/` and `sources/` in a separate repo
 - the installed `archive` CLI can infer `--workspace` when run inside a valid Archive workspace
 - when run elsewhere, pass `--workspace /path/to/repo`
 
@@ -195,7 +195,7 @@ archive check --workspace /path/to/repo
 - use workflow-local `_sections.yaml` files to override displayed section labels such as `OMV` or default sidebar fold state
 - exact paths are workflow-scoped:
   - standalone mode: `sources/docs/_sections.yaml` and `sources/notes/_sections.yaml`
-  - private workspace mode: `WORKSPACE/sources/docs/_sections.yaml` and `WORKSPACE/sources/notes/_sections.yaml`
+  - workspace mode: `WORKSPACE/sources/docs/_sections.yaml` and `WORKSPACE/sources/notes/_sections.yaml`
 - docs and notes are independent; if you want `OMV` only for docs, change only the docs file, and if you want it in both workflows, add the override to both files
 - use `processing: review` for rough or AI-generated imports that should be inspected before acceptance
 
@@ -285,5 +285,5 @@ See [/docs/homelab/security/homelab-https-setup](/docs/homelab/security/homelab-
 
 ## Human vs Agent UX
 
-- inside a private workspace repo, humans should usually keep using the generated forwarding `Makefile`
+- inside a workspace repo, humans should usually keep using the generated forwarding `Makefile`
 - agents working from other directories or other repositories should use the installed `archive` CLI

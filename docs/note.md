@@ -68,4 +68,4 @@ sections:
 
 - run `make validate` after editing canonical notes
 - run `make build` for a full rebuild or `make dev-bg` for a local preview loop
-- in private workspace mode, run those commands from the private repo wrapper `Makefile` or from the Archive repo with `WORKSPACE=/path/to/private/repo`
+- in workspace mode, run those commands from the workspace repo wrapper `Makefile` or from the Archive repo with `WORKSPACE=/path/to/workspace`

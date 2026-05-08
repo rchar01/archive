@@ -10,7 +10,7 @@ if __package__ in (None, ""):
 
 from scripts.core.paths import resolve_workspace_path
 
-TEMPLATES_DIR = Path(__file__).resolve().parent / "templates" / "private-workspace"
+TEMPLATES_DIR = Path(__file__).resolve().parent / "templates" / "workspace"
 DIRECTORY_SKELETON = (
     Path("incoming") / "new",
     Path("incoming") / "review",
