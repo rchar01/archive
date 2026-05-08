@@ -35,6 +35,7 @@ It does not copy the public repo's starter examples. A new workspace repo begins
 You can rerun `make -C ~/tools/archive WORKSPACE=~/repos/my-notes init-workspace` on an existing workspace repo.
 By default it only creates missing directories and missing root bootstrap files, so existing `sources/...` content and existing root files are preserved.
 Use `archive init-workspace --force ~/repos/my-notes` only when you intentionally want to refresh the root `.gitignore`, `README.md`, `AGENTS.md`, and forwarding `Makefile` templates.
+The generated `AGENTS.md` is a default workspace-local guide for LLMs and agents; customize it for your own runtime if needed.
 
 ## Forwarding Makefile
 
@@ -48,6 +49,34 @@ WORKSPACE := $(CURDIR)
 ```
 
 Update `ARCHIVE_DIR` if your Archive clone lives elsewhere.
+
+## Requirements
+
+Workspace mode depends on a separate Archive tool repo checkout.
+
+You need:
+
+- `make`
+- `podman`
+- a local checkout of the Archive repo
+
+If you only have the workspace repo, clone Archive separately:
+
+```sh
+git clone https://codeberg.org/rch/archive ../archive
+```
+
+Then confirm forwarding works:
+
+```sh
+make help
+```
+
+If your Archive clone lives elsewhere:
+
+```sh
+make ARCHIVE_DIR=/path/to/archive help
+```
 
 ## Daily Usage
 
