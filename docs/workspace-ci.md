@@ -34,8 +34,8 @@ workspace/
 The workspace repo owns canonical content.
 The Archive repo owns tooling and generated output.
 
-In workspace-instance mode, generated output lands under `.instances/<instance>/...`.
-The legacy root `content/` and `site/` paths are still used for standalone mode.
+When you build from one Archive clone against one or more workspace repos, `ARCHIVE_INSTANCE` selects the generated-output namespace inside the Archive repo.
+In workspace mode, generated output lands under `.instances/<instance>/...`.
 
 ## Build Sequence
 
@@ -44,19 +44,19 @@ From the checked-out Archive repo:
 ```sh
 make WORKSPACE=../workspace-repo ARCHIVE_INSTANCE=workspace-repo validate
 make WORKSPACE=../workspace-repo ARCHIVE_INSTANCE=workspace-repo build
-make runtime-build
+make ARCHIVE_INSTANCE=workspace-repo runtime-build
 ```
 
 Important contract:
 
-- `make build` reads canonical content from the workspace repo and writes generated output into the Archive repo, using `.instances/<instance>/...` when `ARCHIVE_INSTANCE` is set for workspace-instance mode
+- `make build` reads canonical content from the workspace repo and writes generated output into the Archive repo, under `.instances/<instance>/...` in workspace mode
 - `make runtime-build` packages the prebuilt `site/` output and does not rebuild canonical content inside the image build
 
 Recommended sequence:
 
 1. `make WORKSPACE=../workspace-repo ARCHIVE_INSTANCE=workspace-repo validate`
 2. `make WORKSPACE=../workspace-repo ARCHIVE_INSTANCE=workspace-repo build`
-3. `make runtime-build`
+3. `make ARCHIVE_INSTANCE=workspace-repo runtime-build`
 4. push the runtime image
 
 If the same Archive checkout is used for multiple workspace builds in one CI environment, give each build a distinct `ARCHIVE_INSTANCE` value.
@@ -115,7 +115,7 @@ jobs:
 
       - name: Package runtime image from prebuilt site
         run: |
-          make -C archive WORKSPACE=../workspace-repo ARCHIVE_INSTANCE=${{ env.ARCHIVE_INSTANCE }} runtime-build
+          make -C archive ARCHIVE_INSTANCE=${{ env.ARCHIVE_INSTANCE }} runtime-build
           podman tag archive-runtime:${{ env.ARCHIVE_INSTANCE }} "$ARCHIVE_IMAGE"
 
       - name: Push image
