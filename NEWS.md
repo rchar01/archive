@@ -6,7 +6,7 @@ This file gives a short, release-oriented view of what changed between versions.
 
 - added `ARCHIVE_INSTANCE`-scoped generated output so one Archive clone can build, preview, and package multiple workspaces concurrently without collisions
 - added generated tag pages plus clickable Context-panel tags so tags are navigable in the published site instead of metadata-only
-- added local-search tag queries like `#proxmox`, which now return the generated tag page plus pages explicitly tagged with that term
+- added local-search tag queries like exact `#proxmox` and prefix `#proxm*`, which return the generated tag page plus pages explicitly tagged with matching terms
 - made workspace bootstrap refreshes safer and easier by keeping `init-workspace` non-destructive by default while supporting explicit root-template refreshes with `FORCE=1` or `archive init-workspace --force`
 - refreshed the top-level README and workspace docs to explain what Archive adds beyond plain VitePress and how instance-aware workspace mode works
 

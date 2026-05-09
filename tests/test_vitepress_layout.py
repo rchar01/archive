@@ -31,18 +31,21 @@ class VitePressLayoutTests(unittest.TestCase):
         self.assertIn("knowledgePanelBacklinks: true", config)
         self.assertIn("knowledgePanelRelated: true", config)
         self.assertIn("const TAG_SEARCH_PREFIX = 'archivetag-'", config)
+        self.assertIn("const TAG_SEARCH_WILDCARD_PREFIX = 'archivetagprefix-'", config)
+        self.assertIn("function normalizeTagSearchValue(value: unknown)", config)
         self.assertIn("function normalizeTagSearchToken(value: unknown)", config)
+        self.assertIn("function prefixTagSearchTokens(value: string): string[]", config)
         self.assertIn("function collectTagSearchTokens(frontmatter: Record<string, unknown> | undefined)", config)
         self.assertIn("function tokenizeSearchText(text: string): string[]", config)
         self.assertIn("const searchTokenizer = (text: string) =>", config)
-        self.assertIn("const searchPrefixOption = (term: string) => !term.startsWith('archivetag-')", config)
-        self.assertIn("const searchFuzzyOption = (term: string) => (term.startsWith('archivetag-') ? false : 0.2)", config)
+        self.assertIn("const searchPrefixOption = (term: string) => !term.startsWith('archivetag-') && !term.startsWith('archivetagprefix-')", config)
+        self.assertIn("const searchFuzzyOption = (term: string) => (term.startsWith('archivetag-') || term.startsWith('archivetagprefix-') ? false : 0.2)", config)
         self.assertIn("async function renderSearchHtml(", config)
         self.assertIn("tokenize: searchTokenizer", config)
         self.assertIn("searchOptions: {", config)
         self.assertIn("prefix: searchPrefixOption", config)
         self.assertIn("fuzzy: searchFuzzyOption", config)
-        self.assertIn("return cleaned ? `archivetag-${cleaned}` : ''", config)
+        self.assertIn("return cleaned ? `${isWildcardQuery ? 'archivetagprefix-' : 'archivetag-'}${cleaned}` : ''", config)
         self.assertIn("const html = await renderSearchHtml(src, env, md)", config)
         self.assertIn("const tagTokens = collectTagSearchTokens(env.frontmatter)", config)
         self.assertIn("return `${html}\\n<div hidden>${tagTokens.join(' ')}</div>`", config)
@@ -64,13 +67,20 @@ class VitePressLayoutTests(unittest.TestCase):
         script = """
 const MiniSearch = require('minisearch')
 const TAG_SEARCH_PREFIX = 'archivetag-'
-const normalizeTagSearchToken = (value) => {
+const TAG_SEARCH_WILDCARD_PREFIX = 'archivetagprefix-'
+const normalizeTagSearchValue = (value) => {
   if (typeof value !== 'string') return ''
-  const cleaned = value.trim().toLowerCase().replace(/[^\\p{L}\\p{N}]+/gu, '-').replace(/^-+|-+$/g, '')
-  return cleaned ? `${TAG_SEARCH_PREFIX}${cleaned}` : ''
+  return value.trim().toLowerCase().replace(/[^\\p{L}\\p{N}]+/gu, '-').replace(/^-+|-+$/g, '')
 }
-const tokenizeSearchText = (text) => (text.match(/#[\\p{L}\\p{N}]+(?:-[\\p{L}\\p{N}]+)*|[\\p{L}\\p{N}]+(?:[-_][\\p{L}\\p{N}]+)*/gu) ?? []).map((term) => term.startsWith('#') ? normalizeTagSearchToken(term.slice(1)) : term)
-const isTagSearchToken = (term) => term.startsWith(TAG_SEARCH_PREFIX)
+const prefixTokens = (value) => Array.from({ length: value.length }, (_, index) => `${TAG_SEARCH_WILDCARD_PREFIX}${value.slice(0, index + 1)}`)
+const tokenizeSearchText = (text) => (text.match(/#[\\p{L}\\p{N}]+(?:-[\\p{L}\\p{N}]+)*\\*?|[\\p{L}\\p{N}]+(?:[-_][\\p{L}\\p{N}]+)*/gu) ?? []).map((term) => {
+  if (!term.startsWith('#')) return term
+  const isWildcardQuery = term.endsWith('*')
+  const cleaned = normalizeTagSearchValue(isWildcardQuery ? term.slice(1, -1) : term.slice(1))
+  if (!cleaned) return ''
+  return `${isWildcardQuery ? TAG_SEARCH_WILDCARD_PREFIX : TAG_SEARCH_PREFIX}${cleaned}`
+}).filter(Boolean)
+const isTagSearchToken = (term) => term.startsWith(TAG_SEARCH_PREFIX) || term.startsWith(TAG_SEARCH_WILDCARD_PREFIX)
 const index = new MiniSearch({
   fields: ['text'],
   storeFields: ['text'],
@@ -82,11 +92,17 @@ const index = new MiniSearch({
   },
 })
 index.add({ id: 'plain', text: 'dns troubleshooting' })
-index.add({ id: 'tagged-dns', text: 'archivetag-dns' })
-index.add({ id: 'tagged-dev', text: 'archivetag-dev' })
-const results = index.search('#dns').map((result) => result.id)
-if (JSON.stringify(results) !== JSON.stringify(['tagged-dns'])) {
-  console.error(JSON.stringify(results))
+index.add({ id: 'tagged-dns', text: ['archivetag-dns', ...prefixTokens('dns')].join(' ') })
+index.add({ id: 'tagged-images', text: ['archivetag-images', ...prefixTokens('images')].join(' ') })
+index.add({ id: 'tagged-image-tools', text: ['archivetag-image-tools', ...prefixTokens('image-tools')].join(' ') })
+const exactResults = index.search('#dns').map((result) => result.id)
+if (JSON.stringify(exactResults) !== JSON.stringify(['tagged-dns'])) {
+  console.error(JSON.stringify(exactResults))
+  process.exit(1)
+}
+const wildcardResults = index.search('#image*').map((result) => result.id)
+if (JSON.stringify(wildcardResults.slice().sort()) !== JSON.stringify(['tagged-image-tools', 'tagged-images'])) {
+  console.error(JSON.stringify(wildcardResults))
   process.exit(1)
 }
 """

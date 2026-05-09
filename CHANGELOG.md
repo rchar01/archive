@@ -13,7 +13,7 @@ and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - instance-aware VitePress loading of generated content roots, nav/sidebar data, and knowledge metadata so each active workspace can render its own isolated site surface from the shared Archive tool repo
 - generated `/tags/<tag>/` pages that list every note or doc carrying that tag
 - clickable tag chips in the Context panel that navigate to the generated tag pages
-- local-search hashtag queries like `#proxmox` that return the generated tag page plus pages explicitly tagged with that term without changing normal full-text search behavior
+- local-search hashtag queries like exact `#proxmox` and prefix `#proxm*` that return the generated tag page plus pages explicitly tagged with matching terms without changing normal full-text search behavior
 
 ### Changed
 

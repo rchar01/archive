@@ -57,6 +57,7 @@ const siteDir = useLegacyGeneratedLayout ? path.join(TOOL_ROOT, 'site') : path.j
 const nav = readGeneratedJson(path.join(generatedDir, 'nav.generated.json'), [{ text: 'Home', link: '/' }])
 const sidebar = readGeneratedJson(path.join(generatedDir, 'sidebar.generated.json'), {})
 const TAG_SEARCH_PREFIX = 'archivetag-'
+const TAG_SEARCH_WILDCARD_PREFIX = 'archivetagprefix-'
 
 function escapeVueProp(value: string): string {
   return value
@@ -67,7 +68,7 @@ function escapeVueProp(value: string): string {
     .replace(/>/g, '&gt;')
 }
 
-function normalizeTagSearchToken(value: unknown): string {
+function normalizeTagSearchValue(value: unknown): string {
   if (typeof value !== 'string') {
     return ''
   }
@@ -76,7 +77,20 @@ function normalizeTagSearchToken(value: unknown): string {
     .toLowerCase()
     .replace(/[^\p{L}\p{N}]+/gu, '-')
     .replace(/^-+|-+$/g, '')
+  return cleaned
+}
+
+function normalizeTagSearchToken(value: unknown): string {
+  const cleaned = normalizeTagSearchValue(value)
   return cleaned ? `${TAG_SEARCH_PREFIX}${cleaned}` : ''
+}
+
+function prefixTagSearchTokens(value: string): string[] {
+  const tokens: string[] = []
+  for (let length = 1; length <= value.length; length += 1) {
+    tokens.push(`${TAG_SEARCH_WILDCARD_PREFIX}${value.slice(0, length)}`)
+  }
+  return tokens
 }
 
 function collectTagSearchTokens(frontmatter: Record<string, unknown> | undefined): string[] {
@@ -91,41 +105,61 @@ function collectTagSearchTokens(frontmatter: Record<string, unknown> | undefined
       continue
     }
     for (const item of rawValue) {
-      const token = normalizeTagSearchToken(item)
-      if (!token || seen.has(token)) {
+      const normalized = normalizeTagSearchValue(item)
+      if (!normalized) {
         continue
       }
-      seen.add(token)
-      tokens.push(token)
+      const tagTokens = [
+        `${TAG_SEARCH_PREFIX}${normalized}`,
+        ...prefixTagSearchTokens(normalized),
+      ]
+      for (const token of tagTokens) {
+        if (seen.has(token)) {
+          continue
+        }
+        seen.add(token)
+        tokens.push(token)
+      }
     }
   }
   return tokens
 }
 
 function tokenizeSearchText(text: string): string[] {
-  return (text.match(/#[\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*|[\p{L}\p{N}]+(?:[-_][\p{L}\p{N}]+)*/gu) ?? []).map((term) =>
-    term.startsWith('#') ? normalizeTagSearchToken(term.slice(1)) : term,
-  )
-}
-
-const searchTokenizer = (text: string) =>
-  (text.match(/#[\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*|[\p{L}\p{N}]+(?:[-_][\p{L}\p{N}]+)*/gu) ?? [])
+  return (text.match(/#[\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*\*?|[\p{L}\p{N}]+(?:[-_][\p{L}\p{N}]+)*/gu) ?? [])
     .map((term) => {
       if (!term.startsWith('#')) {
         return term
       }
+      const isWildcardQuery = term.endsWith('*')
+      const cleaned = normalizeTagSearchValue(isWildcardQuery ? term.slice(1, -1) : term.slice(1))
+      if (!cleaned) {
+        return ''
+      }
+      return `${isWildcardQuery ? TAG_SEARCH_WILDCARD_PREFIX : TAG_SEARCH_PREFIX}${cleaned}`
+    })
+    .filter((term) => term.length > 0)
+}
+
+const searchTokenizer = (text: string) =>
+  (text.match(/#[\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*\*?|[\p{L}\p{N}]+(?:[-_][\p{L}\p{N}]+)*/gu) ?? [])
+    .map((term) => {
+      if (!term.startsWith('#')) {
+        return term
+      }
+      const isWildcardQuery = term.endsWith('*')
       const cleaned = term
-        .slice(1)
+        .slice(1, isWildcardQuery ? -1 : undefined)
         .trim()
         .toLowerCase()
         .replace(/[^\p{L}\p{N}]+/gu, '-')
         .replace(/^-+|-+$/g, '')
-      return cleaned ? `archivetag-${cleaned}` : ''
+      return cleaned ? `${isWildcardQuery ? 'archivetagprefix-' : 'archivetag-'}${cleaned}` : ''
     })
     .filter((term) => term.length > 0)
 
-const searchPrefixOption = (term: string) => !term.startsWith('archivetag-')
-const searchFuzzyOption = (term: string) => (term.startsWith('archivetag-') ? false : 0.2)
+const searchPrefixOption = (term: string) => !term.startsWith('archivetag-') && !term.startsWith('archivetagprefix-')
+const searchFuzzyOption = (term: string) => (term.startsWith('archivetag-') || term.startsWith('archivetagprefix-') ? false : 0.2)
 
 async function renderSearchHtml(src: string, env: object, md: { renderAsync?: (src: string, env: object) => Promise<string>; render: (src: string, env: object) => string }): Promise<string> {
   if (typeof md.renderAsync === 'function') {
