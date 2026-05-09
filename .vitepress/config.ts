@@ -56,6 +56,7 @@ const contentDir = useLegacyGeneratedLayout ? path.join(TOOL_ROOT, 'content') : 
 const siteDir = useLegacyGeneratedLayout ? path.join(TOOL_ROOT, 'site') : path.join(instanceRoot, 'site')
 const nav = readGeneratedJson(path.join(generatedDir, 'nav.generated.json'), [{ text: 'Home', link: '/' }])
 const sidebar = readGeneratedJson(path.join(generatedDir, 'sidebar.generated.json'), {})
+const TAG_SEARCH_PREFIX = 'archivetag-'
 
 function escapeVueProp(value: string): string {
   return value
@@ -64,6 +65,73 @@ function escapeVueProp(value: string): string {
     .replace(/'/g, '&#39;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
+}
+
+function normalizeTagSearchToken(value: unknown): string {
+  if (typeof value !== 'string') {
+    return ''
+  }
+  const cleaned = value
+    .trim()
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, '-')
+    .replace(/^-+|-+$/g, '')
+  return cleaned ? `${TAG_SEARCH_PREFIX}${cleaned}` : ''
+}
+
+function collectTagSearchTokens(frontmatter: Record<string, unknown> | undefined): string[] {
+  if (!frontmatter) {
+    return []
+  }
+  const seen = new Set<string>()
+  const tokens: string[] = []
+  for (const field of ['tags', 'search_tags']) {
+    const rawValue = frontmatter[field]
+    if (!Array.isArray(rawValue)) {
+      continue
+    }
+    for (const item of rawValue) {
+      const token = normalizeTagSearchToken(item)
+      if (!token || seen.has(token)) {
+        continue
+      }
+      seen.add(token)
+      tokens.push(token)
+    }
+  }
+  return tokens
+}
+
+function tokenizeSearchText(text: string): string[] {
+  return (text.match(/#[\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*|[\p{L}\p{N}]+(?:[-_][\p{L}\p{N}]+)*/gu) ?? []).map((term) =>
+    term.startsWith('#') ? normalizeTagSearchToken(term.slice(1)) : term,
+  )
+}
+
+const searchTokenizer = (text: string) =>
+  (text.match(/#[\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*|[\p{L}\p{N}]+(?:[-_][\p{L}\p{N}]+)*/gu) ?? [])
+    .map((term) => {
+      if (!term.startsWith('#')) {
+        return term
+      }
+      const cleaned = term
+        .slice(1)
+        .trim()
+        .toLowerCase()
+        .replace(/[^\p{L}\p{N}]+/gu, '-')
+        .replace(/^-+|-+$/g, '')
+      return cleaned ? `archivetag-${cleaned}` : ''
+    })
+    .filter((term) => term.length > 0)
+
+const searchPrefixOption = (term: string) => !term.startsWith('archivetag-')
+const searchFuzzyOption = (term: string) => (term.startsWith('archivetag-') ? false : 0.2)
+
+async function renderSearchHtml(src: string, env: object, md: { renderAsync?: (src: string, env: object) => Promise<string>; render: (src: string, env: object) => string }): Promise<string> {
+  if (typeof md.renderAsync === 'function') {
+    return md.renderAsync(src, env)
+  }
+  return md.render(src, env)
 }
 
 export default defineConfig({
@@ -106,6 +174,31 @@ export default defineConfig({
     knowledgePanel: true,
     knowledgePanelBacklinks: true,
     knowledgePanelRelated: true,
-    search: { provider: 'local' },
+    search: {
+      provider: 'local',
+      options: {
+        miniSearch: {
+          options: {
+            tokenize: searchTokenizer,
+          },
+          searchOptions: {
+            prefix: searchPrefixOption,
+            fuzzy: searchFuzzyOption,
+            tokenize: searchTokenizer,
+          },
+        },
+        async _render(src, env, md) {
+          const html = await renderSearchHtml(src, env, md)
+          if (env.frontmatter?.search === false) {
+            return ''
+          }
+          const tagTokens = collectTagSearchTokens(env.frontmatter)
+          if (tagTokens.length === 0) {
+            return html
+          }
+          return `${html}\n<div hidden>${tagTokens.join(' ')}</div>`
+        },
+      },
+    },
   },
 })

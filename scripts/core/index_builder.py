@@ -334,7 +334,7 @@ def render_tag_page(tag: str, entries: Iterable[IndexEntry]) -> str:
     )
 
     lines = [
-        dump_frontmatter({"title": f"Tag: {tag}", "pageClass": "archive-index"}).rstrip(),
+        dump_frontmatter({"title": f"Tag: {tag}", "pageClass": "archive-index", "search_tags": [tag]}).rstrip(),
         f"# Tag: {tag}",
         "",
         f'<p class="archive-index__intro">{escape(intro)}</p>',

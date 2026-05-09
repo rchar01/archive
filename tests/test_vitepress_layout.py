@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import subprocess
 import unittest
 from pathlib import Path
 
@@ -29,6 +30,22 @@ class VitePressLayoutTests(unittest.TestCase):
         self.assertIn("knowledgePanel: true", config)
         self.assertIn("knowledgePanelBacklinks: true", config)
         self.assertIn("knowledgePanelRelated: true", config)
+        self.assertIn("const TAG_SEARCH_PREFIX = 'archivetag-'", config)
+        self.assertIn("function normalizeTagSearchToken(value: unknown)", config)
+        self.assertIn("function collectTagSearchTokens(frontmatter: Record<string, unknown> | undefined)", config)
+        self.assertIn("function tokenizeSearchText(text: string): string[]", config)
+        self.assertIn("const searchTokenizer = (text: string) =>", config)
+        self.assertIn("const searchPrefixOption = (term: string) => !term.startsWith('archivetag-')", config)
+        self.assertIn("const searchFuzzyOption = (term: string) => (term.startsWith('archivetag-') ? false : 0.2)", config)
+        self.assertIn("async function renderSearchHtml(", config)
+        self.assertIn("tokenize: searchTokenizer", config)
+        self.assertIn("searchOptions: {", config)
+        self.assertIn("prefix: searchPrefixOption", config)
+        self.assertIn("fuzzy: searchFuzzyOption", config)
+        self.assertIn("return cleaned ? `archivetag-${cleaned}` : ''", config)
+        self.assertIn("const html = await renderSearchHtml(src, env, md)", config)
+        self.assertIn("const tagTokens = collectTagSearchTokens(env.frontmatter)", config)
+        self.assertIn("return `${html}\\n<div hidden>${tagTokens.join(' ')}</div>`", config)
         self.assertIn("doc-after", theme_index)
         self.assertIn("KnowledgePanel", theme_index)
         self.assertIn("MermaidDiagram", theme_index)
@@ -42,6 +59,39 @@ class VitePressLayoutTests(unittest.TestCase):
         self.assertIn("securityLevel: 'strict'", mermaid_component)
         self.assertIn("watch([() => props.code, () => isDark.value]", mermaid_component)
         self.assertIn("import('mermaid')", mermaid_client)
+
+    def test_hashtag_tag_search_stays_separate_from_plain_text_search(self) -> None:
+        script = """
+const MiniSearch = require('minisearch')
+const TAG_SEARCH_PREFIX = 'archivetag-'
+const normalizeTagSearchToken = (value) => {
+  if (typeof value !== 'string') return ''
+  const cleaned = value.trim().toLowerCase().replace(/[^\\p{L}\\p{N}]+/gu, '-').replace(/^-+|-+$/g, '')
+  return cleaned ? `${TAG_SEARCH_PREFIX}${cleaned}` : ''
+}
+const tokenizeSearchText = (text) => (text.match(/#[\\p{L}\\p{N}]+(?:-[\\p{L}\\p{N}]+)*|[\\p{L}\\p{N}]+(?:[-_][\\p{L}\\p{N}]+)*/gu) ?? []).map((term) => term.startsWith('#') ? normalizeTagSearchToken(term.slice(1)) : term)
+const isTagSearchToken = (term) => term.startsWith(TAG_SEARCH_PREFIX)
+const index = new MiniSearch({
+  fields: ['text'],
+  storeFields: ['text'],
+  tokenize: tokenizeSearchText,
+  searchOptions: {
+    tokenize: tokenizeSearchText,
+    prefix: (term) => !isTagSearchToken(term),
+    fuzzy: (term) => (isTagSearchToken(term) ? false : 0.2),
+  },
+})
+index.add({ id: 'plain', text: 'dns troubleshooting' })
+index.add({ id: 'tagged-dns', text: 'archivetag-dns' })
+index.add({ id: 'tagged-dev', text: 'archivetag-dev' })
+const results = index.search('#dns').map((result) => result.id)
+if (JSON.stringify(results) !== JSON.stringify(['tagged-dns'])) {
+  console.error(JSON.stringify(results))
+  process.exit(1)
+}
+"""
+
+        subprocess.run(["node", "-e", script], check=True, cwd=Path(__file__).resolve().parents[1])
 
 
 if __name__ == "__main__":

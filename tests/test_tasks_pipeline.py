@@ -739,8 +739,12 @@ class TaskPipelineTests(unittest.TestCase):
                 '<a class="archive-entry" href="/docs/testing/knowledge-panel-automatic-navigation-title-fallback-evaluation">',
                 docs_index,
             )
+            self.assertIn("search_tags:", dns_tag_page)
+            self.assertIn("- dns", dns_tag_page)
             self.assertIn("# Tag: dns", dns_tag_page)
             self.assertIn('href="/notes/containers/docker-dns-issue"', dns_tag_page)
+            self.assertIn("search_tags:", knowledge_tag_page)
+            self.assertIn("- knowledge", knowledge_tag_page)
             self.assertIn("# Tag: knowledge", knowledge_tag_page)
             self.assertIn('href="/docs/testing/knowledge-panel-guardrail-stress-test"', knowledge_tag_page)
             self.assertIn('href="/docs/testing/knowledge-panel-automatic-navigation-title-fallback-evaluation"', knowledge_tag_page)

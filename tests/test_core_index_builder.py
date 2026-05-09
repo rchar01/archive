@@ -94,6 +94,8 @@ class IndexBuilderTests(unittest.TestCase):
 
         tag_page = pages["tags/dns%20server/index.md"]
         self.assertIn("title: 'Tag: DNS Server'", tag_page)
+        self.assertIn("search_tags:", tag_page)
+        self.assertIn("- DNS Server", tag_page)
         self.assertIn("2 pages tagged `DNS Server` across 2 workflows.", tag_page)
         self.assertIn('href="/notes/general/docker-dns-issue"', tag_page)
         self.assertIn('href="/docs/reference/resolver-guide"', tag_page)
