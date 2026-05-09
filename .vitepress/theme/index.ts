@@ -8,10 +8,12 @@ import BackToTop from './BackToTop.vue'
 import KnowledgePanel from './KnowledgePanel.vue'
 import MermaidDiagram from './MermaidDiagram.vue'
 import OutlineAutoScroll from './OutlineAutoScroll'
+import { patchLocalSearch } from './localSearch'
 
 const theme: Theme = {
   extends: DefaultTheme,
   enhanceApp({ app }) {
+    patchLocalSearch()
     app.component('MermaidDiagram', MermaidDiagram)
   },
   Layout() {
