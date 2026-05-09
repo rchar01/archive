@@ -2,6 +2,13 @@
 
 This file gives a short, release-oriented view of what changed between versions.
 
+## v1.3.0 - 2026-05-09
+
+- added `ARCHIVE_INSTANCE`-scoped generated output so one Archive clone can build, preview, and package multiple workspaces concurrently without collisions
+- added generated tag pages plus clickable Context-panel tags so tags are navigable in the published site instead of metadata-only
+- made workspace bootstrap refreshes safer and easier by keeping `init-workspace` non-destructive by default while supporting explicit root-template refreshes with `FORCE=1` or `archive init-workspace --force`
+- refreshed the top-level README and workspace docs to explain what Archive adds beyond plain VitePress and how instance-aware workspace mode works
+
 ## v1.2.1 - 2026-05-07
 
 - bumped the pinned `PyYAML` dependency from `6.0.2` to the current stable `6.0.3`

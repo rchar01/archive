@@ -5,6 +5,21 @@ All notable changes to `archive` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-05-09
+
+### Added
+
+- `ARCHIVE_INSTANCE`-scoped generated output under `.instances/<instance>/...` so one Archive clone can build, preview, and package multiple workspace repos concurrently without collisions
+- instance-aware VitePress loading of generated content roots, nav/sidebar data, and knowledge metadata so each active workspace can render its own isolated site surface from the shared Archive tool repo
+- generated `/tags/<tag>/` pages that list every note or doc carrying that tag
+- clickable tag chips in the Context panel that navigate to the generated tag pages
+
+### Changed
+
+- `make init-workspace` can now explicitly refresh the root workspace bootstrap templates with `FORCE=1` while remaining non-destructive by default on normal reruns
+- workspace bootstrap docs, workspace CI docs, and the generated workspace template README now explain instance-aware generated output and the one-Archive-clone/many-workspaces operating model more directly
+- the top-level README now includes a concise `What Archive Adds` section so readers can understand the Archive-specific layer beyond plain VitePress earlier in the project description
+
 ## [1.2.1] - 2026-05-07
 
 ### Changed
