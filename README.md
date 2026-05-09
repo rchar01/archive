@@ -7,6 +7,19 @@ Archive supports two usage modes:
 - standalone mode: clone `archive` and keep canonical content in that repo
 - workspace mode: use the `archive` clone as tooling and keep canonical `incoming/` and `sources/` content in a separate repo
 
+## What Archive Adds
+
+Compared with plain VitePress, Archive adds:
+
+- a canonical publishing pipeline: `incoming/ -> sources/ -> content/ -> site/`
+- workflow-aware authoring for `note` and `doc`, with dynamic workflow discovery for future additions
+- generated home, workflow, and tag index pages plus generated top-nav and sidebar data
+- a knowledge panel with generated related links, backlinks, metadata, and tag navigation
+- an intake and review flow for rough imported Markdown before it becomes canonical content
+- workspace mode, where canonical content lives in a separate repo while generated output stays in the Archive tool repo
+- instance-scoped generated output via `ARCHIVE_INSTANCE` so one Archive clone can serve multiple workspaces concurrently
+- source-adjacent asset copying and built-in Mermaid fence rendering in the local theme
+
 ## Quickstart
 
 Archive supports two first-run paths. Start with standalone mode unless your canonical content should live in a separate repo.
