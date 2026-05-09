@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
 from html import escape
 from pathlib import Path
 from typing import Any, Iterable
+from urllib.parse import quote
 
 from scripts.core.content_links import normalize_content_link
 from scripts.core.frontmatter import dump_frontmatter
@@ -15,7 +16,7 @@ from scripts.core.markdown import markdown_files
 from scripts.core.paths import CONTENT_DIR
 from scripts.core.page_catalog import resolve_summary
 from scripts.core.sections import SectionOverride, load_section_overrides, section_display_title
-from scripts.core.validation import require_field, require_iso_date, require_optional_string, require_optional_slug
+from scripts.core.validation import require_field, require_iso_date, require_list, require_optional_string, require_optional_slug
 
 MAX_NAV_TITLE_LENGTH = 60
 
@@ -45,6 +46,7 @@ class IndexEntry:
     nav_title: str = ""
     created: str = ""
     summary: str = ""
+    tags: list[str] = field(default_factory=list)
 
     @property
     def display_title(self) -> str:
@@ -57,6 +59,20 @@ class WorkflowOverview:
     label: str
     entry_count: int
     section_count: int
+
+
+@dataclass(frozen=True)
+class TagOverview:
+    display_tag: str
+    entries: tuple[IndexEntry, ...]
+
+    @property
+    def entry_count(self) -> int:
+        return len(self.entries)
+
+    @property
+    def workflow_count(self) -> int:
+        return len({entry.workflow_root for entry in self.entries})
 
 
 def collect_index_entries(workflows: Mapping[str, object], *, content_dir: Path = CONTENT_DIR) -> list[IndexEntry]:
@@ -81,9 +97,37 @@ def collect_index_entries(workflows: Mapping[str, object], *, content_dir: Path 
                     link=normalize_content_link(output_path.relative_to(content_dir).as_posix()),
                     created=created,
                     summary=resolve_summary(document.frontmatter, document.body),
+                    tags=[str(tag).strip() for tag in require_list(document.frontmatter, "tags") if str(tag).strip()],
                 )
             )
     return entries
+
+
+def tag_route_segment(tag: str) -> str:
+    return quote(tag.strip().lower(), safe="")
+
+
+def build_tag_overviews(entries: Iterable[IndexEntry]) -> dict[str, TagOverview]:
+    grouped_entries: dict[str, list[IndexEntry]] = defaultdict(list)
+    display_tags: dict[str, str] = {}
+
+    for entry in sorted(entries, key=lambda item: (item.title.lower(), item.link)):
+        seen_tags: set[str] = set()
+        for tag in entry.tags:
+            cleaned = str(tag).strip()
+            if not cleaned:
+                continue
+            normalized = cleaned.lower()
+            if normalized in seen_tags:
+                continue
+            seen_tags.add(normalized)
+            display_tags.setdefault(normalized, cleaned)
+            grouped_entries[normalized].append(entry)
+
+    return {
+        normalized: TagOverview(display_tag=display_tags[normalized], entries=tuple(grouped_entries[normalized]))
+        for normalized in sorted(grouped_entries)
+    }
 
 
 def humanize_segment(value: str) -> str:
@@ -280,6 +324,29 @@ def render_workflow_index(
     return "\n".join(lines).rstrip() + "\n"
 
 
+def render_tag_page(tag: str, entries: Iterable[IndexEntry]) -> str:
+    entry_list = list(entries)
+    entry_count = len(entry_list)
+    workflow_count = len({entry.workflow_root for entry in entry_list})
+    intro = (
+        f"{entry_count} {pluralize(entry_count, 'page')} tagged `{tag}`"
+        f" across {workflow_count} {pluralize(workflow_count, 'workflow')}."
+    )
+
+    lines = [
+        dump_frontmatter({"title": f"Tag: {tag}", "pageClass": "archive-index"}).rstrip(),
+        f"# Tag: {tag}",
+        "",
+        f'<p class="archive-index__intro">{escape(intro)}</p>',
+        "",
+        '<div class="archive-index__entries">',
+    ]
+    for entry in entry_list:
+        lines.append(render_entry_row(entry, show_workflow_label=True))
+    lines.append("</div>")
+    return "\n".join(lines).rstrip() + "\n"
+
+
 def build_index_pages(
     entries: Iterable[IndexEntry],
     workflows: Iterable[tuple[str, str]] | None = None,
@@ -321,4 +388,11 @@ def build_index_pages(
             section_overrides=section_overrides_by_root.get(workflow_root),
             default_section=default_sections_by_root.get(workflow_root, "general"),
         )
+
+    for normalized_tag, overview in build_tag_overviews(entry_list).items():
+        pages[f"tags/{tag_route_segment(normalized_tag)}/index.md"] = render_tag_page(
+            overview.display_tag,
+            overview.entries,
+        )
+
     return pages

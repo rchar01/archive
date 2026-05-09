@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import unittest
 
+from scripts.core.index_builder import build_index_pages
 from scripts.core.index_builder import IndexEntry
 from scripts.core.index_builder import WorkflowOverview
 from scripts.core.index_builder import render_home_page
@@ -64,6 +65,38 @@ class IndexBuilderTests(unittest.TestCase):
         self.assertIn('href="/docs/testing/knowledge-panel-guide"', page)
         self.assertNotIn("Docs · 2026-04-27", page)
         self.assertIn("2026-04-27", page)
+
+    def test_build_index_pages_generates_case_insensitive_tag_pages(self) -> None:
+        pages = build_index_pages(
+            [
+                IndexEntry(
+                    workflow_root="notes",
+                    workflow_label="Notes",
+                    section="general",
+                    title="Docker DNS Issue",
+                    link="/notes/general/docker-dns-issue",
+                    created="2026-04-27",
+                    summary="First entry.",
+                    tags=["DNS Server"],
+                ),
+                IndexEntry(
+                    workflow_root="docs",
+                    workflow_label="Docs",
+                    section="reference",
+                    title="Resolver Guide",
+                    link="/docs/reference/resolver-guide",
+                    created="2026-04-28",
+                    summary="Second entry.",
+                    tags=["dns server"],
+                ),
+            ]
+        )
+
+        tag_page = pages["tags/dns%20server/index.md"]
+        self.assertIn("title: 'Tag: DNS Server'", tag_page)
+        self.assertIn("2 pages tagged `DNS Server` across 2 workflows.", tag_page)
+        self.assertIn('href="/notes/general/docker-dns-issue"', tag_page)
+        self.assertIn('href="/docs/reference/resolver-guide"', tag_page)
 
 
 if __name__ == "__main__":

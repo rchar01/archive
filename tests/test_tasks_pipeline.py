@@ -684,6 +684,8 @@ class TaskPipelineTests(unittest.TestCase):
             self.assertTrue((root / "content" / "index.md").exists())
             self.assertTrue((root / "content" / "notes" / "index.md").exists())
             self.assertTrue((root / "content" / "docs" / "index.md").exists())
+            self.assertTrue((root / "content" / "tags" / "dns" / "index.md").exists())
+            self.assertTrue((root / "content" / "tags" / "knowledge" / "index.md").exists())
             self.assertTrue((generated_vitepress_dir / "sidebar.generated.ts").exists())
             self.assertTrue((generated_vitepress_dir / "nav.generated.ts").exists())
             self.assertTrue((knowledge_dir / "pages.generated.json").exists())
@@ -692,6 +694,8 @@ class TaskPipelineTests(unittest.TestCase):
 
             home_page = (root / "content" / "index.md").read_text()
             docs_index = (root / "content" / "docs" / "index.md").read_text()
+            dns_tag_page = (root / "content" / "tags" / "dns" / "index.md").read_text()
+            knowledge_tag_page = (root / "content" / "tags" / "knowledge" / "index.md").read_text()
             generated_doc = (root / "content" / "docs" / "testing" / "knowledge-panel-guardrail-stress-test.md").read_text()
             nav = (generated_vitepress_dir / "nav.generated.ts").read_text()
             sidebar = (generated_vitepress_dir / "sidebar.generated.ts").read_text()
@@ -735,6 +739,11 @@ class TaskPipelineTests(unittest.TestCase):
                 '<a class="archive-entry" href="/docs/testing/knowledge-panel-automatic-navigation-title-fallback-evaluation">',
                 docs_index,
             )
+            self.assertIn("# Tag: dns", dns_tag_page)
+            self.assertIn('href="/notes/containers/docker-dns-issue"', dns_tag_page)
+            self.assertIn("# Tag: knowledge", knowledge_tag_page)
+            self.assertIn('href="/docs/testing/knowledge-panel-guardrail-stress-test"', knowledge_tag_page)
+            self.assertIn('href="/docs/testing/knowledge-panel-automatic-navigation-title-fallback-evaluation"', knowledge_tag_page)
             self.assertNotIn("Extremely Long Titles", docs_index)
             self.assertIn('"text": "Notes"', nav)
             self.assertIn('"text": "Docs"', nav)

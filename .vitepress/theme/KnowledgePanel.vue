@@ -63,6 +63,10 @@ function normalizePath(path: string): string {
   return prefixed.endsWith('/') ? prefixed.slice(0, -1) : prefixed
 }
 
+function tagLink(tag: string): string {
+  return `/tags/${encodeURIComponent(tag.trim().toLowerCase())}/`
+}
+
 function hasBooleanOverride(value: unknown): value is boolean {
   return typeof value === 'boolean'
 }
@@ -235,7 +239,7 @@ const hiddenBacklinksCount = computed(() => backlinks.value.length - visibleBack
 
       <div v-if="hasMetadata" class="knowledge-panel__meta">
         <div v-if="metadataTags.length > 0" class="knowledge-panel__tags">
-          <span v-for="tag in visibleMetadataTags" :key="tag" class="knowledge-panel__tag" :title="tag">{{ tag }}</span>
+          <a v-for="tag in visibleMetadataTags" :key="tag" class="knowledge-panel__tag" :href="tagLink(tag)" :title="`Browse tag: ${tag}`">{{ tag }}</a>
           <span
             v-if="hiddenMetadataTagCount > 0"
             class="knowledge-panel__tag knowledge-panel__tag--overflow"
@@ -399,6 +403,16 @@ const hiddenBacklinksCount = computed(() => backlinks.value.length - visibleBack
 .knowledge-panel__count {
   color: var(--vp-c-text-2);
   background: var(--vp-c-default-soft);
+}
+
+.knowledge-panel__tag {
+  text-decoration: none;
+}
+
+.knowledge-panel__tag:hover,
+.knowledge-panel__tag:focus-visible {
+  color: var(--vp-c-brand-1);
+  background: color-mix(in srgb, var(--vp-c-brand-1) 12%, transparent);
 }
 
 .knowledge-panel__tag,

@@ -36,6 +36,8 @@ class VitePressLayoutTests(unittest.TestCase):
         self.assertIn("@archive-generated/knowledge/pages.generated.json", knowledge_panel)
         self.assertIn("@archive-generated/knowledge/linkgraph.generated.json", knowledge_panel)
         self.assertIn("@archive-generated/knowledge/related.generated.json", knowledge_panel)
+        self.assertIn("function tagLink(tag: string)", knowledge_panel)
+        self.assertIn(':href="tagLink(tag)"', knowledge_panel)
         self.assertIn("loadMermaid", mermaid_component)
         self.assertIn("securityLevel: 'strict'", mermaid_component)
         self.assertIn("watch([() => props.code, () => isDark.value]", mermaid_component)

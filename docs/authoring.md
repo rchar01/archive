@@ -145,7 +145,7 @@ Common author-controlled fields:
 - `slug`: optional stable route segment; lowercase letters, numbers, and hyphens only
 - `nav_title`: optional compact label for sidebar and generated index pages
 - `summary`: optional short description reused in generated indexes and the knowledge panel
-- `tags`: optional list of tags
+- `tags`: optional list of tags; generated pages render them in the Context panel as links to generated `/tags/...` pages
 - `related_manual`: optional curated related routes such as `/docs/...` or `/notes/...`
 - `hide_knowledge_panel`: optional boolean
 - `hide_backlinks`: optional boolean
