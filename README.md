@@ -14,7 +14,7 @@ Compared with plain VitePress, Archive adds:
 - a canonical publishing pipeline: `incoming/ -> sources/ -> content/ -> site/`
 - workflow-aware authoring for `note` and `doc`, with dynamic workflow discovery for future additions
 - generated home, workflow, and tag index pages plus generated top-nav and sidebar data
-- a knowledge panel with generated related links, backlinks, metadata, tag navigation, and local tag-search support such as exact `#tag` and prefix `#tag*`
+- a knowledge panel with generated related links, backlinks, metadata, tag navigation, and local tag-search support such as exact `#tag`, prefix `#tag*`, and tag-qualified text queries like `#tag text`
 - an intake and review flow for rough imported Markdown before it becomes canonical content
 - workspace mode, where canonical content lives in a separate repo while generated output stays in the Archive tool repo
 - instance-scoped generated output via `ARCHIVE_INSTANCE` so one Archive clone can serve multiple workspaces concurrently
@@ -247,6 +247,18 @@ In workspace mode, those generated files still land in the Archive tool repo, no
 - workflow defaults live in `scripts/workflows/*/workflow.yml`
 - per-page frontmatter may use `hide_knowledge_panel`, `hide_backlinks`, and `hide_related`
 - precedence is per-page override, then workflow default, then global theme config
+
+## Search
+
+Archive keeps normal VitePress local search behavior for plain text queries while adding tag-aware queries for generated metadata.
+
+- `network`: normal full-text search; results keep VitePress section anchors such as `#expected-network-configuration`
+- `#proxmox`: exact tag search for pages tagged `proxmox`
+- `#proxmo*`: controlled tag-prefix search for tags starting with `proxmo`
+- `#proxmox network`: tag-qualified text search; results must match the tag and the text term
+- `#proxmo* network`: prefix-tag-qualified text search; results must match the tag prefix and the text term
+
+Hashtag searches return page-level URLs so metadata-only matches do not jump to an unrelated final heading. Plain text searches still use the default section-level VitePress anchors.
 
 ## Source Frontmatter
 

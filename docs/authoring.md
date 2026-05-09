@@ -145,7 +145,7 @@ Common author-controlled fields:
 - `slug`: optional stable route segment; lowercase letters, numbers, and hyphens only
 - `nav_title`: optional compact label for sidebar and generated index pages
 - `summary`: optional short description reused in generated indexes and the knowledge panel
-- `tags`: optional list of tags; generated pages render them in the Context panel as links to generated `/tags/...` pages, and local search can target them directly with queries like exact `#proxmox` or prefix `#proxm*`
+- `tags`: optional list of tags; generated pages render them in the Context panel as links to generated `/tags/...` pages, and local search can target them directly with queries like exact `#proxmox`, prefix `#proxm*`, or tag-qualified text such as `#proxmox network`
 - `related_manual`: optional curated related routes such as `/docs/...` or `/notes/...`
 - `hide_knowledge_panel`: optional boolean
 - `hide_backlinks`: optional boolean
@@ -158,6 +158,18 @@ Route and navigation behavior:
 - sidebar and generated index labels use `nav_title` when present
 - page bodies continue to use the full `title`
 - keep canonical `section` paths lowercase and stable; use workflow-local `_sections.yaml` overrides for display casing or sidebar collapse behavior
+
+## Search Behavior
+
+Archive extends VitePress local search with tag-aware queries without changing normal plain text search.
+
+- `network`: normal full-text search with VitePress section anchors
+- `#proxmox`: exact tag search for pages tagged `proxmox`
+- `#proxmo*`: tag-prefix search for pages with tags starting with `proxmo`
+- `#proxmox network`: page-level results that match both the `proxmox` tag and `network`
+- `#proxmo* network`: page-level results that match the tag prefix and `network`
+
+Hashtag searches intentionally return page URLs instead of section anchors because the match comes from page metadata. Plain text searches still return the default section-level anchors when VitePress finds a matching section.
 
 ## Section Display Overrides
 
