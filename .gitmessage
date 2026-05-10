@@ -1,5 +1,10 @@
 
 
+# ==================================================
+# git-tools commit template
+# Installed by git-tools; safe to replace.
+# ==================================================
+#
 # <type>(<scope>)!: <subject>
 #
 # <body>
@@ -10,7 +15,8 @@
 # SUBJECT
 # - Imperative mood
 # - Use recommended verbs (see list below)
-# - Max 50 characters
+# - Full header/title max 68 characters
+# - Subject text max 50 characters
 # - Capitalize first letter
 # - No trailing period
 #
@@ -52,4 +58,10 @@
 #
 # --------------------------------------------------
 # One commit = one logical change
+#
+#
+# ==================================================
+# End git-tools template
+# Git status appears below.
+# ==================================================
 #
