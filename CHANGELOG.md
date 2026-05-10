@@ -14,6 +14,7 @@ and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - generated `/tags/<tag>/` pages that list every note or doc carrying that tag
 - clickable tag chips in the Context panel that navigate to the generated tag pages
 - local-search hashtag queries like exact `#proxmox`, prefix `#proxm*`, and tag-qualified text queries like `#proxmox network` that return page-level results for generated tag pages and explicitly tagged pages without changing normal full-text section search behavior
+- local-search result-term highlighting on destination pages after opening a search result, including matches inside code blocks and code language labels shown in detailed search excerpts
 
 ### Changed
 
