@@ -8,8 +8,8 @@ const PENDING_HIGHLIGHT_KEY = 'archive:pending-search-highlight'
 const PENDING_HIGHLIGHT_TTL_MS = 10_000
 const HIGHLIGHT_CLASS = 'archive-search-highlight'
 const HIGHLIGHT_SELECTOR = `mark.${HIGHLIGHT_CLASS}`
-// Keep code examples untouched; VitePress/Shiki code blocks contain nested
-// token spans, copy controls, line markers, and other interactive wrappers.
+// Keep interactive controls and site chrome untouched while allowing matches in
+// the same document content shown by VitePress detailed search excerpts.
 const SKIP_SELECTOR = [
   'script',
   'style',
@@ -18,12 +18,6 @@ const SKIP_SELECTOR = [
   'option',
   'input',
   'button',
-  'pre',
-  'code',
-  'div[class*="language-"]',
-  '.vp-code',
-  '.vp-code-group',
-  '.lang',
   '.copy',
   'svg',
   'canvas',
