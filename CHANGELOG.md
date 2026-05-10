@@ -21,6 +21,7 @@ and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `make init-workspace` can now explicitly refresh the root workspace bootstrap templates with `FORCE=1` while remaining non-destructive by default on normal reruns
 - workspace bootstrap docs, workspace CI docs, and the generated workspace template README now explain instance-aware generated output and the one-Archive-clone/many-workspaces operating model more directly
 - the top-level README now includes a concise `What Archive Adds` section so readers can understand the Archive-specific layer beyond plain VitePress earlier in the project description
+- upgraded the VitePress site build from `1.6.4` to pinned `2.0.0-alpha.17`, including the Vite 7, Shiki 3, MiniSearch 7, and DocSearch 4 dependency surface
 
 ## [1.2.1] - 2026-05-07
 
