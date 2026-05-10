@@ -2,9 +2,13 @@
 
 This file gives a short, release-oriented view of what changed between versions.
 
+## v1.5.0 - 2026-05-10
+
+- added Archive logo and favicon assets with light and dark variants, using tool-owned static assets under `.vitepress/public/brand/`
+- added Phosphor Icons attribution and a reusable `512x512` forge avatar asset
+
 ## v1.4.0 - 2026-05-10
 
-- added Archive logo and favicon assets with light and dark variants, using tool-owned static assets under `.vitepress/public/`
 - upgraded the site build to pinned VitePress `2.0.0-alpha.17`, bringing in the Vite 7, Shiki 3, MiniSearch 7, and DocSearch 4 dependency surface
 - refreshed the npm lockfile for the VitePress 2 alpha dependency tree and cleared the transitive `uuid` audit finding through `mermaid`
 
