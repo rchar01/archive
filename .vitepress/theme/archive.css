@@ -149,6 +149,14 @@
   color: var(--vp-c-brand-1);
 }
 
+mark.archive-search-highlight {
+  border-radius: 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  background-color: var(--vp-local-search-highlight-bg, var(--vp-c-brand-soft));
+  color: var(--vp-local-search-highlight-text, var(--vp-c-brand-1));
+}
+
 @media (max-width: 640px) {
   .archive-home .VPHero {
     padding-bottom: 24px;

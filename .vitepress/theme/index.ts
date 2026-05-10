@@ -8,6 +8,7 @@ import BackToTop from './BackToTop.vue'
 import KnowledgePanel from './KnowledgePanel.vue'
 import MermaidDiagram from './MermaidDiagram.vue'
 import OutlineAutoScroll from './OutlineAutoScroll'
+import SearchHighlight from './SearchHighlight.vue'
 import { patchLocalSearch } from './localSearch'
 
 const theme: Theme = {
@@ -20,7 +21,7 @@ const theme: Theme = {
     return h(DefaultTheme.Layout, null, {
       'aside-outline-after': () => h(OutlineAutoScroll),
       'doc-after': () => h(KnowledgePanel),
-      'layout-bottom': () => h(BackToTop),
+      'layout-bottom': () => [h(BackToTop), h(SearchHighlight)],
     })
   },
 }

@@ -1,6 +1,7 @@
 import MiniSearch, { type SearchOptions, type SearchResult } from 'minisearch'
 
 const TAG_QUERY_RE = /#[\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*\*?/u
+const LAST_QUERY_KEY = 'archive:last-local-search-query'
 
 type ResultFilter = NonNullable<SearchOptions['filter']>
 type SearchFunction = MiniSearch['search']
@@ -25,6 +26,11 @@ export function patchLocalSearch(): void {
   prototype.search = function patchedSearch(query, searchOptions = {}) {
     if (typeof query !== 'string') {
       return search.call(this, query, searchOptions)
+    }
+
+    if (typeof window !== 'undefined') {
+      ;(window as Window & { __archiveLastLocalSearchQuery?: string }).__archiveLastLocalSearchQuery = query
+      window.sessionStorage.setItem(LAST_QUERY_KEY, query)
     }
 
     const filter = searchOptions.filter
