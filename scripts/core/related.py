@@ -32,22 +32,30 @@ def score_candidate(
 ) -> int:
     page_tags = set(str(tag).strip().lower() for tag in page.get("tags", []) if str(tag).strip())
     candidate_tags = set(str(tag).strip().lower() for tag in candidate.get("tags", []) if str(tag).strip())
-    score = len(page_tags & candidate_tags) * 4
+    shared_tags = len(page_tags & candidate_tags)
+
+    page_outbound = set(linkgraph.get(page_link, {}).get("outbound", []))
+    candidate_outbound = set(linkgraph.get(candidate_link, {}).get("outbound", []))
+    shared_outbound = len(page_outbound & candidate_outbound)
+
+    page_backlinks = set(linkgraph.get(page_link, {}).get("backlinks", []))
+    candidate_backlinks = set(linkgraph.get(candidate_link, {}).get("backlinks", []))
+    shared_backlinks = len(page_backlinks & candidate_backlinks)
+
+    directly_linked = candidate_link in page_outbound or page_link in candidate_outbound
+    if shared_tags == 0 and shared_outbound == 0 and shared_backlinks == 0 and not directly_linked:
+        return 0
+
+    score = shared_tags * 4
 
     if str(page.get("kind") or "") == str(candidate.get("kind") or ""):
         score += 2
 
     score += section_score(str(page.get("section") or ""), str(candidate.get("section") or ""))
+    score += shared_outbound * 2
+    score += shared_backlinks * 2
 
-    page_outbound = set(linkgraph.get(page_link, {}).get("outbound", []))
-    candidate_outbound = set(linkgraph.get(candidate_link, {}).get("outbound", []))
-    score += len(page_outbound & candidate_outbound) * 2
-
-    page_backlinks = set(linkgraph.get(page_link, {}).get("backlinks", []))
-    candidate_backlinks = set(linkgraph.get(candidate_link, {}).get("backlinks", []))
-    score += len(page_backlinks & candidate_backlinks) * 2
-
-    if candidate_link in page_outbound or page_link in candidate_outbound:
+    if directly_linked:
         score += 3
 
     score += len(title_tokens(str(page.get("title") or "")) & title_tokens(str(candidate.get("title") or "")))

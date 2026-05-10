@@ -6,6 +6,7 @@ This file gives a short, release-oriented view of what changed between versions.
 
 - added Archive logo and favicon assets with light and dark variants, using tool-owned static assets under `.vitepress/public/brand/`
 - added Phosphor Icons attribution and a reusable `512x512` forge avatar asset
+- tightened auto-related suggestions so unrelated pages no longer appear related solely because they share a section like `dev`
 
 ## v1.4.0 - 2026-05-10
 

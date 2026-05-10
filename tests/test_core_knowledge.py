@@ -6,6 +6,87 @@ from scripts.core.related import build_related_index
 
 
 class KnowledgeCoreTests(unittest.TestCase):
+    def test_build_related_index_ignores_same_section_without_relationship_signal(self) -> None:
+        pages_by_link = {
+            "/notes/dev/emacs": {
+                "title": "Emacs Setup",
+                "kind": "note",
+                "section": "dev",
+                "tags": [],
+                "related_manual": [],
+            },
+            "/notes/dev/icons": {
+                "title": "Icon Assets",
+                "kind": "note",
+                "section": "dev",
+                "tags": [],
+                "related_manual": [],
+            },
+        }
+        linkgraph = {
+            "/notes/dev/emacs": {"outbound": [], "backlinks": []},
+            "/notes/dev/icons": {"outbound": [], "backlinks": []},
+        }
+
+        related_index = build_related_index(pages_by_link, linkgraph)
+
+        self.assertEqual(related_index["/notes/dev/emacs"]["related"], [])
+        self.assertEqual(related_index["/notes/dev/icons"]["related"], [])
+
+    def test_build_related_index_keeps_shared_tag_relationship_signal(self) -> None:
+        pages_by_link = {
+            "/notes/dev/emacs": {
+                "title": "Emacs Setup",
+                "kind": "note",
+                "section": "dev",
+                "tags": ["editor"],
+                "related_manual": [],
+            },
+            "/notes/dev/vim": {
+                "title": "Vim Setup",
+                "kind": "note",
+                "section": "dev",
+                "tags": ["editor"],
+                "related_manual": [],
+            },
+        }
+        linkgraph = {
+            "/notes/dev/emacs": {"outbound": [], "backlinks": []},
+            "/notes/dev/vim": {"outbound": [], "backlinks": []},
+        }
+
+        related_index = build_related_index(pages_by_link, linkgraph)
+
+        self.assertEqual(related_index["/notes/dev/emacs"]["related"], ["/notes/dev/vim"])
+        self.assertEqual(related_index["/notes/dev/vim"]["related"], ["/notes/dev/emacs"])
+
+    def test_build_related_index_keeps_direct_link_relationship_signal(self) -> None:
+        pages_by_link = {
+            "/notes/dev/emacs": {
+                "title": "Emacs Setup",
+                "kind": "note",
+                "section": "dev",
+                "tags": [],
+                "related_manual": [],
+            },
+            "/notes/dev/lisp": {
+                "title": "Lisp Notes",
+                "kind": "note",
+                "section": "dev",
+                "tags": [],
+                "related_manual": [],
+            },
+        }
+        linkgraph = {
+            "/notes/dev/emacs": {"outbound": ["/notes/dev/lisp"], "backlinks": []},
+            "/notes/dev/lisp": {"outbound": [], "backlinks": ["/notes/dev/emacs"]},
+        }
+
+        related_index = build_related_index(pages_by_link, linkgraph)
+
+        self.assertEqual(related_index["/notes/dev/emacs"]["related"], ["/notes/dev/lisp"])
+        self.assertEqual(related_index["/notes/dev/lisp"]["related"], ["/notes/dev/emacs"])
+
     def test_build_related_index_dedupes_manual_links_from_auto_results(self) -> None:
         pages_by_link = {
             "/notes/testing/alpha-note": {

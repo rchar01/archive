@@ -15,6 +15,7 @@ and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - moved VitePress public assets to the tool-owned `.vitepress/public/` directory instead of the generated `content/public/` path
+- tightened auto-related suggestions so same workflow kind or section only rank pages that already share tags or link relationships, instead of making unrelated pages in the same section appear related
 
 ## [1.4.0] - 2026-05-10
 
