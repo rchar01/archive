@@ -160,7 +160,7 @@ For a workspace repo CI and Kubernetes-oriented packaging flow, see `docs/worksp
 
 - `scripts/`
 - `Makefile`
-- `.vitepress/`
+- `.vitepress/`, including static site assets under `.vitepress/public/`
 - standalone generated `content/`, `site/`, and `build/`
 - instance-scoped generated output under `.instances/<instance>/...` in workspace mode or when `ARCHIVE_INSTANCE` is set explicitly
 - generated nav/sidebar data and generated knowledge metadata
@@ -198,7 +198,8 @@ Rules:
 - `site/`: standalone generated static site output
 - `.instances/`: instance-scoped generated content, site, build, and generated data for concurrent workspace runs
 - `docs/`: human-facing documentation and reference guides
-- `.vitepress/`: repo-root VitePress config, local theme, and standalone generated metadata
+- `.vitepress/`: repo-root VitePress config, local theme, tool-owned public assets, and standalone generated metadata
+- `.vitepress/public/brand/`: site logo, favicon, and reusable forge avatar assets
 - `scripts/core/`: reusable platform primitives
 - `scripts/workflows/`: workflow-local note/doc behavior
 - `scripts/tasks/`: thin executable orchestration
@@ -222,6 +223,7 @@ Start with:
 - `docs/doc.md`: doc-specific structure and rules
 - `docs/workspace.md`: workspace repo bootstrap flow and wrapper `Makefile` approach
 - `docs/workspace-ci.md`: workspace CI checkout, build, packaging, and deployment pattern
+- `THIRD_PARTY_NOTICES.md`: attribution and license notices for bundled third-party assets
 
 ## Generated UI
 

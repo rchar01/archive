@@ -263,10 +263,13 @@ export default defineConfig({
   srcDir: toConfigPath(contentDir),
   outDir: toConfigPath(siteDir),
   head: [
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/vitepress-logo-mini.svg' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/brand/favicon-light.svg', media: '(prefers-color-scheme: light)' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/brand/favicon-dark.svg', media: '(prefers-color-scheme: dark)' }],
+    ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/brand/favicon-32x32.png' }],
+    ['link', { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/brand/favicon-16x16.png' }],
   ],
   vite: {
-    publicDir: path.join(TOOL_ROOT, 'content', 'public'),
+    publicDir: path.join(CONFIG_DIR, 'public'),
     resolve: {
       alias: {
         '@archive-generated': generatedDir,
@@ -290,6 +293,11 @@ export default defineConfig({
   },
   cleanUrls: true,
   themeConfig: {
+    logo: {
+      light: '/brand/archive-logo-light.svg',
+      dark: '/brand/archive-logo-dark.svg',
+      alt: 'Archive',
+    },
     nav,
     sidebar,
     outline: { level: [2, 3] },

@@ -7,8 +7,13 @@ and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.4.0] - 2026-05-10
 
+### Added
+
+- added Archive logo and favicon assets with light and dark variants, plus Phosphor Icons attribution
+
 ### Changed
 
+- moved VitePress public assets to the tool-owned `.vitepress/public/` directory instead of the generated `content/public/` path
 - upgraded the VitePress site build from `1.6.4` to pinned `2.0.0-alpha.17`, including the Vite 7, Shiki 3, MiniSearch 7, and DocSearch 4 dependency surface
 - refreshed the npm lockfile for the VitePress 2 alpha dependency tree and resolved the transitive `uuid` audit finding through `mermaid`
 
