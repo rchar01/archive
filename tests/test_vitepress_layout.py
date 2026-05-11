@@ -64,6 +64,8 @@ class VitePressLayoutTests(unittest.TestCase):
         self.assertIn("__archiveLastLocalSearchQuery = query", local_search)
         self.assertIn("combineWith: 'AND'", local_search)
         self.assertIn("isPageLevelResult", local_search)
+        self.assertIn("isGeneratedIndexHashResult", local_search)
+        self.assertIn("isContentSectionResult", local_search)
         self.assertIn("doc-after", theme_index)
         self.assertIn("KnowledgePanel", theme_index)
         self.assertIn("MermaidDiagram", theme_index)
@@ -72,13 +74,10 @@ class VitePressLayoutTests(unittest.TestCase):
         self.assertIn("const SEARCH_FILTER_KEY = 'vitepress:local-search-filter'", search_highlight)
         self.assertIn("const LAST_QUERY_KEY = 'archive:last-local-search-query'", search_highlight)
         self.assertIn("const PENDING_HIGHLIGHT_KEY = 'archive:pending-search-highlight'", search_highlight)
-        self.assertIn("Keep code examples untouched", search_highlight)
-        self.assertIn("'pre',", search_highlight)
-        self.assertIn("'code',", search_highlight)
-        self.assertIn('div[class*="language-"]', search_highlight)
-        self.assertIn("'.vp-code-group',", search_highlight)
-        self.assertIn("'.lang',", search_highlight)
+        self.assertIn("Keep interactive controls and site chrome untouched", search_highlight)
         self.assertIn("'.copy',", search_highlight)
+        self.assertIn("'svg',", search_highlight)
+        self.assertIn("'canvas',", search_highlight)
         self.assertIn("let activeHighlight: PendingHighlight | null = null", search_highlight)
         self.assertIn("let highlightedPath: string | null = null", search_highlight)
         self.assertIn("onContentUpdated(scheduleHighlightRetries)", search_highlight)
@@ -146,13 +145,19 @@ const index = new MiniSearch({
   },
 })
 const isPageLevelResult = (result) => !result.id.includes('#')
+const isGeneratedIndexHashResult = (result) => /^\/#/u.test(result.id) || /^\/[^/#?]+\/#/u.test(result.id) || /^\/tags\/[^/#?]+\/#/u.test(result.id)
+const isContentSectionResult = (result) => !isPageLevelResult(result) && !isGeneratedIndexHashResult(result)
 const search = (query) => {
   if (TAG_QUERY_RE.test(query)) {
     return index.search(query, { combineWith: 'AND', filter: isPageLevelResult })
   }
-  return index.search(query, { filter: (result) => !isPageLevelResult(result) })
+  return index.search(query, { filter: isContentSectionResult })
 }
 index.add({ id: 'plain#troubleshooting', text: 'dns troubleshooting' })
+index.add({ id: '/#recently-added', text: 'image storage' })
+index.add({ id: '/notes/#dev', text: 'image storage' })
+index.add({ id: '/tags/images/#tag-images', text: 'image storage' })
+index.add({ id: '/tags/images/', text: ['image storage', 'archivetag-images', ...prefixTokens('images')].join(' ') })
 index.add({ id: 'tagged-dns', text: ['dns troubleshooting', 'archivetag-dns', ...prefixTokens('dns')].join(' ') })
 index.add({ id: 'tagged-images', text: ['image storage', 'archivetag-images', ...prefixTokens('images')].join(' ') })
 index.add({ id: 'tagged-images#storage', text: 'image storage' })
@@ -165,12 +170,12 @@ if (JSON.stringify(exactResults) !== JSON.stringify(['tagged-dns', 'tagged-image
   process.exit(1)
 }
 const wildcardResults = search('#image*').map((result) => result.id)
-if (JSON.stringify(wildcardResults.slice().sort()) !== JSON.stringify(['tagged-image-tools', 'tagged-image-tools-dns', 'tagged-images'])) {
+if (JSON.stringify(wildcardResults.slice().sort()) !== JSON.stringify(['/tags/images/', 'tagged-image-tools', 'tagged-image-tools-dns', 'tagged-images'])) {
   console.error(JSON.stringify(wildcardResults))
   process.exit(1)
 }
 const qualifiedResults = search('#image* storage').map((result) => result.id)
-if (JSON.stringify(qualifiedResults) !== JSON.stringify(['tagged-images'])) {
+if (JSON.stringify(qualifiedResults.slice().sort()) !== JSON.stringify(['/tags/images/', 'tagged-images'])) {
   console.error(JSON.stringify(qualifiedResults))
   process.exit(1)
 }
@@ -182,6 +187,15 @@ if (JSON.stringify(multiTagResults) !== JSON.stringify(['tagged-image-tools-dns'
 const plainResults = search('image').map((result) => result.id)
 if (plainResults.includes('tagged-images') || plainResults.includes('tagged-image-tools')) {
   console.error(JSON.stringify(plainResults))
+  process.exit(1)
+}
+if (plainResults.includes('/#recently-added') || plainResults.includes('/notes/#dev') || plainResults.includes('/tags/images/#tag-images')) {
+  console.error(JSON.stringify(plainResults))
+  process.exit(1)
+}
+const tagPageResults = search('#images').map((result) => result.id)
+if (!tagPageResults.includes('/tags/images/')) {
+  console.error(JSON.stringify(tagPageResults))
   process.exit(1)
 }
 """

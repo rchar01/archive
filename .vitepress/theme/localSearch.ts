@@ -2,6 +2,9 @@ import MiniSearch, { type SearchOptions, type SearchResult } from 'minisearch'
 
 const TAG_QUERY_RE = /#[\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*\*?/u
 const LAST_QUERY_KEY = 'archive:last-local-search-query'
+const HOME_INDEX_HASH_RE = /^\/#/u
+const WORKFLOW_INDEX_HASH_RE = /^\/[^/#?]+\/#/u
+const TAG_INDEX_HASH_RE = /^\/tags\/[^/#?]+\/#/u
 
 type ResultFilter = NonNullable<SearchOptions['filter']>
 type SearchFunction = MiniSearch['search']
@@ -10,6 +13,17 @@ function isPageLevelResult(result: SearchResult): boolean {
   // VitePress 1.6.x stores section hits as `/page#heading` and page hits as
   // `/page`; the synthetic tag records intentionally use the page form.
   return typeof result.id === 'string' && !result.id.includes('#')
+}
+
+function isGeneratedIndexHashResult(result: SearchResult): boolean {
+  if (typeof result.id !== 'string') {
+    return false
+  }
+  return HOME_INDEX_HASH_RE.test(result.id) || WORKFLOW_INDEX_HASH_RE.test(result.id) || TAG_INDEX_HASH_RE.test(result.id)
+}
+
+function isContentSectionResult(result: SearchResult): boolean {
+  return !isPageLevelResult(result) && !isGeneratedIndexHashResult(result)
 }
 
 function combineFilters(...filters: ResultFilter[]): ResultFilter {
@@ -45,8 +59,8 @@ export function patchLocalSearch(): void {
     return search.call(this, query, {
       ...searchOptions,
       filter: filter
-        ? combineFilters(filter, (result) => !isPageLevelResult(result))
-        : (result) => !isPageLevelResult(result),
+        ? combineFilters(filter, isContentSectionResult)
+        : isContentSectionResult,
     })
   } as SearchFunction
   prototype.__archiveLocalSearchPatched = true
