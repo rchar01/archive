@@ -5,6 +5,20 @@ All notable changes to `archive` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-05-13
+
+### Added
+
+- added `archive init-workspace --no-makefile` and `NO_MAKEFILE=1 make init-workspace` for CLI-only workspace bootstrap
+
+### Changed
+
+- made the installed `archive` command a Bash dispatcher that routes validation, build, dev-server, and runtime commands directly to Archive scripts without requiring workspace repos to use a forwarding `Makefile`
+- made the installed `archive` command the preferred workspace interface in README, workspace docs, workspace templates, and installable skill guidance
+- simplified the root `README.md` into a quick start and repository overview, moving detailed authoring behavior to the dedicated docs
+- rewrote `docs/README.md` as a concise documentation index and refreshed workspace CI examples to use the dotted `v.x.y.z` tag style
+- clarified generated content root wording for standalone and workspace-instance output in authoring, note, and doc workflow docs
+
 ## [1.5.0] - 2026-05-10
 
 ### Added
@@ -15,8 +29,6 @@ and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - moved VitePress public assets to the tool-owned `.vitepress/public/` directory instead of the generated `content/public/` path
-- made the installed `archive` command a Bash dispatcher that routes validation, build, dev-server, and runtime commands directly to Archive scripts without requiring workspace repos to use a forwarding `Makefile`
-- added `archive init-workspace --no-makefile` and `NO_MAKEFILE=1 make init-workspace` for CLI-only workspace bootstrap
 - tightened auto-related suggestions so same workflow kind or section only rank pages that already share tags or link relationships, instead of making unrelated pages in the same section appear related
 - filtered generated home, workflow, and tag index section hits out of plain-text local search so search clicks prefer real note/doc pages that can be highlighted in the sidebar, while explicit tag queries still return page-level tag results
 

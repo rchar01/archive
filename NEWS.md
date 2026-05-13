@@ -2,12 +2,17 @@
 
 This file gives a short, release-oriented view of what changed between versions.
 
+## v1.6.0 - 2026-05-13
+
+- made the installed `archive` command the preferred workspace interface, so workspace repos can validate, build, preview, and run runtime commands without a forwarding `Makefile`
+- added CLI-only workspace bootstrap with `archive init-workspace --no-makefile`
+- simplified the root `README.md` into a quick start and moved detailed workflow guidance to the dedicated docs
+- rewrote `docs/README.md` as a concise documentation index and refreshed workspace docs, templates, CI examples, and skill guidance for the CLI-first workflow
+
 ## v1.5.0 - 2026-05-10
 
 - added Archive logo and favicon assets with light and dark variants, using tool-owned static assets under `.vitepress/public/brand/`
 - added Phosphor Icons attribution and a reusable `512x512` forge avatar asset
-- made the installed `archive` command the preferred workspace interface, so workspace repos can validate, build, preview, and run runtime commands without a forwarding `Makefile`
-- added CLI-only workspace bootstrap with `archive init-workspace --no-makefile`
 - tightened auto-related suggestions so unrelated pages no longer appear related solely because they share a section like `dev`
 - filtered generated index-section hits out of plain-text local search so results more consistently open real note/doc pages with matching sidebar state, while explicit tag searches still include tag pages
 
