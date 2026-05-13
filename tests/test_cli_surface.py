@@ -14,7 +14,7 @@ class ArchiveCliSurfaceTests(unittest.TestCase):
         return Path(__file__).resolve().parents[1]
 
     def cli_path(self) -> Path:
-        return self.repo_root() / "scripts" / "cli" / "archive.py"
+        return self.repo_root() / "scripts" / "cli" / "archive"
 
     def install_script(self) -> Path:
         return self.repo_root() / "scripts" / "install-cli"
@@ -31,7 +31,7 @@ class ArchiveCliSurfaceTests(unittest.TestCase):
 
     def run_cli(self, *args: str, cwd: Path, env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
-            ["python3", str(self.cli_path()), *args],
+            [str(self.cli_path()), *args],
             cwd=cwd,
             env={**os.environ, **(env or {})},
             capture_output=True,
@@ -75,6 +75,46 @@ class ArchiveCliSurfaceTests(unittest.TestCase):
 
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("Could not infer workspace", result.stderr)
+
+    def test_global_workspace_option_reaches_python_commands(self) -> None:
+        with tempfile.TemporaryDirectory() as workspace_dir, tempfile.TemporaryDirectory() as raw_dir:
+            workspace = self.make_workspace(Path(workspace_dir))
+            raw_path = Path(raw_dir) / "dns-notes.md"
+            raw_path.write_text("DNS notes.\n")
+
+            result = self.run_cli(
+                "--workspace",
+                str(workspace),
+                "import",
+                str(raw_path),
+                "--kind",
+                "note",
+                cwd=Path(raw_dir),
+            )
+
+            self.assertEqual(result.returncode, 0, msg=result.stderr)
+            self.assertTrue((workspace / "incoming" / "new" / "dns-notes.md").exists())
+
+    def test_init_workspace_can_skip_makefile(self) -> None:
+        with tempfile.TemporaryDirectory() as workspace_dir:
+            workspace = Path(workspace_dir) / "notes"
+
+            result = self.run_cli("init-workspace", "--no-makefile", str(workspace), cwd=Path(workspace_dir))
+
+            self.assertEqual(result.returncode, 0, msg=result.stderr)
+            self.assertTrue((workspace / "incoming" / "new").is_dir())
+            self.assertTrue((workspace / "sources" / "docs").is_dir())
+            self.assertTrue((workspace / "AGENTS.md").exists())
+            self.assertFalse((workspace / "Makefile").exists())
+
+    def test_bash_dispatcher_routes_public_commands_without_make(self) -> None:
+        dispatcher = self.cli_path().read_text()
+
+        self.assertIn("scripts/tasks/validate_sources.py", dispatcher)
+        self.assertIn("scripts/runtime/$script", dispatcher)
+        self.assertNotIn("make validate", dispatcher)
+        self.assertNotIn("make build", dispatcher)
+        self.assertNotIn("make check", dispatcher)
 
     def test_install_script_writes_archive_launcher(self) -> None:
         with tempfile.TemporaryDirectory(dir=self.repo_root()) as bin_dir:

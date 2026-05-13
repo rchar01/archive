@@ -4,7 +4,7 @@
 
 Use this playbook when a human or agent needs to add or update canonical content in this repository.
 
-If you want to run Archive from other directories or other projects, install and use the wrapper documented in `docs/cli.md`.
+If you want to run Archive from a workspace repo, other directories, or other projects, install and use the CLI documented in `docs/cli.md`.
 
 Canonical flow:
 
@@ -24,7 +24,7 @@ Rules:
 Archive supports two authoring modes:
 
 - standalone mode: run commands from the Archive repo with canonical content in that repo
-- workspace mode: run Archive against a separate repo with `WORKSPACE=/path/to/workspace` or from the workspace repo forwarding `Makefile`
+- workspace mode: run Archive against a separate repo with the installed `archive` CLI, `WORKSPACE=/path/to/workspace`, or the optional workspace repo forwarding `Makefile`
 
 Use standalone mode for the simplest local setup.
 Use workspace mode when canonical docs and notes should stay in a separate repo, whether that repo is private or public.
@@ -34,7 +34,7 @@ Generated output always lives in the Archive tool repo, either in the standalone
 
 The public repo ships a tiny optional starter corpus under `WORKSPACE/sources/notes/examples/` and `WORKSPACE/sources/docs/examples/` in standalone mode.
 Delete those two directories and rebuild if you want a blank standalone corpus.
-Workspace repos created with `make WORKSPACE=/path/to/workspace init-workspace` do not include those examples.
+Workspace repos created with `archive init-workspace /path/to/workspace` do not include those examples.
 
 ## Choose a Workflow
 
@@ -61,29 +61,28 @@ Use this when you already know the target workflow and want to create a canonica
 Example:
 
 ```sh
-make new kind=note title="Docker DNS Issue" section=containers
+archive new note --title "Docker DNS Issue" --section containers
 ```
 
 Workspace mode example:
 
 ```sh
-make WORKSPACE=/path/to/workspace new kind=note title="Docker DNS Issue" section=containers
+archive new note --title "Docker DNS Issue" --section containers --workspace /path/to/workspace
 ```
 
 You can scaffold common metadata at creation time:
 
 ```sh
-make new \
-  kind=doc \
-  title="Homelab Firewall" \
-  section=homelab/networking \
-  slug=edge-firewall \
-  nav_title="Edge Firewall" \
-  summary="Firewall overview and operating notes." \
-  priority=high \
-  tags="firewall,homelab,networking" \
-  related_manual="/docs/networking/dns-basics,/notes/homelab/router-checklist" \
-  hide_backlinks=1
+archive new doc \
+  --title "Homelab Firewall" \
+  --section homelab/networking \
+  --slug edge-firewall \
+  --nav-title "Edge Firewall" \
+  --summary "Firewall overview and operating notes." \
+  --priority high \
+  --tags "firewall,homelab,networking" \
+  --related-manual "/docs/networking/dns-basics,/notes/homelab/router-checklist" \
+  --hide-backlinks
 ```
 
 System-managed fields:
@@ -114,13 +113,13 @@ tags:
 Then run:
 
 ```sh
-make process-incoming
+archive process
 ```
 
 Workspace mode example:
 
 ```sh
-make WORKSPACE=/path/to/workspace process-incoming
+archive process --workspace /path/to/workspace
 ```
 
 Processing behavior:
@@ -131,10 +130,10 @@ Processing behavior:
 To accept a reviewed draft:
 
 ```sh
-make accept-review file=incoming/review/example.md
+archive accept incoming/review/example.md
 ```
 
-The same command works from a workspace repo forwarding `Makefile`, or from the Archive repo with `WORKSPACE=/path/to/workspace`.
+The same command works from inside a workspace repo, or from elsewhere with `--workspace /path/to/workspace`.
 
 ## Common Frontmatter
 
@@ -281,7 +280,7 @@ Reference assets with ordinary relative Markdown paths:
 
 Build behavior:
 
-- `make build-content` copies `<page-stem>.assets/` beside the generated page output
+- `archive build-content` copies `<page-stem>.assets/` beside the generated page output
 - if the page sets `slug`, the generated page filename may differ while the copied asset directory keeps the source file stem
 
 ## Mermaid Diagrams
@@ -310,34 +309,34 @@ After editing canonical content, use one of these loops:
 Minimal validation:
 
 ```sh
-make validate
+archive validate
 ```
 
 Rebuild generated content only:
 
 ```sh
-make build-content
+archive build-content
 ```
 
 Full static build:
 
 ```sh
-make build
+archive build
 ```
 
 Background dev server:
 
 ```sh
-make dev-bg
-make dev-status
-make dev-logs
-make dev-stop
+archive dev-bg
+archive dev-status
+archive dev-logs
+archive dev-stop
 ```
 
 Full repository verification:
 
 ```sh
-make check
+archive check
 ```
 
 ## Recommended End-to-End Flows
@@ -346,19 +345,19 @@ make check
 
 1. Choose `note` or `doc`.
 2. Choose standalone mode or workspace mode.
-3. Run `make new ...` with any scaffoldable metadata. In workspace mode, use `make WORKSPACE=/path/to/workspace new ...` or run the command from the workspace repo wrapper `Makefile`.
+3. Run `archive new ...` with any scaffoldable metadata. In workspace mode, run it from inside the workspace repo or pass `--workspace /path/to/workspace`.
 4. Edit the generated source file under `sources/`.
 5. Add any sibling `<page-stem>.assets/` folder if needed.
 6. Add plain ` ```mermaid ` fences if diagrams help.
-7. Run `make validate`.
-8. Run `make build` or `make dev-bg`.
+7. Run `archive validate`.
+8. Run `archive build` or `archive dev-bg`.
 
 ### Human or Agent Normalizing a Rough Draft
 
 1. Put the draft in `incoming/new/`.
 2. Set `kind` and `processing` in frontmatter.
-3. Run `make process-incoming`. In workspace mode, use `make WORKSPACE=/path/to/workspace process-incoming` or run the command from the workspace repo wrapper `Makefile`.
-4. If the result lands in `incoming/review/`, inspect it and run `make accept-review ...`.
+3. Run `archive process`. In workspace mode, run it from inside the workspace repo or pass `--workspace /path/to/workspace`.
+4. If the result lands in `incoming/review/`, inspect it and run `archive accept ...`.
 5. Refine the canonical source under `sources/` if needed.
-6. Run `make validate`.
-7. Run `make build` or `make dev-bg`.
+6. Run `archive validate`.
+7. Run `archive build` or `archive dev-bg`.

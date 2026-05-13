@@ -10,7 +10,7 @@ mkdir -p "$BIN_DIR"
 
 cat >"$TARGET" <<EOF
 #!/usr/bin/env bash
-exec python3 "$ARCHIVE_ROOT/scripts/cli/archive.py" "\$@"
+exec "$ARCHIVE_ROOT/scripts/cli/archive" "\$@"
 EOF
 
 chmod +x "$TARGET"

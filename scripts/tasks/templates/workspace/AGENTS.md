@@ -5,7 +5,7 @@ This repository is an Archive workspace repo, not the main Archive tool repo.
 ## Purpose
 
 - Canonical Archive content in this repo lives under `incoming/` and `sources/`.
-- The Archive toolchain, build scripts, VitePress theme, and generated output live in the separate Archive repo referenced by `ARCHIVE_DIR` in `Makefile`.
+- The Archive toolchain, build scripts, VitePress theme, and generated output live in a separate Archive repo used by the installed `archive` CLI or optional forwarding `Makefile`.
 - This workspace repo may be private or public.
 
 ## Use Available Specialist Tools
@@ -23,20 +23,20 @@ This repository is an Archive workspace repo, not the main Archive tool repo.
 - `incoming/review/`: normalized drafts waiting for approval
 - `sources/notes/`: canonical note sources
 - `sources/docs/`: canonical doc sources
-- Use the forwarding `Makefile` in this repo as the default interface.
-- By default, that `Makefile` forwards to `../archive`.
-- Override the Archive repo location with `ARCHIVE_DIR=...` if needed.
-- Do not assume the installed `archive` CLI is available in this repo.
+- Use the installed `archive` CLI as the default interface when it is available.
+- The optional forwarding `Makefile` forwards to `../archive` by default.
+- Override the optional Makefile's Archive repo location with `ARCHIVE_DIR=...` if needed.
+- If `archive` is unavailable, use the forwarding `Makefile` or install the launcher from the Archive tool repo.
 
 ## Commands To Use Here
 
-- `make help`
-- `make validate`
-- `make build`
-- `make check`
-- `make new kind=note title="DNS Notes" section=infra`
-- `make process-incoming`
-- `make accept-review file=incoming/review/...`
+- `archive --help`
+- `archive validate`
+- `archive build`
+- `archive check`
+- `archive new note --title "DNS Notes" --section infra`
+- `archive process`
+- `archive accept incoming/review/...`
 
 ## Editing Boundaries
 
@@ -60,5 +60,5 @@ This repository is an Archive workspace repo, not the main Archive tool repo.
 
 ## Verification
 
-- After content edits, run `make validate`.
-- Before finishing substantial work, run `make build` or `make check`.
+- After content edits, run `archive validate`.
+- Before finishing substantial work, run `archive build` or `archive check`.

@@ -81,7 +81,7 @@ class RuntimeSurfaceTests(unittest.TestCase):
         self.assertIn("WORKSPACE ?= .", makefile)
         self.assertIn("ARCHIVE_INSTANCE ?=", makefile)
         self.assertIn("export WORKSPACE ARCHIVE_INSTANCE", makefile)
-        self.assertIn('python3 scripts/tasks/init_workspace.py $(if $(strip $(FORCE)),--force) "$(WORKSPACE)"', makefile)
+        self.assertIn('python3 scripts/tasks/init_workspace.py $(if $(strip $(FORCE)),--force) $(if $(strip $(NO_MAKEFILE)),--no-makefile) "$(WORKSPACE)"', makefile)
 
     def test_container_runtime_uses_repo_workspace_path_in_standalone_mode(self) -> None:
         lines = self.source_container_runtime(".")

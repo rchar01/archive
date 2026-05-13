@@ -285,5 +285,5 @@ See [/docs/homelab/security/homelab-https-setup](/docs/homelab/security/homelab-
 
 ## Human vs Agent UX
 
-- inside a workspace repo, humans should usually keep using the generated forwarding `Makefile`
-- agents working from other directories or other repositories should use the installed `archive` CLI
+- inside a workspace repo, humans should usually use the installed `archive` CLI
+- agents working from other directories or other repositories should use the installed `archive` CLI plus explicit `--workspace` when needed

@@ -1,0 +1,262 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+ARCHIVE_ROOT=$(readlink -f "$SCRIPT_DIR/../..")
+PY_CLI="$SCRIPT_DIR/archive.py"
+IN_CONTAINER="$ARCHIVE_ROOT/scripts/runtime/in-container"
+
+GLOBAL_WORKSPACE=
+GLOBAL_ARCHIVE_INSTANCE=
+
+usage() {
+  cat <<'EOF'
+Archive authoring CLI
+
+Usage:
+  archive [--workspace PATH] [--archive-instance NAME] COMMAND [ARGS...]
+
+Authoring commands:
+  init-workspace PATH [--force] [--no-makefile]
+  new note|doc --title TITLE [--section SECTION]
+  import FILE --kind note|doc [--section SECTION]
+  process
+  accept FILE
+
+Build and validation commands:
+  validate
+  build-content
+  build-linkgraph
+  build-related
+  indexes
+  sidebar
+  build
+  check
+  doctor
+
+Local server commands:
+  dev
+  dev-bg
+  dev-status
+  dev-logs
+  dev-stop
+  devshell
+
+Runtime image commands:
+  runtime-build
+  runtime-run
+  runtime-status
+  runtime-logs
+  runtime-stop
+
+Run from inside an Archive workspace, or pass --workspace PATH.
+EOF
+}
+
+die() {
+  printf '%s\n' "$*" >&2
+  exit 1
+}
+
+is_workspace_root() {
+  local path=$1
+  [ -d "$path/incoming/new" ] \
+    && [ -d "$path/incoming/review" ] \
+    && [ -d "$path/sources/notes" ] \
+    && [ -d "$path/sources/docs" ]
+}
+
+discover_workspace() {
+  local candidate
+  candidate=$(pwd -P)
+  while :; do
+    if is_workspace_root "$candidate"; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+    [ "$candidate" = / ] && return 1
+    candidate=$(dirname "$candidate")
+  done
+}
+
+resolve_path() {
+  local value=$1
+  if [ "${value#/}" != "$value" ]; then
+    readlink -m "$value"
+  else
+    readlink -m "$(pwd -P)/$value"
+  fi
+}
+
+parse_context_args() {
+  WORKSPACE_ARG=$GLOBAL_WORKSPACE
+  ARCHIVE_INSTANCE_ARG=$GLOBAL_ARCHIVE_INSTANCE
+  POSITIONAL_ARGS=()
+
+  while [ "$#" -gt 0 ]; do
+    case "$1" in
+      --workspace)
+        [ "$#" -ge 2 ] || die "--workspace requires a path"
+        WORKSPACE_ARG=$2
+        shift 2
+        ;;
+      --workspace=*)
+        WORKSPACE_ARG=${1#--workspace=}
+        shift
+        ;;
+      --archive-instance)
+        [ "$#" -ge 2 ] || die "--archive-instance requires a name"
+        ARCHIVE_INSTANCE_ARG=$2
+        shift 2
+        ;;
+      --archive-instance=*)
+        ARCHIVE_INSTANCE_ARG=${1#--archive-instance=}
+        shift
+        ;;
+      --help|-h)
+        usage
+        exit 0
+        ;;
+      *)
+        POSITIONAL_ARGS+=("$1")
+        shift
+        ;;
+    esac
+  done
+}
+
+prepare_context() {
+  local workspace
+  if [ -n "$WORKSPACE_ARG" ]; then
+    workspace=$(resolve_path "$WORKSPACE_ARG")
+  else
+    workspace=$(discover_workspace) || die "Could not infer workspace from current directory; pass --workspace /path/to/workspace"
+  fi
+
+  export WORKSPACE=$workspace
+  if [ -n "$ARCHIVE_INSTANCE_ARG" ]; then
+    export ARCHIVE_INSTANCE=$ARCHIVE_INSTANCE_ARG
+  fi
+}
+
+ensure_no_extra_args() {
+  local command=$1
+  if [ "${#POSITIONAL_ARGS[@]}" -ne 0 ]; then
+    die "archive $command received unexpected arguments: ${POSITIONAL_ARGS[*]}"
+  fi
+}
+
+run_container_task() {
+  local command=$1
+  shift
+  local fixed_args=()
+  while [ "$#" -gt 0 ] && [ "$1" != "--" ]; do
+    fixed_args+=("$1")
+    shift
+  done
+  if [ "$#" -gt 0 ]; then
+    shift
+  fi
+  parse_context_args "$@"
+  ensure_no_extra_args "$command"
+  prepare_context
+  exec "$IN_CONTAINER" "${fixed_args[@]}"
+}
+
+run_runtime_script() {
+  local command=$1
+  local script=$2
+  shift 2
+  parse_context_args "$@"
+  ensure_no_extra_args "$command"
+  prepare_context
+  exec "$ARCHIVE_ROOT/scripts/runtime/$script"
+}
+
+delegate_python() {
+  if [ -n "$GLOBAL_WORKSPACE" ]; then
+    export WORKSPACE=$(resolve_path "$GLOBAL_WORKSPACE")
+  fi
+  if [ -n "$GLOBAL_ARCHIVE_INSTANCE" ]; then
+    export ARCHIVE_INSTANCE=$GLOBAL_ARCHIVE_INSTANCE
+  fi
+  exec python3 "$PY_CLI" "$@"
+}
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --workspace)
+      [ "$#" -ge 2 ] || die "--workspace requires a path"
+      GLOBAL_WORKSPACE=$2
+      shift 2
+      ;;
+    --workspace=*)
+      GLOBAL_WORKSPACE=${1#--workspace=}
+      shift
+      ;;
+    --archive-instance)
+      [ "$#" -ge 2 ] || die "--archive-instance requires a name"
+      GLOBAL_ARCHIVE_INSTANCE=$2
+      shift 2
+      ;;
+    --archive-instance=*)
+      GLOBAL_ARCHIVE_INSTANCE=${1#--archive-instance=}
+      shift
+      ;;
+    --help|-h)
+      usage
+      exit 0
+      ;;
+    --)
+      shift
+      break
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
+
+[ "$#" -gt 0 ] || { usage; exit 0; }
+
+COMMAND=$1
+shift
+
+case "$COMMAND" in
+  help)
+    usage
+    ;;
+  init-workspace|new|import|process|accept)
+    delegate_python "$COMMAND" "$@"
+    ;;
+  validate)
+    run_container_task "$COMMAND" python3 scripts/tasks/validate_sources.py -- "$@"
+    ;;
+  build-content)
+    run_container_task "$COMMAND" bash -lc 'python3 scripts/tasks/build_content.py && python3 scripts/tasks/build_linkgraph.py && python3 scripts/tasks/build_related.py && python3 scripts/tasks/build_indexes.py && python3 scripts/tasks/build_sidebar.py' -- "$@"
+    ;;
+  build-linkgraph)
+    run_container_task "$COMMAND" python3 scripts/tasks/build_linkgraph.py -- "$@"
+    ;;
+  build-related)
+    run_container_task "$COMMAND" python3 scripts/tasks/build_related.py -- "$@"
+    ;;
+  indexes)
+    run_container_task "$COMMAND" python3 scripts/tasks/build_indexes.py -- "$@"
+    ;;
+  sidebar)
+    run_container_task "$COMMAND" python3 scripts/tasks/build_sidebar.py -- "$@"
+    ;;
+  check)
+    run_container_task "$COMMAND" bash -lc 'python3 scripts/tasks/validate_sources.py && python3 scripts/tasks/build_content.py && python3 scripts/tasks/build_linkgraph.py && python3 scripts/tasks/build_related.py && python3 scripts/tasks/build_indexes.py && python3 scripts/tasks/build_sidebar.py && npm run docs:build' -- "$@"
+    ;;
+  doctor)
+    run_container_task "$COMMAND" python3 scripts/tasks/doctor.py -- "$@"
+    ;;
+  build|dev|dev-bg|dev-status|dev-logs|dev-stop|devshell|runtime-build|runtime-run|runtime-status|runtime-logs|runtime-stop)
+    run_runtime_script "$COMMAND" "$COMMAND" "$@"
+    ;;
+  *)
+    die "Unknown archive command: $COMMAND"
+    ;;
+esac

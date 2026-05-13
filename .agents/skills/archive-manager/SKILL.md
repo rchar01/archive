@@ -62,26 +62,26 @@ When this skill is active, read in this order:
 
 Use these actions for common user requests:
 
-* add a new canonical entry: run `make new kind=<workflow> title="..." section=...`, plus optional `slug=...`, `nav_title="..."`, `summary="..."`, `priority=...`, comma-separated `tags="a,b"`, comma-separated `related_manual="/x,/y"`, and hide flags like `hide_backlinks=1`
-* use `make new` only for brand-new canonical pages from scratch; it creates the scaffolded source file and any missing parent directories automatically
-* do not start with `make new` when the starting point is already rough Markdown or AI-generated content that needs normalization
-* stage rough Markdown in `incoming/new/` or use `archive import ... --processing auto|review`, then run `make process-incoming`
-* if the note or doc already exists in `sources/...`, edit that canonical file directly instead of using `make new`, `archive import`, or `make accept-review`
-* bootstrap a workspace repo: run `make WORKSPACE=/path/to/workspace init-workspace`; rerunning it is non-destructive by default and only fills in missing directories or missing root bootstrap files unless you explicitly force overwrites with `FORCE=1`
+* add a new canonical entry: run `archive new <workflow> --title "..." --section ...`, plus optional `--slug ...`, `--nav-title "..."`, `--summary "..."`, `--priority ...`, comma-separated `--tags "a,b"`, comma-separated `--related-manual "/x,/y"`, and hide flags like `--hide-backlinks`
+* use `archive new` only for brand-new canonical pages from scratch; it creates the scaffolded source file and any missing parent directories automatically
+* do not start with `archive new` when the starting point is already rough Markdown or AI-generated content that needs normalization
+* stage rough Markdown in `incoming/new/` or use `archive import ... --processing auto|review`, then run `archive process`
+* if the note or doc already exists in `sources/...`, edit that canonical file directly instead of using `archive new`, `archive import`, or `archive accept`
+* bootstrap a workspace repo: run `archive init-workspace /path/to/workspace`; rerunning it is non-destructive by default and only fills in missing directories or missing root bootstrap files unless you explicitly force overwrites with `--force`
 * install the cross-project CLI: run `make install-cli`
 * install the project-shipped global skill for other agents: run `make install-skill`
-* process rough incoming files: run `make process-incoming`
-* accept a reviewed draft: run `make accept-review file=incoming/review/...` only after intake normalization produced a review-gated draft that is ready to become canonical
-* validate canonical sources: run `make validate`
-* regenerate generated Markdown, knowledge metadata, indexes, and nav/sidebar data: run `make build-content`
-* build the static site: run `make build`
-* run the foreground dev server: run `make dev`
-* run the background dev server: run `make dev-bg`
-* inspect or stop the background dev server: run `make dev-status`, `make dev-logs`, `make dev-stop`
-* build the runtime image: run `make build` and then `make runtime-build`
-* run or inspect the local runtime container: run `make runtime-run`, `make runtime-status`, `make runtime-logs`, `make runtime-stop`
-* run full verification: run `make check`
-* inspect repository health: run `make doctor`
+* process rough incoming files: run `archive process`
+* accept a reviewed draft: run `archive accept incoming/review/...` only after intake normalization produced a review-gated draft that is ready to become canonical
+* validate canonical sources: run `archive validate`
+* regenerate generated Markdown, knowledge metadata, indexes, and nav/sidebar data: run `archive build-content`
+* build the static site: run `archive build`
+* run the foreground dev server: run `archive dev`
+* run the background dev server: run `archive dev-bg`
+* inspect or stop the background dev server: run `archive dev-status`, `archive dev-logs`, `archive dev-stop`
+* build the runtime image: run `archive build` and then `archive runtime-build`
+* run or inspect the local runtime container: run `archive runtime-run`, `archive runtime-status`, `archive runtime-logs`, `archive runtime-stop`
+* run full verification: run `archive check`
+* inspect repository health: run `archive doctor`
 
 ## Content Editing Routing
 
@@ -90,16 +90,16 @@ When the user asks to update content:
 * edit canonical Markdown in `sources/<workflow>/...`
 * in workspace mode, that canonical path is `WORKSPACE/sources/<workflow>/...`, not the Archive tool repo
 * do not hand-edit generated content, site output, nav/sidebar data, or generated knowledge metadata
-* do not manually create section directories under `sources/` during normal Archive authoring; `make new`, `archive new`, and intake processing create missing parent directories automatically
+* do not manually create section directories under `sources/` during normal Archive authoring; `archive new` and intake processing create missing parent directories automatically
 * prefer the normal authoring flow over hand-creating `sources/<workflow>/<section>/` paths unless the user explicitly asks for manual directory setup
-* when creating a new canonical page, prefer `make new` for scaffoldable metadata and keep `id`, `created`, `updated`, and default `status` system-managed
+* when creating a new canonical page, prefer `archive new` for scaffoldable metadata and keep `id`, `created`, `updated`, and default `status` system-managed
 * keep canonical `section` paths lowercase and slash-separated; use workflow-scoped `_sections.yaml` files for display labels like `OMV` or default sidebar collapse behavior
 * exact override paths are `sources/docs/_sections.yaml` and `sources/notes/_sections.yaml` in standalone mode, or `WORKSPACE/sources/docs/_sections.yaml` and `WORKSPACE/sources/notes/_sections.yaml` in workspace mode
 * docs and notes are independent; a label override such as `homelab/omv: { title: OMV }` only applies in the workflow file where you define it
 * keep one `#` heading per page, preserve required `##` workflow sections, add more `##` headings after `Summary` or `Overview` when needed, do not place manual thematic breaks like `---`, `***`, or `___` immediately before a `##` heading, and use `###` for real subsections under those major sections
 * prefer normal internal `/docs/...` or `/notes/...` links in the body when the prose directly references another page; backlinks are generated automatically from those links
 * use `related_manual` for discovery relationships that should appear in the knowledge panel even when the body does not need an inline link
-* keep page-local images and files in sibling `<page-stem>.assets/` directories under `sources/`; let `make build-content` copy them beside generated pages
+* keep page-local images and files in sibling `<page-stem>.assets/` directories under `sources/`; let `archive build-content` copy them beside generated pages
 * prefer plain ` ```mermaid ` fences in canonical Markdown instead of embedding manual Vue components for diagrams
 * if the change is workflow-specific behavior, edit `scripts/workflows/<kind>/`
 * if the change is shared generation behavior, edit `scripts/core/`

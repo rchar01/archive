@@ -45,7 +45,7 @@ make install-skill
 
 Use the split like this:
 
-- humans inside a workspace repo: prefer the generated forwarding `Makefile`
+- humans inside a workspace repo: prefer the installed `archive` CLI
 - agents working from other repos or arbitrary directories: prefer the installed `archive` CLI plus the `archive-authoring` skill
 
 ## Source of Truth

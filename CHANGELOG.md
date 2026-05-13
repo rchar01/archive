@@ -15,6 +15,8 @@ and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - moved VitePress public assets to the tool-owned `.vitepress/public/` directory instead of the generated `content/public/` path
+- made the installed `archive` command a Bash dispatcher that routes validation, build, dev-server, and runtime commands directly to Archive scripts without requiring workspace repos to use a forwarding `Makefile`
+- added `archive init-workspace --no-makefile` and `NO_MAKEFILE=1 make init-workspace` for CLI-only workspace bootstrap
 - tightened auto-related suggestions so same workflow kind or section only rank pages that already share tags or link relationships, instead of making unrelated pages in the same section appear related
 - filtered generated home, workflow, and tag index section hits out of plain-text local search so search clicks prefer real note/doc pages that can be highlighted in the sidebar, while explicit tag queries still return page-level tag results
 

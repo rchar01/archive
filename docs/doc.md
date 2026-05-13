@@ -4,7 +4,7 @@
 
 Use `doc` for structured documentation pages.
 
-For the full end-to-end authoring flow, including when to use `make new` versus `incoming/new`, see `docs/authoring.md`.
+For the full end-to-end authoring flow, including when to use `archive new` versus `incoming/new`, see `docs/authoring.md`.
 
 ## Canonical Source Root
 
@@ -30,7 +30,7 @@ Do not place manual thematic breaks like `---`, `***`, or `___` immediately befo
 
 ## Common Metadata Helpers
 
-- `make new` can scaffold `slug`, `nav_title`, `summary`, `priority`, comma-separated `tags`, comma-separated `related_manual`, and knowledge-panel hide flags
+- `archive new` can scaffold `slug`, `nav_title`, `summary`, `priority`, comma-separated `tags`, comma-separated `related_manual`, and knowledge-panel hide flags
 - `id`, `created`, `updated`, and default `status: draft` remain system-managed
 - use `slug` for stable short routes and `nav_title` for compact navigation labels when needed
 - keep `section` lowercase and slash-separated; use `WORKSPACE/sources/docs/_sections.yaml` for display labels like `OMV` or default sidebar fold state
@@ -66,6 +66,6 @@ sections:
 
 ## Validate and Preview
 
-- run `make validate` after editing canonical docs
-- run `make build` for a full rebuild or `make dev-bg` for a local preview loop
-- in workspace mode, run those commands from the workspace repo wrapper `Makefile` or from the Archive repo with `WORKSPACE=/path/to/workspace`
+- run `archive validate` after editing canonical docs
+- run `archive build` for a full rebuild or `archive dev-bg` for a local preview loop
+- in workspace mode, run those commands from inside the workspace repo or pass `--workspace /path/to/workspace`

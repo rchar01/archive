@@ -6,6 +6,8 @@ This file gives a short, release-oriented view of what changed between versions.
 
 - added Archive logo and favicon assets with light and dark variants, using tool-owned static assets under `.vitepress/public/brand/`
 - added Phosphor Icons attribution and a reusable `512x512` forge avatar asset
+- made the installed `archive` command the preferred workspace interface, so workspace repos can validate, build, preview, and run runtime commands without a forwarding `Makefile`
+- added CLI-only workspace bootstrap with `archive init-workspace --no-makefile`
 - tightened auto-related suggestions so unrelated pages no longer appear related solely because they share a section like `dev`
 - filtered generated index-section hits out of plain-text local search so results more consistently open real note/doc pages with matching sidebar state, while explicit tag searches still include tag pages
 

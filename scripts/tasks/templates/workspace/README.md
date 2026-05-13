@@ -9,9 +9,9 @@ This workspace repo depends on a separate Archive tool repo.
 
 You need:
 
-- `make`
 - `podman`
 - a local checkout of the Archive repo from `https://codeberg.org/rch/archive`
+- the installed `archive` launcher from that checkout, unless you use the optional forwarding `Makefile`
 
 ## Layout
 
@@ -25,14 +25,15 @@ This bootstrap stays intentionally empty; the public repo's optional `examples/`
 
 ## If You Only Have This Workspace Repo
 
-Clone the Archive repo separately and either place it at `../archive` or point this repo at it explicitly:
+Clone the Archive repo separately and install the launcher:
 
 ```sh
 git clone https://codeberg.org/rch/archive ../archive
-make help
+../archive/scripts/install-cli
+archive --help
 ```
 
-If your Archive clone lives elsewhere:
+If you prefer the optional forwarding `Makefile` and your Archive clone lives elsewhere:
 
 ```sh
 make ARCHIVE_DIR=/path/to/archive help
@@ -40,8 +41,8 @@ make ARCHIVE_DIR=/path/to/archive help
 
 ## Usage
 
-Set `ARCHIVE_DIR` in the forwarding `Makefile` if your Archive clone is not at `../archive`.
-This repo's `Makefile` defaults `ARCHIVE_INSTANCE` to the workspace directory name so one Archive clone can host multiple workspaces concurrently.
+The installed `archive` command is the preferred workspace interface and discovers this workspace from the current directory.
+The optional forwarding `Makefile` defaults `ARCHIVE_INSTANCE` to the workspace directory name so one Archive clone can host multiple workspaces concurrently.
 See `AGENTS.md` in this repo for workspace-local agent guidance.
 That file includes generic guidance for agents that support specialist tools or subagents for exploration, verification, review, or research.
 Treat it as a starting point for your own environment and edit it freely if your preferred agent runtime uses different capabilities or conventions.
@@ -49,34 +50,32 @@ Treat it as a starting point for your own environment and edit it freely if your
 Then run commands from this workspace repo:
 
 ```sh
-make validate
-make new kind=note title="DNS Notes" section=infra
-make build
+archive validate
+archive new note --title "DNS Notes" --section infra
+archive build
 ```
 
-Those commands forward to Archive with `WORKSPACE=$(CURDIR)`.
-Use this forwarding `Makefile` as the default interface when you are already inside the workspace repo.
-The installed `archive` CLI is optional and is most useful for cross-project or external-agent workflows.
+Use the forwarding `Makefile` if your local workflow already standardizes on `make`; it forwards to Archive with `WORKSPACE=$(CURDIR)`.
 
 ## First Run
 
 From this workspace repo:
 
 ```sh
-make validate
-make build
+archive validate
+archive build
 ```
 
-Use `make check` for a fuller verification pass.
+Use `archive check` for a fuller verification pass.
 
 ## Preview Server
 
 Start the local VitePress preview server from this workspace repo:
 
 ```sh
-make dev-bg
-make dev-status
-make dev-logs
+archive dev-bg
+archive dev-status
+archive dev-logs
 ```
 
 Then open `http://localhost:5173`.
@@ -84,16 +83,16 @@ Then open `http://localhost:5173`.
 Stop it later with:
 
 ```sh
-make dev-stop
+archive dev-stop
 ```
 
-Use `make dev` instead if you want the foreground dev server.
+Use `archive dev` instead if you want the foreground dev server.
 
 To run multiple workspace preview servers from one Archive clone, use different ports and, if needed, different explicit instance names:
 
 ```sh
-make ARCHIVE_INSTANCE=notes-a VITEPRESS_DEV_PORT=5173 dev-bg
-make ARCHIVE_INSTANCE=notes-b VITEPRESS_DEV_PORT=5174 dev-bg
+ARCHIVE_INSTANCE=notes-a VITEPRESS_DEV_PORT=5173 archive dev-bg
+ARCHIVE_INSTANCE=notes-b VITEPRESS_DEV_PORT=5174 archive dev-bg
 ```
 
 ## Static Runtime Server
@@ -101,10 +100,10 @@ make ARCHIVE_INSTANCE=notes-b VITEPRESS_DEV_PORT=5174 dev-bg
 Build the static site and run the local Caddy runtime image:
 
 ```sh
-make runtime-build
-make runtime-run
-make runtime-status
-make runtime-logs
+archive runtime-build
+archive runtime-run
+archive runtime-status
+archive runtime-logs
 ```
 
 Then open `http://localhost:8080`.
@@ -112,7 +111,7 @@ Then open `http://localhost:8080`.
 Stop it later with:
 
 ```sh
-make runtime-stop
+archive runtime-stop
 ```
 
 `runtime-build` packages the prebuilt static site into the Caddy runtime image.
@@ -120,8 +119,8 @@ make runtime-stop
 To run multiple local runtime servers from one Archive clone, use different ports and, if needed, different explicit instance names:
 
 ```sh
-make ARCHIVE_INSTANCE=notes-a RUNTIME_PORT=8080 runtime-run
-make ARCHIVE_INSTANCE=notes-b RUNTIME_PORT=8081 runtime-run
+ARCHIVE_INSTANCE=notes-a RUNTIME_PORT=8080 archive runtime-run
+ARCHIVE_INSTANCE=notes-b RUNTIME_PORT=8081 archive runtime-run
 ```
 
 ## Ownership

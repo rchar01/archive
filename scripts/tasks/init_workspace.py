@@ -17,6 +17,7 @@ DIRECTORY_SKELETON = (
     Path("sources") / "notes",
     Path("sources") / "docs",
 )
+ROOT_TEMPLATES = (".gitignore", "README.md", "AGENTS.md")
 
 
 def write_template(target: Path, template_name: str, *, force: bool) -> None:
@@ -29,6 +30,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("path", nargs="?", default=".")
     parser.add_argument("--force", action="store_true")
+    parser.add_argument("--no-makefile", action="store_true")
     args = parser.parse_args(argv)
 
     workspace_root = resolve_workspace_path(args.path)
@@ -37,10 +39,10 @@ def main(argv: list[str] | None = None) -> int:
     for rel_path in DIRECTORY_SKELETON:
         (workspace_root / rel_path).mkdir(parents=True, exist_ok=True)
 
-    write_template(workspace_root / ".gitignore", ".gitignore", force=args.force)
-    write_template(workspace_root / "README.md", "README.md", force=args.force)
-    write_template(workspace_root / "AGENTS.md", "AGENTS.md", force=args.force)
-    write_template(workspace_root / "Makefile", "Makefile", force=args.force)
+    for template_name in ROOT_TEMPLATES:
+        write_template(workspace_root / template_name, template_name, force=args.force)
+    if not args.no_makefile:
+        write_template(workspace_root / "Makefile", "Makefile", force=args.force)
 
     print(workspace_root)
     return 0

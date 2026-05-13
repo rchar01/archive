@@ -48,7 +48,7 @@ devshell:
 
 ## Initialize a workspace skeleton at WORKSPACE
 init-workspace:
-	python3 scripts/tasks/init_workspace.py $(if $(strip $(FORCE)),--force) "$(WORKSPACE)"
+	python3 scripts/tasks/init_workspace.py $(if $(strip $(FORCE)),--force) $(if $(strip $(NO_MAKEFILE)),--no-makefile) "$(WORKSPACE)"	
 
 ## Create a new canonical source entry
 new:

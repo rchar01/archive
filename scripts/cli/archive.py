@@ -70,6 +70,9 @@ def discover_workspace(path: Path) -> Path | None:
 def resolve_workspace(value: str | None) -> Path:
     if value:
         return Path(value).expanduser().resolve()
+    env_workspace = optional_string(os.environ.get("WORKSPACE"))
+    if env_workspace is not None:
+        return Path(env_workspace).expanduser().resolve()
     workspace = discover_workspace(Path.cwd().resolve())
     if workspace is not None:
         return workspace
@@ -182,6 +185,8 @@ def command_init_workspace(args: argparse.Namespace) -> int:
     command = ["python3", "scripts/tasks/init_workspace.py"]
     if args.force:
         command.append("--force")
+    if args.no_makefile:
+        command.append("--no-makefile")
     command.append(str(Path(args.path).expanduser()))
     run(command)
     return 0
@@ -286,6 +291,7 @@ def build_parser() -> argparse.ArgumentParser:
     init_workspace = subparsers.add_parser("init-workspace", help="Bootstrap a workspace repo")
     init_workspace.add_argument("path")
     init_workspace.add_argument("--force", action="store_true")
+    init_workspace.add_argument("--no-makefile", action="store_true")
     init_workspace.set_defaults(func=command_init_workspace)
 
     new = subparsers.add_parser("new", help="Create a canonical source entry")

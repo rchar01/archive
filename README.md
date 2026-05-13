@@ -47,24 +47,25 @@ Use this when canonical docs and notes should stay in a separate repo while Arch
 
 ```sh
 git clone https://codeberg.org/rch/archive ~/tools/archive
+~/tools/archive/scripts/install-cli
 mkdir -p ~/repos/my-notes
 
-make -C ~/tools/archive WORKSPACE=~/repos/my-notes init-workspace
-make -C ~/tools/archive WORKSPACE=~/repos/my-notes install
-make -C ~/tools/archive WORKSPACE=~/repos/my-notes check
-make -C ~/tools/archive WORKSPACE=~/repos/my-notes dev-bg
+archive init-workspace ~/repos/my-notes
+archive check --workspace ~/repos/my-notes
+archive dev-bg --workspace ~/repos/my-notes
 ```
 
 Then open `http://localhost:5173`.
 
 Workspace bootstrap stays empty on purpose; it does not copy the public starter examples into your workspace repo.
-You can safely rerun `make -C ~/tools/archive WORKSPACE=~/repos/my-notes init-workspace`; by default it only fills in missing directories and missing root bootstrap files.
-Use `make -C ~/tools/archive WORKSPACE=~/repos/my-notes FORCE=1 init-workspace` when you intentionally want to refresh the root `.gitignore`, `README.md`, `AGENTS.md`, and forwarding `Makefile` templates.
+You can safely rerun `archive init-workspace ~/repos/my-notes`; by default it only fills in missing directories and missing root bootstrap files.
+Use `archive init-workspace --force ~/repos/my-notes` when you intentionally want to refresh the root `.gitignore`, `README.md`, `AGENTS.md`, and forwarding `Makefile` templates.
+Use `archive init-workspace --no-makefile ~/repos/my-notes` when you want a CLI-only workspace.
 
 ### Shared Prerequisites
 
 - `podman`
-- `make`
+- `make` for standalone/repo-contributor workflows; workspace users can use the installed `archive` CLI without a workspace Makefile
 
 ### Shared Commands
 
@@ -75,7 +76,7 @@ make install
 make check
 ```
 
-Optional installed CLI for cross-project use:
+Install the CLI for workspace and cross-project use:
 
 ```sh
 make install-cli
@@ -115,27 +116,27 @@ make runtime-run
 Create your first canonical page directly:
 
 ```sh
-make new kind=note title="Hello Archive" section=getting-started
-make validate
-make build
+archive new note --title "Hello Archive" --section getting-started
+archive validate
+archive build
 ```
 
 Or start from a rough draft placed in `incoming/new/`:
 
 ```sh
-make process-incoming
-make build
+archive process
+archive build
 ```
 
-For the full authoring flow, including when to use `make new` versus intake/review, read `docs/authoring.md`.
+For the full authoring flow, including when to use `archive new` versus intake/review, read `docs/authoring.md`.
 
-All content-oriented `make` targets accept `WORKSPACE`, which defaults to `.`:
+All content-oriented `make` targets accept `WORKSPACE`, which defaults to `.`. The installed `archive` CLI also accepts `--workspace` and can infer it from inside a workspace repo:
 
 ```sh
-make WORKSPACE=. validate
+archive validate --workspace .
 ```
 
-The public command form is `make WORKSPACE=<canonical-root> <target>`.
+The public command form is `archive <command> --workspace <canonical-root>` or `make WORKSPACE=<canonical-root> <target>`.
 `WORKSPACE` selects the canonical content root for `incoming/` and `sources/` while generated output stays in the Archive tool repo.
 `ARCHIVE_INSTANCE` selects the generated-output namespace inside the Archive tool repo. Standalone mode defaults to `default`; workspace repos default to their directory name.
 
@@ -152,7 +153,7 @@ For a workspace repo CI and Kubernetes-oriented packaging flow, see `docs/worksp
 - `sources/`
 - `sources/notes/`
 - `sources/docs/`
-- the forwarding workspace-repo `Makefile`
+- the optional forwarding workspace-repo `Makefile`
 - the workspace-repo `README.md`
 - the workspace-repo `.gitignore`
 
@@ -216,7 +217,7 @@ Human-facing documentation lives under `docs/`.
 Start with:
 
 - `docs/README.md`: documentation index
-- `docs/cli.md`: installed cross-project command wrapper
+- `docs/cli.md`: installed workspace and cross-project command wrapper
 - `docs/skills.md`: installable global skill for cross-project agents
 - `docs/authoring.md`: end-to-end human and agent authoring playbook
 - `docs/note.md`: note-specific structure and rules
@@ -238,7 +239,7 @@ Start with:
 - the home page shows up to 10 recently added items across all workflows
 - generated content, site output, nav/sidebar data, and knowledge metadata are machine-owned output
 
-`make build-content` rebuilds generated pages, knowledge metadata, generated home/workflow indexes, and nav/sidebar data.
+`archive build-content` and `make build-content` rebuild generated pages, knowledge metadata, generated home/workflow indexes, and nav/sidebar data.
 
 In workspace mode, those generated files still land in the Archive tool repo, not in the workspace repo. Use distinct `ARCHIVE_INSTANCE` values when you want multiple workspaces active at the same time from one Archive clone.
 
@@ -272,7 +273,7 @@ Canonical content lives in `sources/` and may include optional routing and navig
 - `nav_title`: optional compact label for sidebar and generated index surfaces
 - `summary`: optional description reused in generated indexes and the knowledge panel
 - `related_manual`: optional curated related links
-- `make new` can set `slug`, `nav_title`, `summary`, `priority`, comma-separated `tags`, comma-separated `related_manual`, and knowledge-panel hide flags at creation time
+- `archive new` can set `slug`, `nav_title`, `summary`, `priority`, comma-separated `tags`, comma-separated `related_manual`, and knowledge-panel hide flags at creation time
 - `id`, `created`, `updated`, and the default `status: draft` remain system-managed
 
 Optional workflow-local section display overrides live beside canonical content:
@@ -303,7 +304,7 @@ Reference those assets with ordinary relative Markdown paths:
 
 Build behavior:
 
-- `make build-content` copies `<page-stem>.assets/` beside the generated page output
+- `archive build-content` and `make build-content` copy `<page-stem>.assets/` beside the generated page output
 - the generated page file may use `slug`, but the copied asset directory keeps the source file stem
 - Markdown image paths are preserved as written; the build does not rewrite them
 
@@ -337,6 +338,23 @@ Behavior:
 - Mermaid uses a strict security level by default
 
 ## Commands
+
+Installed CLI commands:
+
+- `archive --help`
+- `archive init-workspace ~/repos/my-notes`
+- `archive new note --title "..." --section ...`
+- `archive process`
+- `archive accept incoming/review/...`
+- `archive validate`
+- `archive build-content`
+- `archive build`
+- `archive check`
+- `archive dev-bg`
+- `archive runtime-build`
+- `archive runtime-run`
+
+Make targets remain available from the Archive tool repo for contributor and compatibility workflows:
 
 - `make help`
 - `make install`

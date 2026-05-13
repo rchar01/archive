@@ -6,16 +6,17 @@ The workspace repo may be private or public.
 
 ## Bootstrap
 
-Create the workspace repo skeleton with the Archive tool clone:
+Create the workspace repo skeleton with the Archive tool clone and installed CLI:
 
 ```sh
 git clone https://codeberg.org/rch/archive ~/tools/archive
+~/tools/archive/scripts/install-cli
 mkdir -p ~/repos/my-notes
 
-make -C ~/tools/archive WORKSPACE=~/repos/my-notes init-workspace
+archive init-workspace ~/repos/my-notes
 ```
 
-Do not copy files out of `scripts/tasks/templates/workspace/` manually. Those files are internal templates used by `make init-workspace`.
+Do not copy files out of `scripts/tasks/templates/workspace/` manually. Those files are internal templates used by `archive init-workspace` and `make init-workspace`.
 
 That creates:
 
@@ -30,15 +31,28 @@ AGENTS.md
 Makefile
 ```
 
+The forwarding `Makefile` is optional. Use `archive init-workspace --no-makefile ~/repos/my-notes` when you want a CLI-only workspace.
+
 It does not copy the public repo's starter examples. A new workspace repo begins with empty `sources/notes/` and `sources/docs/` trees.
 
-You can rerun `make -C ~/tools/archive WORKSPACE=~/repos/my-notes init-workspace` on an existing workspace repo.
+You can rerun `archive init-workspace ~/repos/my-notes` on an existing workspace repo.
 By default it only creates missing directories and missing root bootstrap files, so existing `sources/...` content and existing root files are preserved.
-Use `make -C ~/tools/archive WORKSPACE=~/repos/my-notes FORCE=1 init-workspace` when you intentionally want to refresh the root `.gitignore`, `README.md`, `AGENTS.md`, and forwarding `Makefile` templates.
-`archive init-workspace --force ~/repos/my-notes` remains available too.
+Use `archive init-workspace --force ~/repos/my-notes` when you intentionally want to refresh the root `.gitignore`, `README.md`, `AGENTS.md`, and forwarding `Makefile` templates.
+The equivalent Make workflow is `make -C ~/tools/archive WORKSPACE=~/repos/my-notes FORCE=1 init-workspace`.
 The generated `AGENTS.md` is a default workspace-local guide for LLMs and agents; customize it for your own runtime if needed.
 
-## Forwarding Makefile
+## Installed CLI and Forwarding Makefile
+
+The installed `archive` command is the preferred workspace interface. It discovers the workspace from the current directory, so these commands work from inside a workspace repo:
+
+```sh
+archive validate
+archive new note --title "DNS Notes" --section infra
+archive process
+archive build
+```
+
+The generated workspace-repo `Makefile` remains available for users who prefer `make`.
 
 The generated workspace-repo `Makefile` forwards commands to Archive with `WORKSPACE=$(CURDIR)`.
 
@@ -59,18 +73,19 @@ Workspace mode depends on a separate Archive tool repo checkout.
 
 You need:
 
-- `make`
 - `podman`
 - a local checkout of the Archive repo from `https://codeberg.org/rch/archive`
+- the installed `archive` launcher from that checkout, unless you use the optional forwarding `Makefile`
 
-If you cloned only the workspace repo, clone the Archive repo separately and confirm forwarding works:
+If you cloned only the workspace repo, clone the Archive repo separately and install the launcher:
 
 ```sh
 git clone https://codeberg.org/rch/archive ../archive
-make help
+../archive/scripts/install-cli
+archive --help
 ```
 
-Or point at a different Archive checkout explicitly:
+Or use the optional forwarding Makefile and point at a different Archive checkout explicitly:
 
 ```sh
 make ARCHIVE_DIR=/path/to/archive help
@@ -81,14 +96,13 @@ make ARCHIVE_DIR=/path/to/archive help
 From inside the workspace repo:
 
 ```sh
-make validate
-make new kind=note title="DNS Notes" section=infra
-make process-incoming
-make build
+archive validate
+archive new note --title "DNS Notes" --section infra
+archive process
+archive build
 ```
 
-Inside the workspace repo, `make` is the default human-facing interface.
-The installed `archive` CLI is most useful when you are operating from other repositories or when external agents need to target this workspace explicitly.
+Inside the workspace repo, `archive` is the default human-facing interface. The forwarding `Makefile` is still useful when a local workflow or CI job already standardizes on `make`.
 
 ## Multiple Workspaces, One Archive Clone
 
@@ -101,15 +115,15 @@ One Archive clone can host multiple workspace repos at the same time.
 If you want multiple live preview servers, use different ports:
 
 ```sh
-make ARCHIVE_INSTANCE=notes-a VITEPRESS_DEV_PORT=5173 dev-bg
-make ARCHIVE_INSTANCE=notes-b VITEPRESS_DEV_PORT=5174 dev-bg
+ARCHIVE_INSTANCE=notes-a VITEPRESS_DEV_PORT=5173 archive dev-bg
+ARCHIVE_INSTANCE=notes-b VITEPRESS_DEV_PORT=5174 archive dev-bg
 ```
 
 If you want multiple local runtime containers, use different ports there too:
 
 ```sh
-make ARCHIVE_INSTANCE=notes-a RUNTIME_PORT=8080 runtime-run
-make ARCHIVE_INSTANCE=notes-b RUNTIME_PORT=8081 runtime-run
+ARCHIVE_INSTANCE=notes-a RUNTIME_PORT=8080 archive runtime-run
+ARCHIVE_INSTANCE=notes-b RUNTIME_PORT=8081 archive runtime-run
 ```
 
 ## Preview Server
@@ -117,9 +131,9 @@ make ARCHIVE_INSTANCE=notes-b RUNTIME_PORT=8081 runtime-run
 Start the local VitePress preview server from the workspace repo:
 
 ```sh
-make dev-bg
-make dev-status
-make dev-logs
+archive dev-bg
+archive dev-status
+archive dev-logs
 ```
 
 Then open `http://localhost:5173`.
@@ -127,20 +141,20 @@ Then open `http://localhost:5173`.
 Stop it later with:
 
 ```sh
-make dev-stop
+archive dev-stop
 ```
 
-Use `make dev` instead if you want the foreground dev server.
+Use `archive dev` instead if you want the foreground dev server.
 
 ## Static Runtime Server
 
 Build the static site and run the local Caddy runtime image:
 
 ```sh
-make runtime-build
-make runtime-run
-make runtime-status
-make runtime-logs
+archive runtime-build
+archive runtime-run
+archive runtime-status
+archive runtime-logs
 ```
 
 Then open `http://localhost:8080`.
@@ -148,7 +162,7 @@ Then open `http://localhost:8080`.
 Stop it later with:
 
 ```sh
-make runtime-stop
+archive runtime-stop
 ```
 
 `runtime-build` packages the prebuilt static site into the Caddy runtime image.
