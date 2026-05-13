@@ -1,26 +1,15 @@
 # Documentation
 
-This directory contains the human-facing documentation for Archive.
+Human-facing documentation for Archive lives here.
 
-The repository currently ships these workflows:
+- [Installed CLI](cli.md) - install and use the `archive` command, workspace discovery, bootstrap behavior, and command surface.
+- [Authoring Workflow](authoring.md) - create, import, review, validate, preview, and build canonical notes and docs.
+- [Workspace Mode](workspace.md) - split workspace/tool-repo ownership, workspace bootstrap, optional forwarding `Makefile`, and local preview/runtime use.
+- [Workspace CI](workspace-ci.md) - pinned Archive checkout, static-site build, runtime image packaging, and deployment pattern.
+- [Note Workflow](note.md) - note-specific source root, required sections, metadata helpers, assets, Mermaid, and validation rules.
+- [Doc Workflow](doc.md) - doc-specific source root, required sections, metadata helpers, assets, Mermaid, and validation rules.
+- [Installable Skills](skills.md) - install and use the cross-project `archive-authoring` skill for agents.
 
-- `note`
-- `doc`
+The root `README.md` is intentionally a quick start and repository overview. These docs are the source of truth for human and agent workflows.
 
-Workflow configuration is machine-readable and discovered from `scripts/workflows/*/workflow.yml`.
-
-Additional workflows can be added later without changing central registry files.
-
-Non-empty workflows appear automatically in generated home navigation, top navigation, workflow indexes, and sidebar output.
-
-These files explain the supported usage modes, authoring flow, and workflow-specific rules.
-
-Recommended reading order:
-
-- `cli.md` for the installed workspace and cross-project command wrapper
-- `skills.md` for the manually installable cross-project Archive skill
-- `authoring.md` for the end-to-end human and agent authoring workflow
-- `note.md` for note-specific structure and constraints
-- `doc.md` for doc-specific structure and constraints
-- `workspace.md` for the split tooling/workspace-repo model
-- `workspace-ci.md` for the recommended workspace CI and deployment pattern
+Bundled third-party asset notices live in [`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md). Skill sources live in [`../skills/`](../skills/) and are installed with `make install-skill`.

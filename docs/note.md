@@ -12,7 +12,9 @@ For the full end-to-end authoring flow, including when to use `archive new` vers
 
 ## Generated Output Root
 
-- `ARCHIVE_TOOL_ROOT/content/notes/`
+- `notes/` under the active generated content directory
+
+In standalone mode, generated content lives under `content/` in the Archive tool repo. In workspace mode, it lives under `.instances/<instance>/content/` in the Archive tool repo.
 
 ## Required Sections
 

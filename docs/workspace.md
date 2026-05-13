@@ -18,7 +18,7 @@ archive init-workspace ~/repos/my-notes
 
 Do not copy files out of `scripts/tasks/templates/workspace/` manually. Those files are internal templates used by `archive init-workspace` and `make init-workspace`.
 
-That creates:
+By default, that creates:
 
 ```text
 incoming/new/
@@ -31,7 +31,7 @@ AGENTS.md
 Makefile
 ```
 
-The forwarding `Makefile` is optional. Use `archive init-workspace --no-makefile ~/repos/my-notes` when you want a CLI-only workspace.
+The forwarding `Makefile` is optional. Use `archive init-workspace --no-makefile ~/repos/my-notes` when you want a CLI-only workspace; this skips writing the Makefile but does not delete an existing one.
 
 It does not copy the public repo's starter examples. A new workspace repo begins with empty `sources/notes/` and `sources/docs/` trees.
 
@@ -110,7 +110,7 @@ One Archive clone can host multiple workspace repos at the same time.
 
 - canonical `incoming/` and `sources/` content still live in each workspace repo
 - generated output stays in the Archive tool repo under `.instances/<instance>/...`
-- the workspace template defaults `ARCHIVE_INSTANCE` to the workspace directory name
+- the installed CLI and workspace template default `ARCHIVE_INSTANCE` to the workspace directory name
 
 If you want multiple live preview servers, use different ports:
 

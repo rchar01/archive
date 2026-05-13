@@ -42,10 +42,8 @@ make ARCHIVE_DIR=/path/to/archive help
 ## Usage
 
 The installed `archive` command is the preferred workspace interface and discovers this workspace from the current directory.
-The optional forwarding `Makefile` defaults `ARCHIVE_INSTANCE` to the workspace directory name so one Archive clone can host multiple workspaces concurrently.
-See `AGENTS.md` in this repo for workspace-local agent guidance.
-That file includes generic guidance for agents that support specialist tools or subagents for exploration, verification, review, or research.
-Treat it as a starting point for your own environment and edit it freely if your preferred agent runtime uses different capabilities or conventions.
+The installed CLI and optional forwarding `Makefile` default `ARCHIVE_INSTANCE` to the workspace directory name so one Archive clone can host multiple workspaces concurrently.
+See `AGENTS.md` in this repo for workspace-local agent guidance; treat it as a starting point for your own environment.
 
 Then run commands from this workspace repo:
 

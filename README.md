@@ -69,7 +69,7 @@ Use `archive init-workspace --no-makefile ~/repos/my-notes` when you want a CLI-
 
 ### Shared Commands
 
-Initial setup and verification for the current mode:
+Initial setup and verification from the Archive tool repo:
 
 ```sh
 make install
@@ -89,7 +89,7 @@ Optional installable global skill for agents in other repos:
 make install-skill
 ```
 
-Start the local preview server:
+Start the local preview server from the active mode:
 
 ```sh
 make dev-bg
@@ -222,185 +222,35 @@ Start with:
 - `docs/authoring.md`: end-to-end human and agent authoring playbook
 - `docs/note.md`: note-specific structure and rules
 - `docs/doc.md`: doc-specific structure and rules
-- `docs/workspace.md`: workspace repo bootstrap flow and wrapper `Makefile` approach
+- `docs/workspace.md`: workspace repo bootstrap flow, installed CLI use, and optional forwarding `Makefile`
 - `docs/workspace-ci.md`: workspace CI checkout, build, packaging, and deployment pattern
 - `THIRD_PARTY_NOTICES.md`: attribution and license notices for bundled third-party assets
 
-## Generated UI
+## Authoring Features
 
-- `content/index.md` is always generated as the home page
-- home navigation links appear only for workflows that currently have generated content
-- workflow overview pages are generated only for non-empty workflows
-- the top nav is generated from non-empty workflows
-- the sidebar is generated from non-empty workflows and their sections
-- sidebar and generated index labels prefer `nav_title` when present, otherwise they derive a shortened label from `title`
-- the knowledge panel is rendered by a repo-local VitePress theme component mounted in the `doc-after` slot
-- generated knowledge metadata drives the knowledge panel from `.vitepress/knowledge/*.generated.json` in standalone mode or `.instances/<instance>/generated/knowledge/*.generated.json` in workspace-instance mode
-- the home page shows up to 10 recently added items across all workflows
-- generated content, site output, nav/sidebar data, and knowledge metadata are machine-owned output
+Archive adds workflow-aware authoring and generated UI around VitePress:
 
-`archive build-content` and `make build-content` rebuild generated pages, knowledge metadata, generated home/workflow indexes, and nav/sidebar data.
+- source frontmatter supports stable `slug`, compact `nav_title`, summaries, tags, curated related links, and knowledge-panel hide flags
+- workflow-local `_sections.yaml` files can override sidebar/index section labels and default collapse state
+- source-adjacent `<page-stem>.assets/` directories are copied beside generated pages
+- plain ` ```mermaid ` fences render through the local VitePress theme
+- generated indexes, sidebar/nav data, tag pages, backlinks, related suggestions, and knowledge metadata are machine-owned output
+- local search supports normal full-text queries plus exact, prefix, and tag-qualified hashtag queries such as `#proxmox`, `#proxmo*`, and `#proxmox network`
 
-In workspace mode, those generated files still land in the Archive tool repo, not in the workspace repo. Use distinct `ARCHIVE_INSTANCE` values when you want multiple workspaces active at the same time from one Archive clone.
-
-## Knowledge Panel
-
-- the knowledge panel reads generated metadata from the active instance output (`.vitepress/knowledge/*.generated.json` in standalone mode or `.instances/<instance>/generated/knowledge/*.generated.json` in workspace-instance mode)
-- global defaults live in `.vitepress/config.ts` via `themeConfig.knowledgePanel`, `knowledgePanelBacklinks`, and `knowledgePanelRelated`
-- workflow defaults live in `scripts/workflows/*/workflow.yml`
-- per-page frontmatter may use `hide_knowledge_panel`, `hide_backlinks`, and `hide_related`
-- precedence is per-page override, then workflow default, then global theme config
-
-## Search
-
-Archive keeps normal VitePress local search behavior for plain text queries while adding tag-aware queries for generated metadata.
-
-- `network`: normal full-text search; results keep VitePress section anchors such as `#expected-network-configuration`
-- `#proxmox`: exact tag search for pages tagged `proxmox`
-- `#proxmo*`: controlled tag-prefix search for tags starting with `proxmo`
-- `#proxmox network`: tag-qualified text search; results must match the tag and the text term
-- `#proxmo* network`: prefix-tag-qualified text search; results must match the tag prefix and the text term
-
-Hashtag searches return page-level URLs so metadata-only matches do not jump to an unrelated final heading. Plain text searches still use the default section-level VitePress anchors.
-
-## Source Frontmatter
-
-Canonical content lives in `sources/` and may include optional routing and navigation helpers in frontmatter.
-
-- `title`: canonical full page title and generated H1
-- `section`: canonical lowercase slash-separated section path such as `homelab/security` or `kubernetes/omv`
-- `slug`: optional stable output URL segment; falls back to a slugified `title`
-- `nav_title`: optional compact label for sidebar and generated index surfaces
-- `summary`: optional description reused in generated indexes and the knowledge panel
-- `related_manual`: optional curated related links
-- `archive new` can set `slug`, `nav_title`, `summary`, `priority`, comma-separated `tags`, comma-separated `related_manual`, and knowledge-panel hide flags at creation time
-- `id`, `created`, `updated`, and the default `status: draft` remain system-managed
-
-Optional workflow-local section display overrides live beside canonical content:
-
-- `sources/docs/_sections.yaml`
-- `sources/notes/_sections.yaml`
-
-Use `_sections.yaml` to override displayed section labels such as `OMV` and default sidebar collapse behavior without changing canonical `section` paths.
-
-See `docs/authoring.md` for the full authoring reference.
-
-## Source-Adjacent Assets
-
-Use a sibling asset directory for page-local images and other static files:
-
-```text
-sources/docs/homelab/firewall.md
-sources/docs/homelab/firewall.assets/
-  topology.svg
-  rules.png
-```
-
-Reference those assets with ordinary relative Markdown paths:
-
-```md
-![Topology](./firewall.assets/topology.svg)
-```
-
-Build behavior:
-
-- `archive build-content` and `make build-content` copy `<page-stem>.assets/` beside the generated page output
-- the generated page file may use `slug`, but the copied asset directory keeps the source file stem
-- Markdown image paths are preserved as written; the build does not rewrite them
-
-Example with `slug`:
-
-```text
-sources/docs/homelab/firewall.md
-sources/docs/homelab/firewall.assets/topology.svg
-content/docs/homelab/edge-firewall.md
-content/docs/homelab/firewall.assets/topology.svg
-```
-
-## Mermaid Diagrams
-
-Canonical Markdown may use plain Mermaid fences:
-
-````md
-```mermaid
-flowchart LR
-A[incoming] --> B[sources]
-B --> C[content]
-C --> D[site]
-```
-````
-
-Behavior:
-
-- Mermaid fences render automatically in the local VitePress theme
-- rendering is client-side and SSR-safe; authors should not embed manual Vue components in page content for Mermaid
-- diagrams rerender on page navigation and dark/light mode changes
-- Mermaid uses a strict security level by default
+For the source format, metadata fields, linking rules, local assets, Mermaid, search, and validation loops, use `docs/authoring.md` as the source of truth.
 
 ## Commands
 
-Installed CLI commands:
+Use `archive --help` for the installed CLI command surface.
+Use `make help` from the Archive tool repo for contributor and compatibility targets.
 
-- `archive --help`
-- `archive init-workspace ~/repos/my-notes`
-- `archive new note --title "..." --section ...`
-- `archive process`
-- `archive accept incoming/review/...`
-- `archive validate`
-- `archive build-content`
-- `archive build`
-- `archive check`
-- `archive dev-bg`
-- `archive runtime-build`
-- `archive runtime-run`
+## Development Verification
 
-Make targets remain available from the Archive tool repo for contributor and compatibility workflows:
+Run the Python test suite and full Archive check before release-oriented changes:
 
-- `make help`
-- `make install`
-- `make container-build`
-- `make devshell`
-- `make new kind=note title="..." section=...`
-- `make process-incoming`
-- `make accept-review file=incoming/review/...`
-- `make validate`
-- `make build-content`
-- `make build-linkgraph`
-- `make build-related`
-- `make indexes`
-- `make sidebar`
-- `make dev`
-- `make dev-bg`
-- `make dev-logs`
-- `make dev-status`
-- `make dev-stop`
-- `make build`
-- `make runtime-build`
-- `make runtime-run`
-- `make runtime-logs`
-- `make runtime-status`
-- `make runtime-stop`
-- `make check`
-- `make clean`
-- `make doctor`
+```sh
+python3 -m unittest discover tests
+make check
+```
 
-## Verification
-
-Verified in this repo:
-
-- `make new`
-- `make process-incoming`
-- `make validate`
-- `make build-content`
-- `make doctor`
-- `make build`
-- `make runtime-build`
-- `make runtime-run`
-- `make check`
-- `VITEPRESS_DEV_PORT=5174 make dev`
-- `./scripts/runtime/in-container python3 -m unittest discover -s tests -p 'test*.py'`
-
-Notes:
-
-- `make dev` worked on port `5174` because `5173` was already in use during verification.
-- legacy archive directories under `scripts/adapters/`, `scripts/renderers/`, and `scripts/pipelines/` have been removed.
+`make check` validates sources, rebuilds generated content and metadata, and runs the VitePress static build.

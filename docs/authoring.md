@@ -47,10 +47,12 @@ Current workflow roots:
 - `note`: `WORKSPACE/sources/notes/`
 - `doc`: `WORKSPACE/sources/docs/`
 
-Generated roots:
+Generated workflow roots under the active generated content directory:
 
-- `note`: `ARCHIVE_TOOL_ROOT/content/notes/`
-- `doc`: `ARCHIVE_TOOL_ROOT/content/docs/`
+- `note`: `notes/`
+- `doc`: `docs/`
+
+In standalone mode, the generated content directory is `content/` in the Archive tool repo. In workspace mode, it is `.instances/<instance>/content/` in the Archive tool repo.
 
 ## Choose an Entry Path
 

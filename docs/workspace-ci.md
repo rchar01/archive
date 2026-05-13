@@ -2,7 +2,7 @@
 
 Workspace CI belongs in the workspace repository.
 
-The Archive repo stays an external, pinned toolchain.
+The Archive repo stays an external, pinned toolchain. Local workspace use should prefer the installed `archive` CLI; CI can call `make -C archive ...` against a pinned checkout when that is clearer for the job layout.
 
 ## Recommended Ownership
 
@@ -67,12 +67,12 @@ Do not build workspace CI against unpinned Archive `main`.
 
 Pin Archive by:
 
-- release tag such as `v1.0.0`
+- release tag such as `v.1.5.0`
 - exact commit SHA when testing unreleased changes
 
 Example pinned refs:
 
-- `ARCHIVE_REF=v1.0.0`
+- `ARCHIVE_REF=v.1.5.0`
 - `ARCHIVE_REF=9f3c2a7b7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a`
 
 ## Concrete CI Example
@@ -91,7 +91,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      ARCHIVE_REF: v1.0.0
+      ARCHIVE_REF: v.1.5.0
       ARCHIVE_INSTANCE: workspace-repo
       ARCHIVE_IMAGE: ghcr.io/example/workspace-archive-site:${{ github.sha }}
     steps:
@@ -147,7 +147,7 @@ The Kubernetes-facing flow is intentionally simple:
 
 Editing does not happen in-cluster.
 
-## Wrapper Makefile Option
+## Local Makefile Option
 
 If the workspace repo uses the generated forwarding `Makefile`, local commands can be run from the workspace repo directly.
 
