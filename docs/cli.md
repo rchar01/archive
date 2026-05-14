@@ -79,6 +79,14 @@ archive build --workspace ~/repos/my-notes
 archive check --workspace ~/repos/my-notes
 ```
 
+Disable the generated knowledge graph for a build:
+
+```sh
+ARCHIVE_KNOWLEDGE_GRAPH=0 archive build --workspace ~/repos/my-notes
+```
+
+`ARCHIVE_KNOWLEDGE_GRAPH` defaults to enabled. Set it to `0`, `false`, `no`, or `off` to omit the `/graph/` page, top-nav item, and home Browse card while keeping generated knowledge-panel metadata available.
+
 From inside a workspace repo, the `--workspace` option is optional:
 
 ```sh

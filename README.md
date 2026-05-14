@@ -15,6 +15,7 @@ Compared with plain VitePress, Archive adds:
 - workflow-aware authoring for `note` and `doc`, with dynamic workflow discovery for future additions
 - generated home, workflow, and tag index pages plus generated top-nav and sidebar data
 - a knowledge panel with generated related links, backlinks, metadata, tag navigation, and local tag-search support such as exact `#tag`, prefix `#tag*`, and tag-qualified text queries like `#tag text`
+- an optional `/graph/` knowledge map for browsing generated links, related entries, and tag relationships
 - an intake and review flow for rough imported Markdown before it becomes canonical content
 - workspace mode, where canonical content lives in a separate repo while generated output stays in the Archive tool repo
 - instance-scoped generated output via `ARCHIVE_INSTANCE` so one Archive clone can serve multiple workspaces concurrently
@@ -139,6 +140,7 @@ archive validate --workspace .
 The public command form is `archive <command> --workspace <canonical-root>` or `make WORKSPACE=<canonical-root> <target>`.
 `WORKSPACE` selects the canonical content root for `incoming/` and `sources/` while generated output stays in the Archive tool repo.
 `ARCHIVE_INSTANCE` selects the generated-output namespace inside the Archive tool repo. Standalone mode defaults to `default`; workspace repos default to their directory name.
+`ARCHIVE_KNOWLEDGE_GRAPH=0` disables the generated `/graph/` page, top-nav item, and home Browse card for builds that do not want the graph surface.
 
 For the supported workspace repo layout, see `docs/workspace.md`.
 For a workspace repo CI and Kubernetes-oriented packaging flow, see `docs/workspace-ci.md`.

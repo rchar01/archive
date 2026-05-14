@@ -20,12 +20,26 @@
 }
 
 .archive-home .vp-doc.container,
-.archive-index .vp-doc {
+.archive-index .vp-doc,
+.archive-graph-page .vp-doc {
   max-width: 960px;
 }
 
+.archive-graph-page .vp-doc > .knowledge-graph {
+  width: 100%;
+}
+
+.archive-graph-page .VPDoc:not(.has-aside) .content {
+  max-width: 896px !important;
+}
+
+.archive-graph-page .VPDoc:not(.has-aside) .content-container {
+  max-width: none !important;
+}
+
 .archive-home .vp-doc h2,
-.archive-index .vp-doc h2 {
+.archive-index .vp-doc h2,
+.archive-graph-page .vp-doc h2 {
   margin: 2rem 0 0.75rem;
   border-top: 0;
   padding-top: 0;

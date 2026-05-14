@@ -1,6 +1,6 @@
 import DefaultTheme from 'vitepress/theme'
 import type { Theme } from 'vitepress'
-import { h } from 'vue'
+import { defineAsyncComponent, h } from 'vue'
 
 import './archive.css'
 import './mermaid.css'
@@ -11,10 +11,13 @@ import OutlineAutoScroll from './OutlineAutoScroll'
 import SearchHighlight from './SearchHighlight.vue'
 import { patchLocalSearch } from './localSearch'
 
+const KnowledgeGraph = defineAsyncComponent(() => import('./KnowledgeGraph.vue'))
+
 const theme: Theme = {
   extends: DefaultTheme,
   enhanceApp({ app }) {
     patchLocalSearch()
+    app.component('KnowledgeGraph', KnowledgeGraph)
     app.component('MermaidDiagram', MermaidDiagram)
   },
   Layout() {

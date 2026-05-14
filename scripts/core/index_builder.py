@@ -228,7 +228,26 @@ def render_workflow_card(workflow: WorkflowOverview) -> str:
     )
 
 
-def render_home_page(workflows: list[WorkflowOverview], recent: list[IndexEntry]) -> str:
+def render_graph_card(entry_count: int) -> str:
+    meta = f"{entry_count} {pluralize(entry_count, 'page')}"
+    return "\n".join(
+        [
+            '<a class="archive-home__workflow" href="/graph/">',
+            '  <span class="archive-home__workflow-title">Knowledge Graph</span>',
+            f'  <span class="archive-home__workflow-meta">{escape(meta)}</span>',
+            '  <span class="archive-home__workflow-summary">Explore pages by links, curated relationships, suggestions, and tags.</span>',
+            "</a>",
+        ]
+    )
+
+
+def render_home_page(
+    workflows: list[WorkflowOverview],
+    recent: list[IndexEntry],
+    *,
+    entry_count: int | None = None,
+    knowledge_graph_enabled: bool = True,
+) -> str:
     frontmatter: dict[str, object] = {
         "title": "Home",
         "layout": "home",
@@ -270,6 +289,8 @@ def render_home_page(workflows: list[WorkflowOverview], recent: list[IndexEntry]
         )
         for workflow in workflows:
             lines.append(render_workflow_card(workflow))
+        if knowledge_graph_enabled and entry_count:
+            lines.append(render_graph_card(entry_count))
         lines.append("</div>")
 
     lines.extend(
@@ -347,11 +368,25 @@ def render_tag_page(tag: str, entries: Iterable[IndexEntry]) -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
+def render_graph_page(entry_count: int) -> str:
+    intro = f"Explore {entry_count} {pluralize(entry_count, 'page')} connected by links, related entries, and tags."
+    lines = [
+        dump_frontmatter({"title": "Knowledge Graph", "pageClass": "archive-graph-page", "search": False, "aside": False}).rstrip(),
+        "# Knowledge Graph",
+        "",
+        f'<p class="archive-index__intro">{escape(intro)}</p>',
+        "",
+        "<KnowledgeGraph />",
+    ]
+    return "\n".join(lines).rstrip() + "\n"
+
+
 def build_index_pages(
     entries: Iterable[IndexEntry],
     workflows: Iterable[tuple[str, str]] | None = None,
     *,
     workflow_definitions: Mapping[str, Any] | None = None,
+    knowledge_graph_enabled: bool = True,
 ) -> dict[str, str]:
     entry_list = list(entries)
     grouped = group_entries(entry_list)
@@ -369,7 +404,14 @@ def build_index_pages(
 
     active_workflows = [(workflow_root, workflow_label) for workflow_root, workflow_label in workflow_pairs if workflow_root in grouped]
 
-    pages["index.md"] = render_home_page(build_workflow_overviews(entry_list, active_workflows), recent_entries(entry_list))
+    pages["index.md"] = render_home_page(
+        build_workflow_overviews(entry_list, active_workflows),
+        recent_entries(entry_list),
+        entry_count=len(entry_list),
+        knowledge_graph_enabled=knowledge_graph_enabled,
+    )
+    if knowledge_graph_enabled and entry_list:
+        pages["graph/index.md"] = render_graph_page(len(entry_list))
 
     section_overrides_by_root: dict[str, Mapping[str, SectionOverride]] = {}
     default_sections_by_root: dict[str, str] = {}

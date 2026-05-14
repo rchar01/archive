@@ -6,6 +6,7 @@ from pathlib import Path
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
+from scripts.core.features import knowledge_graph_enabled
 from scripts.core.index_builder import collect_index_entries
 from scripts.core.io import write_json, write_text
 from scripts.core.paths import CONTENT_DIR, GENERATED_VITEPRESS_DIR
@@ -17,7 +18,7 @@ def main(argv: list[str] | None = None) -> int:
     workflows = discover_workflows()
     entries = collect_index_entries(workflows, content_dir=CONTENT_DIR)
     sidebar = build_sidebar_data(entries, workflow_definitions=workflows)
-    nav = build_nav_data(entries)
+    nav = build_nav_data(entries, knowledge_graph_enabled=knowledge_graph_enabled())
 
     write_json(GENERATED_VITEPRESS_DIR / "sidebar.generated.json", sidebar)
     write_json(GENERATED_VITEPRESS_DIR / "nav.generated.json", nav)

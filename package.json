@@ -10,6 +10,8 @@
     "docs:preview": "vitepress preview ."
   },
   "devDependencies": {
+    "@types/d3-force": "^3.0.10",
+    "d3-force": "^3.0.0",
     "mermaid": "^11.14.0",
     "vitepress": "2.0.0-alpha.17"
   }

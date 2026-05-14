@@ -3,7 +3,8 @@ SHELL := /bin/sh
 WORKSPACE ?= .
 WORKSPACE_ABS := $(abspath $(WORKSPACE))
 ARCHIVE_INSTANCE ?= $(if $(filter $(CURDIR),$(WORKSPACE_ABS)),default,$(notdir $(WORKSPACE_ABS)))
-export WORKSPACE ARCHIVE_INSTANCE
+ARCHIVE_KNOWLEDGE_GRAPH ?= 1
+export WORKSPACE ARCHIVE_INSTANCE ARCHIVE_KNOWLEDGE_GRAPH
 
 .PHONY: help install install-cli install-skill uninstall-skill container-build devshell init-workspace new process-incoming accept-review validate build-content build-linkgraph build-related indexes sidebar dev dev-bg dev-logs dev-status dev-stop build runtime-build runtime-run runtime-logs runtime-status runtime-stop check clean doctor
 

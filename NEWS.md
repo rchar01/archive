@@ -6,6 +6,8 @@ This file gives a short, release-oriented view of what changed between versions.
 
 - made the installed `archive` command the preferred workspace interface, so workspace repos can validate, build, preview, and run runtime commands without a forwarding `Makefile`
 - added CLI-only workspace bootstrap with `archive init-workspace --no-makefile`
+- added an interactive `/graph/` knowledge map for browsing article links, curated relationships, suggestions, and tags with pan/zoom, draggable clickable nodes, search, neighborhood focus, and workflow/section/tag filters
+- made the generated knowledge graph optional with `ARCHIVE_KNOWLEDGE_GRAPH=0` for sites that want only workflow browsing and Context panels
 - simplified the root `README.md` into a quick start and moved detailed workflow guidance to the dedicated docs
 - rewrote `docs/README.md` as a concise documentation index and refreshed workspace docs, templates, CI examples, and skill guidance for the CLI-first workflow
 

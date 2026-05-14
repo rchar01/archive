@@ -103,14 +103,17 @@ def build_sidebar_data(
     return sidebar
 
 
-def build_nav_data(entries: Iterable[IndexEntry]) -> list[dict[str, str]]:
+def build_nav_data(entries: Iterable[IndexEntry], *, knowledge_graph_enabled: bool = True) -> list[dict[str, str]]:
     labels: dict[str, str] = {}
-    for entry in entries:
+    entry_list = list(entries)
+    for entry in entry_list:
         labels[entry.workflow_root] = entry.workflow_label
 
     nav = [{"text": "Home", "link": "/"}]
     for workflow_root in sorted(labels):
         nav.append({"text": labels[workflow_root], "link": f"/{workflow_root}/"})
+    if knowledge_graph_enabled and entry_list:
+        nav.append({"text": "Graph", "link": "/graph/"})
     return nav
 
 

@@ -70,6 +70,34 @@ class TaskPipelineTests(unittest.TestCase):
 
             self.assertEqual(output.getvalue().strip(), "sources/notes/containers/docker-dns-issue.md")
 
+    def test_build_indexes_removes_stale_graph_when_feature_disabled(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir)
+            workflow = self.make_workflow(root, "note")
+            write_markdown(
+                workflow.source_path_for("Docker DNS Issue", "containers"),
+                MarkdownDocument(
+                    frontmatter={
+                        "title": "Docker DNS Issue",
+                        "kind": "note",
+                        "section": "containers",
+                        "created": "2026-04-27",
+                    },
+                    body="# Docker DNS Issue\n\n## Summary\n\nDNS fails.\n",
+                ),
+            )
+            stale_graph = root / "content" / "graph" / "index.md"
+            stale_graph.parent.mkdir(parents=True)
+            stale_graph.write_text("stale graph\n")
+
+            with patch.dict("os.environ", {"ARCHIVE_KNOWLEDGE_GRAPH": "0"}, clear=True), patch(
+                "scripts.tasks.build_indexes.discover_workflows", return_value={"note": workflow}
+            ), patch("scripts.tasks.build_indexes.CONTENT_DIR", root / "content"):
+                build_indexes.main([])
+
+            self.assertFalse((root / "content" / "graph").exists())
+            self.assertNotIn('href="/graph/"', (root / "content" / "index.md").read_text())
+
     def test_new_entry_accepts_optional_metadata_flags(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             root = Path(tmp_dir)

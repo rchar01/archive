@@ -10,11 +10,13 @@ and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - added `archive init-workspace --no-makefile` and `NO_MAKEFILE=1 make init-workspace` for CLI-only workspace bootstrap
+- added an interactive `/graph/` knowledge map backed by generated page, linkgraph, and related-entry metadata, with force layout, pan/zoom, draggable clickable nodes, search, neighborhood focus, and workflow/section/tag filters
 
 ### Changed
 
 - made the installed `archive` command a Bash dispatcher that routes validation, build, dev-server, and runtime commands directly to Archive scripts without requiring workspace repos to use a forwarding `Makefile`
 - made the installed `archive` command the preferred workspace interface in README, workspace docs, workspace templates, and installable skill guidance
+- made the generated knowledge graph optional with `ARCHIVE_KNOWLEDGE_GRAPH=0`, which removes the `/graph/` page, top-nav item, and home Browse card while leaving knowledge-panel metadata generation intact
 - simplified the root `README.md` into a quick start and repository overview, moving detailed authoring behavior to the dedicated docs
 - rewrote `docs/README.md` as a concise documentation index and refreshed workspace CI examples to use the dotted `v.x.y.z` tag style
 - clarified generated content root wording for standalone and workspace-instance output in authoring, note, and doc workflow docs
