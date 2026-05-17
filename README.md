@@ -1,5 +1,9 @@
 # Archive
 
+<div align="center">
+  <img src=".vitepress/public/brand/archive-forge-avatar-transparent-512.png" alt="Archive forge avatar" width="256">
+</div>
+
 Archive is a source-first documentation pipeline built around VitePress and Python workflow automation.
 
 Archive supports two usage modes:

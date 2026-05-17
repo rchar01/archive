@@ -2,6 +2,10 @@
 
 This file gives a short, release-oriented view of what changed between versions.
 
+## v1.6.1 - 2026-05-17
+
+- added the transparent Archive forge avatar to the root README header for clearer project branding
+
 ## v1.6.0 - 2026-05-13
 
 - made the installed `archive` command the preferred workspace interface, so workspace repos can validate, build, preview, and run runtime commands without a forwarding `Makefile`
