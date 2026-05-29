@@ -5,6 +5,12 @@ All notable changes to `archive` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.2] - 2026-05-17
+
+### Changed
+
+- clarified the root `README.md` feature overview to distinguish Archive's VitePress local-search enhancements, optional knowledge graph, and installed CLI workflow from standard VitePress behavior
+
 ## [1.6.1] - 2026-05-17
 
 ### Changed

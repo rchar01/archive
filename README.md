@@ -18,9 +18,11 @@ Compared with plain VitePress, Archive adds:
 - a canonical publishing pipeline: `incoming/ -> sources/ -> content/ -> site/`
 - workflow-aware authoring for `note` and `doc`, with dynamic workflow discovery for future additions
 - generated home, workflow, and tag index pages plus generated top-nav and sidebar data
-- a knowledge panel with generated related links, backlinks, metadata, tag navigation, and local tag-search support such as exact `#tag`, prefix `#tag*`, and tag-qualified text queries like `#tag text`
-- an optional `/graph/` knowledge map for browsing generated links, related entries, and tag relationships
+- a knowledge panel with generated related links, backlinks, metadata, and tag navigation
+- enhanced VitePress local search with exact `#tag`, prefix `#tag*`, tag-qualified queries like `#tag text`, generated-index filtering, and destination-page highlighting after opening a result
+- an optional `/graph/` knowledge map, controlled by `ARCHIVE_KNOWLEDGE_GRAPH`, for browsing generated links, related entries, and tag relationships
 - an intake and review flow for rough imported Markdown before it becomes canonical content
+- an installed `archive` CLI for workspace authoring, validation, builds, previews, and runtime commands without requiring a workspace `Makefile`
 - workspace mode, where canonical content lives in a separate repo while generated output stays in the Archive tool repo
 - instance-scoped generated output via `ARCHIVE_INSTANCE` so one Archive clone can serve multiple workspaces concurrently
 - source-adjacent asset copying and built-in Mermaid fence rendering in the local theme

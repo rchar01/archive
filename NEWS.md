@@ -2,6 +2,10 @@
 
 This file gives a short, release-oriented view of what changed between versions.
 
+## v1.6.2 - 2026-05-17
+
+- clarified the root README feature overview for Archive's local-search enhancements, optional knowledge graph, and installed CLI workflow
+
 ## v1.6.1 - 2026-05-17
 
 - added the transparent Archive forge avatar to the root README header for clearer project branding
