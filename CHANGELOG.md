@@ -9,7 +9,8 @@ and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- clarified the root `README.md` feature overview to distinguish Archive's VitePress local-search enhancements, optional knowledge graph, and installed CLI workflow from standard VitePress behavior
+- reworked the root `README.md` with a centered branded HTML header, clearer overview, requirements, configuration table, and MIT license link
+- clarified that Archive uses enhanced VitePress local search, generated metadata, and a static client-side knowledge map rather than embeddings, semantic search, vector indexes, or a graph database
 
 ## [1.6.1] - 2026-05-17
 

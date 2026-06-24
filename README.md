@@ -1,10 +1,18 @@
-# Archive
-
 <div align="center">
-  <img src=".vitepress/public/brand/archive-forge-avatar-transparent-512.png" alt="Archive forge avatar" width="256">
+  <img src=".vitepress/public/brand/archive-forge-avatar-transparent-512.png" width="256" alt="Archive forge avatar">
 </div>
 
-Archive is a source-first documentation pipeline built around VitePress and Python workflow automation.
+<h1 align="center">Archive</h1>
+
+<p align="center">
+  A source-first publishing and knowledge-metadata pipeline built on VitePress and Python workflow automation.
+</p>
+
+---
+
+## Overview
+
+Archive keeps canonical Markdown sources in `sources/` and generates VitePress content, site output, navigation, search metadata, and optional knowledge-map surfaces from those sources.
 
 Archive supports two usage modes:
 
@@ -20,12 +28,24 @@ Compared with plain VitePress, Archive adds:
 - generated home, workflow, and tag index pages plus generated top-nav and sidebar data
 - a knowledge panel with generated related links, backlinks, metadata, and tag navigation
 - enhanced VitePress local search with exact `#tag`, prefix `#tag*`, tag-qualified queries like `#tag text`, generated-index filtering, and destination-page highlighting after opening a result
-- an optional `/graph/` knowledge map, controlled by `ARCHIVE_KNOWLEDGE_GRAPH`, for browsing generated links, related entries, and tag relationships
+- an optional `/graph/` client-side knowledge map, controlled by `ARCHIVE_KNOWLEDGE_GRAPH`, for browsing generated links, related entries, and tag relationships
 - an intake and review flow for rough imported Markdown before it becomes canonical content
 - an installed `archive` CLI for workspace authoring, validation, builds, previews, and runtime commands without requiring a workspace `Makefile`
 - workspace mode, where canonical content lives in a separate repo while generated output stays in the Archive tool repo
 - instance-scoped generated output via `ARCHIVE_INSTANCE` so one Archive clone can serve multiple workspaces concurrently
 - source-adjacent asset copying and built-in Mermaid fence rendering in the local theme
+
+## Search and Knowledge Model
+
+Archive's search and graph surfaces are generated and static, not database-backed. Archive does not currently use embeddings, semantic search, vector indexes, or a graph database.
+
+Search is VitePress local search powered by MiniSearch, with Archive-specific tag/query handling. Related content is generated from metadata and linking heuristics, including shared tags, sections, links, backlinks, curated related links, and title-token overlap. The `/graph/` page is a client-side visualization over generated page, link, tag, and related-content JSON metadata.
+
+## Requirements
+
+- `podman`
+- `make` for standalone and repository-contributor workflows
+- optional installed `archive` CLI for workspace and cross-project workflows without a workspace `Makefile`
 
 ## Quickstart
 
@@ -68,11 +88,6 @@ Workspace bootstrap stays empty on purpose; it does not copy the public starter 
 You can safely rerun `archive init-workspace ~/repos/my-notes`; by default it only fills in missing directories and missing root bootstrap files.
 Use `archive init-workspace --force ~/repos/my-notes` when you intentionally want to refresh the root `.gitignore`, `README.md`, `AGENTS.md`, and forwarding `Makefile` templates.
 Use `archive init-workspace --no-makefile ~/repos/my-notes` when you want a CLI-only workspace.
-
-### Shared Prerequisites
-
-- `podman`
-- `make` for standalone/repo-contributor workflows; workspace users can use the installed `archive` CLI without a workspace Makefile
 
 ### Shared Commands
 
@@ -144,9 +159,14 @@ archive validate --workspace .
 ```
 
 The public command form is `archive <command> --workspace <canonical-root>` or `make WORKSPACE=<canonical-root> <target>`.
-`WORKSPACE` selects the canonical content root for `incoming/` and `sources/` while generated output stays in the Archive tool repo.
-`ARCHIVE_INSTANCE` selects the generated-output namespace inside the Archive tool repo. Standalone mode defaults to `default`; workspace repos default to their directory name.
-`ARCHIVE_KNOWLEDGE_GRAPH=0` disables the generated `/graph/` page, top-nav item, and home Browse card for builds that do not want the graph surface.
+
+## Configuration
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `WORKSPACE` | `.` | Canonical content root for `incoming/` and `sources/`. Generated output stays in the Archive tool repo. |
+| `ARCHIVE_INSTANCE` | `default` in standalone mode; workspace directory name in workspace mode | Generated-output namespace under `.instances/<instance>/...` when not using the standalone default output paths. |
+| `ARCHIVE_KNOWLEDGE_GRAPH` | `1` | Set to `0` to disable the generated `/graph/` page, top-nav item, and home Browse card while keeping Context-panel metadata generation. |
 
 For the supported workspace repo layout, see `docs/workspace.md`.
 For a workspace repo CI and Kubernetes-oriented packaging flow, see `docs/workspace-ci.md`.
@@ -262,3 +282,7 @@ make check
 ```
 
 `make check` validates sources, rebuilds generated content and metadata, and runs the VitePress static build.
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.

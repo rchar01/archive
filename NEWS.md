@@ -4,7 +4,7 @@ This file gives a short, release-oriented view of what changed between versions.
 
 ## v1.6.2 - 2026-05-17
 
-- clarified the root README feature overview for Archive's local-search enhancements, optional knowledge graph, and installed CLI workflow
+- reworked the root README with a centered branded header, clearer requirements and configuration, and an explicit note that Archive has enhanced lexical local search and a static knowledge map, not semantic search or a graph database
 
 ## v1.6.1 - 2026-05-17
 
